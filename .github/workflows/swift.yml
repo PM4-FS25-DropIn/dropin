@@ -1,0 +1,35 @@
+name: Swift iOS Client CI
+
+on:
+  pull_request:
+    branches: [ dev ]
+    paths:
+      - 'client/ios/**'
+
+jobs:
+  build:
+    runs-on: macos-latest
+    
+    defaults:
+      run:
+        working-directory: ./client/ios
+        
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Swift
+      uses: swift-actions/setup-swift@v2
+      with:
+        swift-version: '5.10'
+    
+    - name: Show Swift version
+      run: swift --version
+      
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: 'latest-stable'
+        
+    - name: Build & Test
+      run: |
+        xcodebuild clean test -scheme "dropin" -destination "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro" CODE_SIGNING_ALLOWED=NO
