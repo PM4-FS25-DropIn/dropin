@@ -1,0 +1,10 @@
+include:
+  - supabase/docker-compose.yml
+services:
+  api:
+    image: dropin:latest
+    depends_on:
+      - db
+      - auth
+      - rest
+      - kong
