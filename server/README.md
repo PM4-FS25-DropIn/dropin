@@ -18,6 +18,10 @@ For production mode
 
 Run the test cases.
 
+## Requirements
+
+- node version 20
+
 ## Learn More
 
 To learn Fastify, check out the [Fastify documentation](https://fastify.dev/docs/latest/).
