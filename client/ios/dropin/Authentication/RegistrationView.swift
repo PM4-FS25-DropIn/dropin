@@ -51,7 +51,7 @@ struct RegistrationView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
-                        .background(Color(red: 0/255, green: 180/255, blue: 216/255))
+                        .background(Color("AccentColor"))
                         .cornerRadius(30)
                 }
                 .padding(.horizontal, 35)
@@ -59,7 +59,7 @@ struct RegistrationView: View {
                     Text("Already have an account?")
                     NavigationLink(destination: LoginView()) {
                         Text("Log In")
-                            .foregroundColor(Color(red: 0/255, green: 180/255, blue: 216/255))
+                            .foregroundColor(Color("AccentColor"))
                             .fontWeight(.bold)
                     }
                 }
