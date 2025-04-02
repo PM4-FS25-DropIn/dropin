@@ -7,15 +7,19 @@
 
 import SwiftUI
 
+
+/// Simple Circular Shaped Profile Image with a status ring.
+/// Status Ring can be enabled by setting isHighlighted to true.
 struct FriendAvatar: View {
     var imageURL: URL
+    var isHighlighted = false
     
     var body: some View {
         ZStack {
             Circle()
                 .stroke(
                     LinearGradient(
-                        gradient: Gradient(colors: [.lightCyan, .pacificCyan]),
+                        gradient: Gradient(colors: isHighlighted ? [.lightCyan, .pacificCyan] : [.gray, .black]),
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     ),
