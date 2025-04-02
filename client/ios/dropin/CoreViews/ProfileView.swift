@@ -155,3 +155,53 @@ struct ProfileView: View {
         }
     }
 }
+
+// MARK: - DropInFeedView
+
+// TODO: dynamic data for DropInFeedView
+struct DropInFeedView: View {
+    // Example placeholder data
+    let events = [
+        "My Beach Party",
+        "Coding Hangout",
+        "Birthday Bash",
+        "Movie Night",
+        "Brunch Meet"
+    ]
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("My DropIns")
+                .font(.headline)
+            
+            ForEach(events, id: \.self) { event in
+                eventRow(for: event)
+            }
+        }
+    }
+    
+    private func eventRow(for event: String) -> some View {
+        HStack {
+            Rectangle()
+                .fill(Color("AccentColor"))  // Custom accent color from Assets
+                .frame(width: 60, height: 60)
+                .cornerRadius(8)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(event)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                Text("Short description about this event.")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+            }
+            
+            Spacer()
+        }
+        .padding(.vertical, 4)
+    }
+}
+
+#Preview {
+    ProfileView()
+}
