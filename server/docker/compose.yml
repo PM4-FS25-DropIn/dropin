@@ -1,0 +1,12 @@
+include:
+  - supabase/docker-compose.yml
+services:
+  api:
+    ports:
+      - 80:3000
+    image: dropin:latest
+    depends_on:
+      - db
+      - auth
+      - rest
+      - kong
