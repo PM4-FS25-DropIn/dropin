@@ -14,6 +14,13 @@ struct ContentView: View {
         if showOnboarding {
             OnboardingView(showOnboarding: $showOnboarding)
         } else {
+            /* If user is signed in (check with supabase) then
+             if authService.isAuthenticated {
+                 AppView()
+             } else {
+                 LoginView()
+             }
+             */
             RegistrationView()
         }
     }
