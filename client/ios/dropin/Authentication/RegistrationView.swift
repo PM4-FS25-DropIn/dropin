@@ -1,15 +1,6 @@
-//
-//  RegistrationView.swift
-//  dropin
-//
-//  Created by Shpetim Veseli on 28.03.2025.
-//
-
 import SwiftUI
 
 struct RegistrationView: View {
-    
-    @State private var privacyPolicy: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -20,56 +11,55 @@ struct RegistrationView: View {
                     .padding()
                 Text("Create an account and get started!")
             }
-            
             Spacer()
             
-            VStack(spacing: 35) {
-                Section {
-                    TextField("Username", text: .constant(""))
-                        .padding()
-                        .overlay(RoundedRectangle(cornerRadius: 30).stroke(Color(red: 227/255, green: 227/255, blue: 227/255)))
-                    TextField("Email", text: .constant(""))
-                        .padding()
-                        .overlay(RoundedRectangle(cornerRadius: 30).stroke(Color(red: 227/255, green: 227/255, blue: 227/255)))
-                    SecureField("Password", text: .constant(""))
-                        .padding()
-                        .overlay(RoundedRectangle(cornerRadius: 30).stroke(Color(red: 227/255, green: 227/255, blue: 227/255)))
-                    SecureField("Confirm Password", text: .constant(""))
-                        .padding()
-                        .overlay(RoundedRectangle(cornerRadius: 30).stroke(Color(red: 227/255, green: 227/255, blue: 227/255)))
-                }
-                .padding(.horizontal,35)
-            }
-            
-            
+            inputSection
             Spacer()
-            
-            VStack(spacing: 30) {
-                Button(action: {}) {
-                    Text("Sign Up")
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(Color("AccentColor"))
-                        .cornerRadius(30)
-                }
-                .padding(.horizontal, 35)
-                HStack() {
-                    Text("Already have an account?")
-                    NavigationLink(destination: LoginView()) {
-                        Text("Log In")
-                            .foregroundColor(Color("AccentColor"))
-                            .fontWeight(.bold)
-                    }
-                }
-            }
-            
-            
+            submitSection
             
             Spacer()
         }
     }
+    
+    private var inputSection: some View {
+        VStack(spacing: 35) {
+            Section {
+                TextField("Username", text: .constant(""))
+                    .roundedTextFieldStyle()
+                TextField("Email", text: .constant(""))
+                    .roundedTextFieldStyle()
+                SecureField("Password", text: .constant(""))
+                    .roundedTextFieldStyle()
+                SecureField("Confirm Password", text: .constant(""))
+                    .roundedTextFieldStyle()
+            }
+            .padding(.horizontal,35)
+        }
+    }
+    
+    private var submitSection: some View {
+        VStack(spacing: 30) {
+            Button(action: {}) {
+                Text("Sign Up")
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(Color("AccentColor"))
+                    .cornerRadius(30)
+            }
+            .padding(.horizontal, 35)
+            HStack() {
+                Text("Already have an account?")
+                NavigationLink(destination: LoginView()) {
+                    Text("Log In")
+                        .foregroundColor(Color("AccentColor"))
+                        .fontWeight(.bold)
+                }
+            }
+        }
+    }
+    
 }
 
 
