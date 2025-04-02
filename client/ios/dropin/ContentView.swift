@@ -14,7 +14,7 @@ struct ContentView: View {
         if showOnboarding {
             OnboardingView(showOnboarding: $showOnboarding)
         } else {
-            HomeView()
+            RegistrationView()
         }
     }
 }
