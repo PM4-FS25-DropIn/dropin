@@ -13,7 +13,7 @@ struct Chat: Identifiable {
 
 // MARK: - Chats View
 
-struct ChatsView: View {
+struct ChatListView: View {
 
     // State variable to hold our dummy chat data
     @State private var chats: [Chat] = []
@@ -155,5 +155,5 @@ struct ChatDetailPlaceholderView: View {
 // MARK: - Preview
 
 #Preview {
-    ChatsView()
+    ChatListView()
 }
