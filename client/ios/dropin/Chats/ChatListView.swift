@@ -77,50 +77,53 @@ struct ChatRow: View {
     let chat: Chat
 
     var body: some View {
-        HStack(spacing: 15) {
-            // Profile Picture Placeholder
-            Circle()
-                .fill(.gray.opacity(0.8)) // Blank gray circle
-                .frame(width: 50, height: 50)
+        HStack(spacing: 10) {
+            groupImage
+            chatPreview
+            Spacer()
+            timestampAndBadge
+        }
+        .padding(.vertical, 5)
+    }
 
-            // Group Name and Last Message Preview
-            VStack(alignment: .leading, spacing: 4) {
-                Text(chat.groupName)
-                    .font(.headline)
-                    .lineLimit(1) // Ensure group name doesn't wrap excessively
+    private var groupImage: some View {
+        Circle()
+            .fill(.gray.opacity(0.8))
+            .frame(width: 50, height: 50)
+    }
 
-                Text(chat.lastMessage)
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                    .lineLimit(1) // Show only one line of the last message
-            }
+    private var chatPreview: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(chat.groupName)
+                .font(.headline)
+                .lineLimit(1)
+            Text(chat.lastMessage)
+                .font(.subheadline)
+                .foregroundColor(.gray)
+                .lineLimit(1)
+        }
+    }
 
-            Spacer() // Pushes timestamp and badge to the right
+    private var timestampAndBadge: some View {
+        VStack(alignment: .trailing, spacing: 5) {
+            Text(formatDate(chat.lastMessageTimestamp))
+                .font(.caption)
+                .foregroundColor(.gray)
 
-            // Timestamp and Unread Count Badge
-            VStack(alignment: .trailing, spacing: 5) {
-                Text(formatDate(chat.lastMessageTimestamp))
-                    .font(.caption)
-                    .foregroundColor(.gray)
-
-                // Display unread count badge only if count > 0
-                if chat.unreadCount > 0 {
-                    ZStack {
-                        Circle()
-                            .fill(.blue)
-                        Text("\(chat.unreadCount)")
-                            .font(.caption2)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                    }
-                    .frame(width: 20, height: 20) // Fixed size for the badge
-                } else {
-                    // Keep the space consistent even if no badge
-                    Spacer().frame(height: 20)
+            if chat.unreadCount > 0 {
+                ZStack {
+                    Circle()
+                        .fill(.blue)
+                    Text("\(chat.unreadCount)")
+                        .font(.caption2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
                 }
+                .frame(width: 20, height: 20)
+            } else {
+                Spacer().frame(height: 20)
             }
         }
-        .padding(.vertical, 5) // Add some vertical padding to each row
     }
 
     // Helper function to format the date nicely
