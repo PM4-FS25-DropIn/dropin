@@ -12,32 +12,39 @@ struct HomeView: View {
     @State private var events: [DropInEvent] = [dummyEvent]
     
     var body: some View {
-        VStack {
-            HStack {
-                Spacer()
-                Image(systemName: "bell.fill")
-                    .padding(.horizontal)
-                    .foregroundStyle(.secondary)
-            }
-            FriendAvatarCarousel()
-            EventCategoryTabView(selectedCategory: $selectedCategory)
-                .padding(.horizontal)
-                .padding(.vertical, 5)
-            
-            ScrollView {
-                LazyVStack(alignment: .center, spacing: 25) {
-                    ForEach(events.indices, id: \.self) { index in
-                        EventCard(event: events[index])
+        NavigationStack {
+            VStack {
+                HStack {
+                    Image(systemName: "bell.fill")
+                        .padding(.horizontal)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    NavigationLink(destination: ChatListView()) {
+                        Image(systemName: "paperplane.fill")
+                            .padding(.horizontal)
+                            .foregroundStyle(.secondary)
                     }
                 }
-                .padding()
-            }
-            .scrollIndicators(.hidden)
-            .refreshable {
-                // Refresh and fetch new data from db
-            }
-            .task {
-                // Initial fetch from db
+                FriendAvatarCarousel()
+                EventCategoryTabView(selectedCategory: $selectedCategory)
+                    .padding(.horizontal)
+                    .padding(.vertical, 5)
+
+                ScrollView {
+                    LazyVStack(alignment: .center, spacing: 25) {
+                        ForEach(events.indices, id: \.self) { index in
+                            EventCard(event: events[index])
+                        }
+                    }
+                    .padding()
+                }
+                .scrollIndicators(.hidden)
+                .refreshable {
+                    // Refresh and fetch new data from db
+                }
+                .task {
+                    // Initial fetch from db
+                }
             }
         }
     }
