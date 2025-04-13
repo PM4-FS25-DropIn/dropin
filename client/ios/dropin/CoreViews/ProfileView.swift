@@ -1,22 +1,31 @@
-
 import SwiftUI
 
 struct ProfileView: View {
     var body: some View {
-        VStack(spacing: 0) {
-            
-            profileHeader
-            
-            bioSection
-            
-            Divider()
-                .padding(.vertical, 16)
-            
+        ScrollView {
+
+            GeometryReader { geometry in
+                VStack(spacing: 0) {
+                    profileHeader
+
+                    bioSection
+                        .padding(.top, 16)
+
+                    Divider()
+                        .padding(.vertical, 16)
+                }
+                .offset(y: -geometry.frame(in: .global).minY / 1.5)  // Header will move slower than the scroll -> offset correction
+            }
+            .frame(height: 420)
+
             feedSection
+                .background(Color(.systemBackground))
+                .zIndex(1)  // Ensure the profile header is above the feed section
+                .cornerRadius(16)
         }
-        .ignoresSafeArea(edges: .top)  // Allow the header (wallpaper) to extend under the status bar
+        .edgesIgnoringSafeArea(.top)
     }
-    
+
     // MARK: - Header Section
     private var profileHeader: some View {
         ZStack(alignment: .top) {
@@ -31,17 +40,18 @@ struct ProfileView: View {
             .frame(maxWidth: .infinity)
         }
     }
-    
+
     // The background gradient that fades from AccentColor to the system background
     private var backgroundGradient: some View {
         LinearGradient(
-            gradient: Gradient(colors: [Color("AccentColor"), Color(.systemBackground)]),
+            gradient: Gradient(colors: [
+                Color("AccentColor"), Color(.systemBackground),
+            ]),
             startPoint: .top,
             endPoint: .bottom
         )
-        .ignoresSafeArea()  // Make sure the gradient covers the full screen area
     }
-    
+
     // The banner image on top of the header
     private var bannerImage: some View {
         Image("account_banner_placeholder")
@@ -125,24 +135,25 @@ struct ProfileView: View {
         }
         .padding(.top, 4)
     }
-    
+
     // MARK: - Bio Section
     private var bioSection: some View {
-        Text("This is a short description about the user. It can include hobbies, location, or anything relevant.")
-            .font(.body)
+        Text(
+            "This is a short description about the user. It can include hobbies, location, or anything relevant."
+        )
+        .font(.body)
     }
-    
+
     // MARK: - Feed Section
     private var feedSection: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                DropInFeedView()
-                Spacer().frame(height: 40)
-            }
-            .padding(.horizontal)
+        VStack(alignment: .leading, spacing: 16) {
+            DropInFeedView()
+            Spacer().frame(height: 40)
         }
+        .padding(.horizontal)
+        .padding(.top, 16)
     }
-    
+
     // Helper function for stat items
     @ViewBuilder
     private func statItem(number: String, label: String) -> some View {
