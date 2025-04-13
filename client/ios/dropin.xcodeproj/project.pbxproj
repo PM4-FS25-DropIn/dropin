@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		EE3385912DAC5D25006C95F4 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = EE3385902DAC5D25006C95F4 /* Supabase */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		B3B7161D2D872E1F0023465A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -29,9 +33,22 @@
 		B3B716262D872E1F0023465A /* dropinUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = dropinUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		EE33859A2DACFDD1006C95F4 /* Exceptions for "dropin" folder in "dropin" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = B3B7160B2D872E1D0023465A /* dropin */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B3B7160E2D872E1D0023465A /* dropin */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				EE33859A2DACFDD1006C95F4 /* Exceptions for "dropin" folder in "dropin" target */,
+			);
 			path = dropin;
 			sourceTree = "<group>";
 		};
@@ -52,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE3385912DAC5D25006C95F4 /* Supabase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +130,7 @@
 			);
 			name = dropin;
 			packageProductDependencies = (
+				EE3385902DAC5D25006C95F4 /* Supabase */,
 			);
 			productName = dropin;
 			productReference = B3B7160C2D872E1D0023465A /* dropin.app */;
@@ -195,6 +214,9 @@
 			);
 			mainGroup = B3B716032D872E1D0023465A;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				EE33858F2DAC5D25006C95F4 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B3B7160D2D872E1D0023465A /* Products */;
 			projectDirPath = "";
@@ -399,6 +421,7 @@
 				DEVELOPMENT_TEAM = AAB7Y32C8V;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = dropin/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -432,6 +455,7 @@
 				DEVELOPMENT_TEAM = AAB7Y32C8V;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = dropin/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -578,6 +602,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		EE33858F2DAC5D25006C95F4 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EE3385902DAC5D25006C95F4 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EE33858F2DAC5D25006C95F4 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3B716042D872E1D0023465A /* Project object */;
 }

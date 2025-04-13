@@ -1,6 +1,11 @@
 import SwiftUI
 
-struct LoginView: View {
+struct SignInView: View {
+    @Environment(AuthService.self) private var authService
+    
+    @State private var authDetails = AuthCredentials()
+    
+    
     
     var body: some View {
         VStack {
@@ -12,7 +17,7 @@ struct LoginView: View {
         }
         Spacer()
         
-        inputSection
+        inputForm
         Spacer()
         buttonSection
         
@@ -20,13 +25,11 @@ struct LoginView: View {
         Spacer()
     }
     
-    private var inputSection: some View {
+    private var inputForm: some View {
         VStack(spacing: 35) {
             Section {
-                TextField("Email", text: .constant(""))
-                    .roundedTextFieldStyle()
-                SecureField("Password", text: .constant(""))
-                    .roundedTextFieldStyle()
+                AuthTextField("Email",value: $authDetails.email)
+                AuthSecureField("Password",value: $authDetails.password)
             }
             .padding(.horizontal,35)
         }
@@ -34,7 +37,7 @@ struct LoginView: View {
     
     private var buttonSection: some View {
         VStack() {
-            Button(action: {}) {
+            Button(action: signIn) {
                 Text("Sign In")
                     .fontWeight(.bold)
                     .foregroundColor(.white)
@@ -46,9 +49,20 @@ struct LoginView: View {
             .padding(.horizontal, 35)
         }
     }
+    
+    private func signIn() {
+        Task {
+            do {
+                try await authService.signIn(authData: authDetails)
+            } catch {
+                print(error)
+            }
+        }
+    }
 }
 
 
 #Preview {
-    LoginView()
+    SignInView()
+        .environment(AuthService())
 }
