@@ -155,7 +155,6 @@ struct ProfileView: View {
     }
 
     // Helper function for stat items
-    @ViewBuilder
     private func statItem(number: String, label: String) -> some View {
         VStack {
             Text(number)
