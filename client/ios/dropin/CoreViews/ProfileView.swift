@@ -2,6 +2,9 @@
 import SwiftUI
 
 struct ProfileView: View {
+    
+    
+    
     var body: some View {
         VStack(spacing: 0) {
             
@@ -160,6 +163,9 @@ struct ProfileView: View {
 
 // TODO: dynamic data for DropInFeedView
 struct DropInFeedView: View {
+    
+    @Environment(AuthService.self) private var authService
+    
     // Example placeholder data
     let events = [
         "My Beach Party",
@@ -176,6 +182,18 @@ struct DropInFeedView: View {
             
             ForEach(events, id: \.self) { event in
                 eventRow(for: event)
+            }
+        }
+        
+        VStack {
+            Button("signOut") {
+                Task {
+                    do {
+                        try await authService.signOut()
+                    } catch {
+                        print("error")
+                    }
+                }
             }
         }
     }
@@ -204,4 +222,5 @@ struct DropInFeedView: View {
 
 #Preview {
     ProfileView()
+        .environment(AuthService())
 }
