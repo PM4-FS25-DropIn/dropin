@@ -166,9 +166,19 @@ struct DropInFeedView: View {
         "Coding Hangout",
         "Birthday Bash",
         "Movie Night",
-        "Brunch Meet"
+        "Brunch Meet",
+        "My Beach Party",
+        "Coding Hangout",
+        "Birthday Bash",
+        "Movie Night",
+        "Brunch Meet",
+        "My Beach Party",
+        "Coding Hangout",
+        "Birthday Bash",
+        "Movie Night",
+        "Brunch Meet",
     ]
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("My DropIns")
