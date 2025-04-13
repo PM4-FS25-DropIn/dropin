@@ -1,4 +1,11 @@
--- RLS
+-- ===========================================
+-- Migration:     Create Profiles RLS
+--
+-- Description:
+-- Creates needed RLS policies for the profiles table
+-- 
+--  
+-- ==========================================
 
 alter table profiles enable row level security;
 

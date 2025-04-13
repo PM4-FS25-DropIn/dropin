@@ -1,3 +1,12 @@
+-- ===========================================
+-- Migration:     create_handle_new_user_function_trigger
+--
+-- Description:
+--   - Creates a trigger function that inserts a new row into the 'profiles' table
+--     when a new user is created in 'auth.users'
+--   - Extracts the username from `raw_user_meta_data`
+--   - Trigger runs after insert on 'auth.users'
+-- ===========================================
 create function public.handle_new_user()
 returns trigger
 set search_path = ''
@@ -10,4 +19,4 @@ end;
 $$ language plpgsql security definer;
 create trigger on_auth_user_created
   after insert on auth.users
-  for each row execute procedure public.handle_new_user();
+  for each row execute function public.handle_new_user();
