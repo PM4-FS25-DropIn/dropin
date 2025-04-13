@@ -22,7 +22,7 @@ struct ProfileView: View {
         ZStack(alignment: .top) {
             backgroundGradient
             bannerImage
-            
+
             VStack(spacing: 8) {
                 headerButtonsRow
                 nameAndUsername
@@ -50,7 +50,7 @@ struct ProfileView: View {
             .frame(height: 160)
             .clipped()
     }
-    
+
     // Row with the settings button, profile image, and edit button.
     private var headerButtonsRow: some View {
         HStack {
@@ -62,7 +62,7 @@ struct ProfileView: View {
         }
         .padding(.horizontal)
     }
-    
+
     private var settingsButton: some View {
         Button(action: {
             // TODO: Navigate to settings
@@ -74,7 +74,7 @@ struct ProfileView: View {
         }
         .padding(.top, 160)
     }
-    
+
     private var editButton: some View {
         Button(action: {
             // TODO: Edit profile action
@@ -86,7 +86,7 @@ struct ProfileView: View {
         }
         .padding(.top, 160)
     }
-    
+
     // The profile image (avatar)
     private var profileImageView: some View {
         Image("profile_avatar_placeholder")
@@ -100,7 +100,7 @@ struct ProfileView: View {
             .shadow(radius: 1)
             .padding(.top, 110)
     }
-    
+
     // Name and username texts
     private var nameAndUsername: some View {
         VStack {
@@ -112,7 +112,7 @@ struct ProfileView: View {
                 .foregroundColor(.gray)
         }
     }
-    
+
     // Evenly spaced stats row
     private var statsRow: some View {
         HStack {
@@ -183,20 +183,20 @@ struct DropInFeedView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("My DropIns")
                 .font(.headline)
-            
+
             ForEach(events, id: \.self) { event in
                 eventRow(for: event)
             }
         }
     }
-    
+
     private func eventRow(for event: String) -> some View {
         HStack {
             Rectangle()
                 .fill(Color("AccentColor"))  // Custom accent color from Assets
                 .frame(width: 60, height: 60)
                 .cornerRadius(8)
-            
+
             VStack(alignment: .leading, spacing: 4) {
                 Text(event)
                     .font(.subheadline)
@@ -205,7 +205,7 @@ struct DropInFeedView: View {
                     .font(.caption)
                     .foregroundColor(.gray)
             }
-            
+
             Spacer()
         }
         .padding(.vertical, 4)
