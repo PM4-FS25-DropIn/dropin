@@ -36,5 +36,7 @@ jobs:
     - name: Build & Test
       run: |
         xcrun simctl boot "iPhone 16 Pro"
-        xcrun simctl bootstatus "iPhone 16 Pro" --wait
+        xcrun simctl bootstatus "iPhone 16 Pro"
+        # Optionally add a delay if needed:
+        sleep 15
         xcodebuild clean test -scheme "dropin" -destination "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro" CODE_SIGNING_ALLOWED=NO
