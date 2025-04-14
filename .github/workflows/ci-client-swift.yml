@@ -20,7 +20,7 @@ jobs:
     - name: Setup Swift
       uses: swift-actions/setup-swift@v2
       with:
-        swift-version: '6.1'
+        swift-version: '6.0'
     
     - name: Show Swift version
       run: swift --version
@@ -33,15 +33,6 @@ jobs:
     - name: List available simulators
       run: xcrun simctl list devices
 
-    - name: Verify simulator exists
-      run: |
-        if ! xcrun simctl list devices | grep -q "iPhone 14 (16.4)"; then
-          echo "Simulator iPhone 14 with iOS 16.4 not found. Exiting."; exit 1;
-        fi
-
     - name: Build & Test
       run: |
-        xcodebuild clean test \
-          -scheme "dropin" \
-          -destination "platform=iOS Simulator,name=iPhone 14,OS=16.4" \
-          CODE_SIGNING_ALLOWED=NO
+        xcodebuild clean test -scheme "dropin" -destination "platform=iOS Simulator,OS=17.5,name=iPhone 15 Pro" CODE_SIGNING_ALLOWED=NO
