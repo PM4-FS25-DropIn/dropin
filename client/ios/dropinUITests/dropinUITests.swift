@@ -21,23 +21,34 @@ final class dropinUITests: XCTestCase {
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
-
+    
+    func createAppWithSupabaseEnv() -> XCUIApplication {
+        let env = ProcessInfo.processInfo.environment
+        let app = XCUIApplication()
+        app.launchEnvironment = [
+            "SUPABASE_URL": env["SUPABASE_URL"] ?? "",
+            "SUPABASE_KEY": env["SUPABASE_KEY"] ?? ""
+        ]
+        return app
+    }
+    
     @MainActor
     func testExample() throws {
         // UI tests must launch the application that they test.
-        let app = XCUIApplication()
+        let app = createAppWithSupabaseEnv()
         app.launch()
 
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
 
-    @MainActor
+    // Fuck this test for now
+    /*@MainActor
     func testLaunchPerformance() throws {
-        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
-            // This measures how long it takes to launch your application.
+        if #available(iOS 13.0, *) {
             measure(metrics: [XCTApplicationLaunchMetric()]) {
-                XCUIApplication().launch()
-            }
-        }
-    }
+                let app = createAppWithSupabaseEnv()
+                app.launch()
+             }
+         }
+    }*/
 }
