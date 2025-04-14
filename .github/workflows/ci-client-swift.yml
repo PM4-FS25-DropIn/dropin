@@ -33,10 +33,15 @@ jobs:
     - name: List available simulators
       run: xcrun simctl list devices
 
+    - name: Verify simulator exists
+      run: |
+        if ! xcrun simctl list devices | grep -q "iPhone 14 (16.4)"; then
+          echo "Simulator iPhone 14 with iOS 16.4 not found. Exiting."; exit 1;
+        fi
+
     - name: Build & Test
       run: |
-        xcrun simctl boot "iPhone 16 Pro"
-        xcrun simctl bootstatus "iPhone 16 Pro"
-        # Optionally add a delay if needed:
-        sleep 15
-        xcodebuild clean test -scheme "dropin" -destination "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro" CODE_SIGNING_ALLOWED=NO
+        xcodebuild clean test \
+          -scheme "dropin" \
+          -destination "platform=iOS Simulator,name=iPhone 14,OS=16.4" \
+          CODE_SIGNING_ALLOWED=NO
