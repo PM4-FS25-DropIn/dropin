@@ -16,10 +16,21 @@ final class dropinUITestsLaunchTests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
     }
+    
+    func createAppWithSupabaseEnv() -> XCUIApplication {
+        let env = ProcessInfo.processInfo.environment
+        let app = XCUIApplication()
+        app.launchEnvironment = [
+            "SUPABASE_URL": env["SUPABASE_URL"] ?? "",
+            "SUPABASE_KEY": env["SUPABASE_KEY"] ?? ""
+        ]
+        return app
+    }
 
     @MainActor
     func testLaunch() throws {
-        let app = XCUIApplication()
+        let app = createAppWithSupabaseEnv()
+
         app.launch()
 
         // Insert steps here to perform after app launch but before taking a screenshot,

@@ -66,7 +66,7 @@ struct TabBar: View {
                 }
                 Tab("Profile", systemImage: "person") {
                     // Profile View here
-                    Text("Profile View")
+                    ProfileView()
                 }
             }
             .tabViewStyle(DefaultTabViewStyle())

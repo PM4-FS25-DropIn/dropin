@@ -196,6 +196,8 @@ struct ProfileView: View {
 
 // TODO: dynamic data for DropInFeedView
 struct DropInFeedView: View {
+    
+    
     // Example placeholder data
     let events = [
         "My Beach Party",
@@ -224,6 +226,7 @@ struct DropInFeedView: View {
                 eventRow(for: event)
             }
         }
+        
     }
 
     private func eventRow(for event: String) -> some View {
@@ -260,4 +263,5 @@ struct HeaderHeightPreferenceKey: PreferenceKey {
 
 #Preview {
     ProfileView()
+        .environment(AuthService())
 }
