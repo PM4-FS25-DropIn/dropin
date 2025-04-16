@@ -250,7 +250,7 @@ struct DropInFeedView: View {
 
 // MARK: - Preferences
 struct HeaderHeightPreferenceKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
+    static let defaultValue: CGFloat = 0
 
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
         // We use the maximum height in case there are multiple children reporting
