@@ -164,7 +164,7 @@ struct ProfileView: View {
         ExpandableText(
             text:
                 "This is a long description about the user. It can include hobbies, location, or anything relevant. If the text is very long, it will be collapsed to a maximum of five lines by default. Tap 'Read More' to expand and see all the content, and 'Close' to collapse it back.",
-            lineLimit: 2
+            lineLimit: 3
         )
         .padding(.horizontal)
         .foregroundColor(Color.primary.opacity(0.8))
@@ -248,6 +248,7 @@ struct DropInFeedView: View {
     }
 }
 
+// MARK: - Preferences
 struct HeaderHeightPreferenceKey: PreferenceKey {
     static var defaultValue: CGFloat = 0
 
