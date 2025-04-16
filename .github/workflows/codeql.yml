@@ -1,14 +1,13 @@
 name: "Swift CodeQL Analysis"
 
 on:
+  workflow_dispatch:
   push:
     branches: [ "dev" ]
   pull_request:
     branches: [ "dev" ]
     paths:
       - 'client/ios/**'
-  workflow_dispatch:
-    # Added for testing reasons
       
 jobs:
   analyze:
