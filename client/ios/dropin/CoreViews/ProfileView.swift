@@ -138,12 +138,15 @@ struct ProfileView: View {
 
     // MARK: - Bio Section
     private var bioSection: some View {
-        Text(
-            "This is a short description about the user. It can include hobbies, location, or anything relevant."
+        ExpandableText(
+            text:
+                "This is a long description about the user. It can include hobbies, location, or anything relevant. If the text is very long, it will be collapsed to a maximum of five lines by default. Tap 'Read More' to expand and see all the content, and 'Close' to collapse it back.",
+            lineLimit: 2
         )
-        .font(.body)
+        .padding(.horizontal)
+        .foregroundColor(Color.primary.opacity(0.8))
     }
-
+    
     // MARK: - Feed Section
     private var feedSection: some View {
         VStack(alignment: .leading, spacing: 16) {
