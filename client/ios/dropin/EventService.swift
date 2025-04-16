@@ -6,16 +6,11 @@
 //
 
 import Foundation
+import Auth
 
 @MainActor
 @Observable
 class EventService {
-    /*
-     1. Fetch all events from a user
-     2. Get events from the db that user hasn't dropped in yet + hasn't declined
-     3. Let a user create a new event
-     4. Let a user update his own events
-     */
     
     /// This function is used to retrieve the user object of the currently logged in
     /// - Returns: Supabase User Object
@@ -24,11 +19,12 @@ class EventService {
         return try await supabase.auth.session.user
     }
     
+    /// Fetches all events the user created
     func fetchEventsOfUser() async throws -> [DropInEvent] {
         let user = try await getUser()
         
         let events: [DropInEvent] = try await supabase
-            .from("dropins")
+            .from("events")
             .select()
             .eq("user_id", value: user.id)
             .execute()
@@ -37,16 +33,74 @@ class EventService {
         return events
     }
     
-    func fetchEventsFeed() async throws -> [DropInEvent] {
+    /// Fetches all events the user is officially attending  (including his own)
+    func fetchAttendingEventsOfUser() async throws -> [DropInEvent] {
         let events: [DropInEvent] = try await supabase
-            .from("dropins")
+            .from("events_joined_by_user")
             .select()
-            .limit(10)
             .execute()
             .value
+        
         return events
     }
     
+    /// Fetches up to 5 events from the events_not_responded_to table that are not in the excludedIDs list.
+    func fetchEventsFeed(excludingIDs: Set<Int> = []) async throws -> [DropInEvent] {
+        let events: [DropInEvent] = try await supabase
+            .rpc("fetch_events_feed", params: ["excluded_ids": [excludingIDs]])
+            .execute()
+            .value
+        
+        return events
+    }
+    
+    /// Join a specific event
+    func joinEvent(_ event: DropInEvent) async throws {
+        let user = try await getUser()
+        
+        guard let eventId = event.id else {
+            throw EventServiceError.eventIdNotValid
+        }
+        
+        try await supabase
+            .from("event_joins")
+            .upsert(EventJoins(eventId: eventId, userId: user.id))
+            .execute()
+    }
+    
+    /// Leave a specific event
+    /// This will remove the row from the event_joins table
+    func leaveEvent(_ event: DropInEvent) async throws {
+        let user = try await getUser()
+        
+        guard let eventId = event.id else {
+            throw EventServiceError.eventIdNotValid
+        }
+        
+        try await supabase
+            .from("event_joins")
+            .delete()
+            .eq("event_id", value: eventId)
+            .eq("user_id", value: user.id)
+            .execute()
+    }
+    
+    /// Decline a specific event
+    /// This will insert a row in the event_declines
+    func declineEvent(_ event: DropInEvent) async throws {
+        let user = try await getUser()
+        
+        guard let eventId = event.id else {
+            throw EventServiceError.eventIdNotValid
+        }
+        
+        try await supabase
+            .from("event_declines")
+            .insert(EventDeclines(eventId: eventId, userId: user.id))
+            .execute()
+    }
+    
+    /// Create a new event
     func createEvent(_ event: DropInEvent) async throws {
         let user = try await getUser()
         
@@ -54,28 +108,31 @@ class EventService {
         event.userId = user.id
         
         try await supabase
-            .from("dropins")
+            .from("events")
             .insert(event)
             .execute()
     }
     
+    /// Delete an event
     func deleteEvent(_ event: DropInEvent) async throws {
         try await supabase
-            .from("dropins")
+            .from("events")
             .delete()
             .eq("id", value: event.id)
             .execute()
     }
     
+    /// Update an event
     func updateEvent(_ event: DropInEvent) async throws {
         try await supabase
-            .from("dropins")
+            .from("events")
             .update(event)
             .eq("id", value: event.id)
             .execute()
     }
     
-    func getOrganizerUsername(of event: DropInEvent) async throws -> String {
+    
+    func getHostUsername(of event: DropInEvent) async throws -> String {
         let profile: [Profile] = try await supabase
             .from("profiles")
             .select()
@@ -95,4 +152,5 @@ class EventService {
 
 enum EventServiceError: Error {
     case eventNotFound
+    case eventIdNotValid
 }
