@@ -1,25 +1,18 @@
 import SwiftUI
 
 struct ProfileView: View {
-    
-    
-    
+
+    @State private var headerHeight: CGFloat = 320
+
     var body: some View {
         ScrollView {
 
             GeometryReader { geometry in
-                VStack(spacing: 0) {
-                    profileHeader
-
-                    bioSection
-                        .padding(.top, 16)
-
-                    Divider()
-                        .padding(.vertical, 16)
-                }
-                .offset(y: -geometry.frame(in: .global).minY / 1.5)  // Header will move slower than the scroll -> offset correction
+                headerContainer
+                    .ignoresSafeArea(edges: .top)
+                    .offset(y: -geometry.frame(in: .global).minY / 1.5)
             }
-            .frame(height: 420)
+            .frame(height: headerHeight)  // Set dynamically from the measured content.
 
             feedSection
                 .background(Color(.systemBackground))
@@ -27,9 +20,36 @@ struct ProfileView: View {
                 .cornerRadius(16)
         }
         .edgesIgnoringSafeArea(.top)
+        .onPreferenceChange(HeaderHeightPreferenceKey.self) { newHeight in
+            withAnimation(.easeInOut) {
+                headerHeight = newHeight
+            }
+        }
     }
 
     // MARK: - Header Section
+    private var headerContainer: some View {
+        VStack(spacing: 0) {
+            profileHeader
+
+            bioSection
+                .padding(.top, 8)
+
+            Divider()
+                .padding(.vertical, 8)
+        }
+        // Use a background GeometryReader to measure the total height of the header container.
+        .background(
+            GeometryReader { geo in
+                Color.clear
+                    .preference(
+                        key: HeaderHeightPreferenceKey.self,
+                        value: geo.size.height
+                    )
+            }
+        )
+    }
+
     private var profileHeader: some View {
         ZStack(alignment: .top) {
             backgroundGradient
@@ -82,7 +102,7 @@ struct ProfileView: View {
         }) {
             Image(systemName: "gearshape.fill")
                 .font(.title2)
-                .foregroundColor(.white)
+                .foregroundColor(.primary)
                 .padding()
         }
         .padding(.top, 160)
@@ -94,7 +114,7 @@ struct ProfileView: View {
         }) {
             Image(systemName: "pencil.line")
                 .font(.title2)
-                .foregroundColor(.white)
+                .foregroundColor(.primary)
                 .padding()
         }
         .padding(.top, 160)
@@ -141,12 +161,15 @@ struct ProfileView: View {
 
     // MARK: - Bio Section
     private var bioSection: some View {
-        Text(
-            "This is a short description about the user. It can include hobbies, location, or anything relevant."
+        ExpandableText(
+            text:
+                "This is a long description about the user. It can include hobbies, location, or anything relevant. If the text is very long, it will be collapsed to a maximum of five lines by default. Tap 'Read More' to expand and see all the content, and 'Close' to collapse it back.",
+            lineLimit: 3
         )
-        .font(.body)
+        .padding(.horizontal)
+        .foregroundColor(Color.primary.opacity(0.8))
     }
-
+    
     // MARK: - Feed Section
     private var feedSection: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -225,6 +248,16 @@ struct DropInFeedView: View {
             Spacer()
         }
         .padding(.vertical, 4)
+    }
+}
+
+// MARK: - Preferences
+struct HeaderHeightPreferenceKey: PreferenceKey {
+    static let defaultValue: CGFloat = 0
+
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        // We use the maximum height in case there are multiple children reporting
+        value = max(value, nextValue())
     }
 }
 
