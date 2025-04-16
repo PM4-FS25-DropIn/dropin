@@ -80,3 +80,48 @@ private let dummyEvents: [DummyDropInEvent] = [
 ]
 
 // MARK: - END DUMMY SECTION
+
+// MARK: - Main View
+
+struct DropInListView: View {
+    
+    @State private var selectedTab: Tab = .all
+
+    private var filteredEvents: [DummyDropInEvent] {
+        switch selectedTab {
+        case .all:
+            return dummyEvents
+        case .mine:
+            return dummyEvents.filter { $0.userId == currentUserId }
+        }
+    }
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 0) {
+                
+                Picker("Events", selection: $selectedTab) {
+                    ForEach(Tab.allCases, id: \.self) { tab in
+                        Text(tab.title).tag(tab)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal)
+                .padding(.vertical, 8)
+                
+                // List of events
+                List {
+                    ForEach(filteredEvents) { event in
+                        EventRowView(event: event,
+                                     isMine: event.userId == currentUserId)
+                            .listRowSeparator(.hidden)
+                    }
+                }
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+            }
+            .navigationTitle("DropIn Events")
+            .background(Color(.systemGroupedBackground).ignoresSafeArea())
+        }
+    }
+}
