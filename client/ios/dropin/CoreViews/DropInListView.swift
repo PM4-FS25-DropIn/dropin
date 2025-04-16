@@ -137,3 +137,71 @@ private enum Tab: CaseIterable {
         }
     }
 }
+
+// MARK: - DUMMY Row View
+// can be replaced in the future
+
+struct EventRowView: View {
+    let event: DummyDropInEvent
+    let isMine: Bool
+
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            HStack(alignment: .top, spacing: 12) {
+                // Placeholder image — replace with AsyncImage or your own
+                Image(systemName: "calendar.circle.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 48, height: 48)
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(event.title)
+                        .font(.headline)
+                        .multilineTextAlignment(.leading)
+
+                    Text(event.description)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .lineLimit(2)
+
+                    HStack {
+                        Text(event.start, style: .date)
+                            .font(.caption)
+                        Spacer()
+                        Text("\(event.takenSlots)/\(event.maxSlots) slots")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+            .padding()
+            .background(
+                // Card style background
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(Color(.secondarySystemBackground))
+                    .shadow(color: Color.black.opacity(0.05),
+                            radius: 4, x: 0, y: 2)
+            )
+
+            // A small “Yours” badge in the top‑right corner
+            if isMine {
+                Text("Yours")
+                    .font(.caption2).bold()
+                    .padding(.horizontal, 8).padding(.vertical, 4)
+                    .background(
+                        Capsule()
+                            .fill(Color.accentColor.opacity(0.2))
+                    )
+                    .offset(x: -8, y: 8)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+
+#Preview {
+    DropInListView()
+}
+
+
