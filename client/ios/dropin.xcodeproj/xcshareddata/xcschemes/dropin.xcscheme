@@ -27,8 +27,13 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      shouldAutocreateTestPlan = "YES">
+      shouldUseLaunchSchemeArgsEnv = "YES">
+      <TestPlans>
+         <TestPlanReference
+            reference = "container:dropin.xctestplan"
+            default = "YES">
+         </TestPlanReference>
+      </TestPlans>
       <Testables>
          <TestableReference
             skipped = "NO"
@@ -49,6 +54,16 @@
                BlueprintIdentifier = "B3B716252D872E1F0023465A"
                BuildableName = "dropinUITests.xctest"
                BlueprintName = "dropinUITests"
+               ReferencedContainer = "container:dropin.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3B7161B2D872E1F0023465A"
+               BuildableName = "dropinTests.xctest"
+               BlueprintName = "dropinTests"
                ReferencedContainer = "container:dropin.xcodeproj">
             </BuildableReference>
          </TestableReference>
