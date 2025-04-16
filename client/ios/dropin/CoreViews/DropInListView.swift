@@ -125,3 +125,15 @@ struct DropInListView: View {
         }
     }
 }
+
+// Tabs for switching
+private enum Tab: CaseIterable {
+    case all, mine
+
+    var title: String {
+        switch self {
+        case .all:  return "All Events"
+        case .mine: return "My Events"
+        }
+    }
+}
