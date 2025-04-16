@@ -24,9 +24,36 @@ struct ProfileView: View {
                 .cornerRadius(16)
         }
         .edgesIgnoringSafeArea(.top)
+        .onPreferenceChange(HeaderHeightPreferenceKey.self) { newHeight in
+            withAnimation(.easeInOut) {
+                headerHeight = newHeight
+            }
+        }
     }
 
     // MARK: - Header Section
+    private var headerContainer: some View {
+        VStack(spacing: 0) {
+            profileHeader
+
+            bioSection
+                .padding(.top, 8)
+
+            Divider()
+                .padding(.vertical, 8)
+        }
+        // Use a background GeometryReader to measure the total height of the header container.
+        .background(
+            GeometryReader { geo in
+                Color.clear
+                    .preference(
+                        key: HeaderHeightPreferenceKey.self,
+                        value: geo.size.height
+                    )
+            }
+        )
+    }
+
     private var profileHeader: some View {
         ZStack(alignment: .top) {
             backgroundGradient
