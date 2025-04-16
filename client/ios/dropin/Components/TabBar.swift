@@ -53,7 +53,7 @@ struct TabBar: View {
                 }
                 Tab("Map", systemImage: "map") {
                     // Mapview here
-                    Text("Map View")
+                    MapView()
                 }
                 if isPhone {
                     Tab() {
