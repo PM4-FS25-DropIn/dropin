@@ -79,7 +79,7 @@ struct ProfileView: View {
         }) {
             Image(systemName: "gearshape.fill")
                 .font(.title2)
-                .foregroundColor(.white)
+                .foregroundColor(.primary)
                 .padding()
         }
         .padding(.top, 160)
@@ -91,7 +91,7 @@ struct ProfileView: View {
         }) {
             Image(systemName: "pencil.line")
                 .font(.title2)
-                .foregroundColor(.white)
+                .foregroundColor(.primary)
                 .padding()
         }
         .padding(.top, 160)
