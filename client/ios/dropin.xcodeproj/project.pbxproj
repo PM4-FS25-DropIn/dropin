@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		AAE5B1CA2DB0352600A776A2 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = AAE5B1C92DB0352600A776A2 /* Supabase */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		B3B7161D2D872E1F0023465A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AAE5B1CA2DB0352600A776A2 /* Supabase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,12 +77,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		AAE5B1C82DB0352600A776A2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		B3B716032D872E1D0023465A = {
 			isa = PBXGroup;
 			children = (
 				B3B7160E2D872E1D0023465A /* dropin */,
 				B3B7161F2D872E1F0023465A /* dropinTests */,
 				B3B716292D872E1F0023465A /* dropinUITests */,
+				AAE5B1C82DB0352600A776A2 /* Frameworks */,
 				B3B7160D2D872E1D0023465A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -112,6 +125,7 @@
 			);
 			name = dropin;
 			packageProductDependencies = (
+				AAE5B1C92DB0352600A776A2 /* Supabase */,
 			);
 			productName = dropin;
 			productReference = B3B7160C2D872E1D0023465A /* dropin.app */;
@@ -592,6 +606,14 @@
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AAE5B1C92DB0352600A776A2 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA915E802DB0315E00164413 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3B716042D872E1D0023465A /* Project object */;
 }
