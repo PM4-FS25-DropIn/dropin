@@ -164,7 +164,6 @@ struct ProfileView: View {
 // TODO: dynamic data for DropInFeedView
 struct DropInFeedView: View {
     
-    @Environment(AuthService.self) private var authService
     
     // Example placeholder data
     let events = [
@@ -185,17 +184,6 @@ struct DropInFeedView: View {
             }
         }
         
-        VStack {
-            Button("signOut") {
-                Task {
-                    do {
-                        try await authService.signOut()
-                    } catch {
-                        print("error")
-                    }
-                }
-            }
-        }
     }
     
     private func eventRow(for event: String) -> some View {

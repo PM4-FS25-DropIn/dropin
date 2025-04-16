@@ -4,9 +4,10 @@ struct SignUpView: View {
     @Environment(AuthService.self) private var authService
     
     @State private var authData = AuthCredentials()
-    @State private var confirmPassword:String = ""
+    @State private var confirmPassword: String = ""
     @State private var didSignUpFail: Bool = false
     @State private var signUpErrorMessage: Error?
+    @State private var isSignedUp: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -16,20 +17,22 @@ struct SignUpView: View {
                     .fontWeight(.bold)
                     .padding()
                 Text("Create an account and get started!")
+                Spacer()
+                
+                loginForm
+                    .alert("Error", isPresented: $didSignUpFail) {
+                        Button("Ok", role: .cancel) {}
+                    } message: {
+                        Text(signUpErrorMessage?.localizedDescription ?? "Try again later")
+                    }
+                
+                Spacer()
+                submitSection
+                Spacer()
             }
-            Spacer()
-            
-            loginForm
-                .alert("Error", isPresented: $didSignUpFail) {
-                    Button("Ok", role: .cancel) {}
-                } message: {
-                    Text(signUpErrorMessage?.localizedDescription ?? "Try again later")
-                }
-            
-            Spacer()
-            submitSection
-            
-            Spacer()
+            .navigationDestination(isPresented: $isSignedUp) {
+                VerifyCodeView(authData: authData)
+            }
         }
     }
     
@@ -41,7 +44,7 @@ struct SignUpView: View {
                 AuthSecureField("Password", value: $authData.password)
                 AuthSecureField("Confirm Password", value: $confirmPassword)
             }
-            .padding(.horizontal,35)
+            .padding(.horizontal, 35)
         }
     }
     
@@ -57,7 +60,8 @@ struct SignUpView: View {
                     .cornerRadius(30)
             }
             .padding(.horizontal, 35)
-            HStack() {
+            
+            HStack {
                 Text("Already have an account?")
                 NavigationLink(destination: SignInView()) {
                     Text("Log In")
@@ -69,18 +73,18 @@ struct SignUpView: View {
     }
     
     private func signUp() {
+        print("Signing up...")
         Task {
             do {
                 try await authService.signUp(authData: authData)
+                isSignedUp = true
             } catch {
                 didSignUpFail = true
                 signUpErrorMessage = error
             }
         }
     }
-    
 }
-
 
 #Preview {
     SignUpView()

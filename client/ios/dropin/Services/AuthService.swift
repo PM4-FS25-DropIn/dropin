@@ -29,6 +29,10 @@ final class AuthService {
         try await supabase.auth.signUp(email: authData.email, password: authData.password)
     }
     
+    func signUpOTP(authData: AuthCredentials, code: String) async throws {
+        try await supabase.auth.verifyOTP(email: authData.email, token: code, type: .signup)
+    }
+    
     func signOut() async throws {
         try await supabase.auth.signOut()
     }
@@ -39,4 +43,3 @@ final class AuthService {
     
     
 }
-
