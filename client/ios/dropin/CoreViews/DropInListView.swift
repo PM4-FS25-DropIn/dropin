@@ -96,8 +96,9 @@ private let dummyEvents: [DummyDropInEvent] = [
 // MARK: - Main View
 
 struct DropInListView: View {
-    
+
     @State private var selectedTab: Tab = .all
+    @State private var path = NavigationPath()
 
     private var filteredEvents: [DummyDropInEvent] {
         switch selectedTab {
@@ -109,9 +110,9 @@ struct DropInListView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             VStack(spacing: 0) {
-                
+
                 Picker("Events", selection: $selectedTab) {
                     ForEach(Tab.allCases, id: \.self) { tab in
                         Text(tab.title).tag(tab)
@@ -120,19 +121,31 @@ struct DropInListView: View {
                 .pickerStyle(.segmented)
                 .padding(.horizontal)
                 .padding(.vertical, 8)
-                
+
                 // List of events
                 List {
                     ForEach(filteredEvents) { event in
-                        EventRowView(event: event,
-                                     isMine: event.userId == currentUserId)
+                        Button {
+                            // append to path to push the detail view
+                            path.append(event)
+                        } label: {
+                            EventRowView(
+                                event: event,
+                                isMine: event.userId == currentUserId
+                            )
                             .listRowSeparator(.hidden)
+                        }
+                        .buttonStyle(.plain)
+                        .contentShape(Rectangle())
                     }
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
             }
             .navigationTitle("DropIn Events")
+            .navigationDestination(for: DummyDropInEvent.self) { event in
+                            EventDetailPlaceholderView(event: event)
+                        }
             .background(Color(.systemGroupedBackground).ignoresSafeArea())
         }
     }
@@ -144,7 +157,7 @@ private enum Tab: CaseIterable {
 
     var title: String {
         switch self {
-        case .all:  return "All Events"
+        case .all: return "All Events"
         case .mine: return "My Events"
         }
     }
@@ -211,9 +224,22 @@ struct EventRowView: View {
     }
 }
 
+// Simple placeholder detail view
+struct EventDetailPlaceholderView: View {
+    let event: DummyDropInEvent
+
+    var body: some View {
+        VStack {
+            Text(event.title)
+                .font(.largeTitle).bold()
+                .padding()
+            Spacer()
+        }
+        .navigationTitle("Event")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
 
 #Preview {
     DropInListView()
 }
-
-
