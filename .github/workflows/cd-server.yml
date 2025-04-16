@@ -44,6 +44,6 @@ jobs:
           context: ./server
           file: ./server/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/${{ env.DOCKER_IMAGE_NAME }}:latest,ghcr.io/pm4-fs25-dropin/${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
+          tags: ${{ env.DOCKER_REGISTRY }}/pm4-fs25-dropin/${{ env.DOCKER_IMAGE_NAME }}:latest,ghcr.io/pm4-fs25-dropin/${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
