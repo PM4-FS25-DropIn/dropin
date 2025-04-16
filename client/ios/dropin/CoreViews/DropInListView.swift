@@ -8,7 +8,7 @@ import SwiftUI
 
 // MARK: - DUMMY SECTION
 
-struct DummyDropInEvent: Identifiable {
+struct DummyDropInEvent: Identifiable, Hashable {
     let id: Int
     let createdAt: Date
     let title: String
@@ -44,10 +44,14 @@ private let dummyEvents: [DummyDropInEvent] = [
         userId: currentUserId,
         start: Date().addingTimeInterval(3600),
         end: Date().addingTimeInterval(7200),
-        latitude: 0, longitude: 0,
-        maxSlots: 20, takenSlots: 5,
-        visibility: .public, ageRestricted: false,
-        chatEnabled: true, status: .upcoming
+        latitude: 0,
+        longitude: 0,
+        maxSlots: 20,
+        takenSlots: 5,
+        visibility: .public,
+        ageRestricted: false,
+        chatEnabled: true,
+        status: .upcoming
     ),
     DummyDropInEvent(
         id: 2,
@@ -55,13 +59,17 @@ private let dummyEvents: [DummyDropInEvent] = [
         title: "Community Meetup",
         description: "Casual meetup to chat about SwiftUI.",
         imagePaths: ["meetup.thumb"],
-        userId: UUID(), // someone else
+        userId: UUID(),  // someone else
         start: Date().addingTimeInterval(86400),
         end: Date().addingTimeInterval(90000),
-        latitude: 0, longitude: 0,
-        maxSlots: 50, takenSlots: 30,
-        visibility: .public, ageRestricted: false,
-        chatEnabled: false, status: .upcoming
+        latitude: 0,
+        longitude: 0,
+        maxSlots: 50,
+        takenSlots: 30,
+        visibility: .public,
+        ageRestricted: false,
+        chatEnabled: false,
+        status: .upcoming
     ),
     DummyDropInEvent(
         id: 3,
@@ -72,11 +80,15 @@ private let dummyEvents: [DummyDropInEvent] = [
         userId: currentUserId,
         start: Date().addingTimeInterval(172800),
         end: Date().addingTimeInterval(176400),
-        latitude: 0, longitude: 0,
-        maxSlots: 10, takenSlots: 2,
-        visibility: .public, ageRestricted: false,
-        chatEnabled: true, status: .upcoming
-    )
+        latitude: 0,
+        longitude: 0,
+        maxSlots: 10,
+        takenSlots: 2,
+        visibility: .public,
+        ageRestricted: false,
+        chatEnabled: true,
+        status: .upcoming
+    ),
 ]
 
 // MARK: - END DUMMY SECTION
