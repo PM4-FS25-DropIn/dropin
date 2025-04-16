@@ -7,6 +7,8 @@ on:
     branches: [ "dev" ]
     paths:
       - 'client/ios/**'
+  workflow_dispatch:
+    # Added for testing reasons
       
 jobs:
   analyze:
