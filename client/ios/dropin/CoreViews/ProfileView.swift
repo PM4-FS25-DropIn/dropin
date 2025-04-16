@@ -1,22 +1,18 @@
 import SwiftUI
 
 struct ProfileView: View {
+
+    @State private var headerHeight: CGFloat = 320
+
     var body: some View {
         ScrollView {
 
             GeometryReader { geometry in
-                VStack(spacing: 0) {
-                    profileHeader
-
-                    bioSection
-                        .padding(.top, 16)
-
-                    Divider()
-                        .padding(.vertical, 16)
-                }
-                .offset(y: -geometry.frame(in: .global).minY / 1.5)  // Header will move slower than the scroll -> offset correction
+                headerContainer
+                    .ignoresSafeArea(edges: .top)
+                    .offset(y: -geometry.frame(in: .global).minY / 1.5)
             }
-            .frame(height: 420)
+            .frame(height: headerHeight)  // Set dynamically from the measured content.
 
             feedSection
                 .background(Color(.systemBackground))
