@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct ProfileView: View {
+    
+    
+    
     var body: some View {
         ScrollView {
 
@@ -170,6 +173,8 @@ struct ProfileView: View {
 
 // TODO: dynamic data for DropInFeedView
 struct DropInFeedView: View {
+    
+    
     // Example placeholder data
     let events = [
         "My Beach Party",
@@ -198,6 +203,7 @@ struct DropInFeedView: View {
                 eventRow(for: event)
             }
         }
+        
     }
 
     private func eventRow(for event: String) -> some View {
@@ -224,4 +230,5 @@ struct DropInFeedView: View {
 
 #Preview {
     ProfileView()
+        .environment(AuthService())
 }
