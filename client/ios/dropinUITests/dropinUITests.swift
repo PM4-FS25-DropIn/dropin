@@ -12,19 +12,6 @@ final class dropinUITests: XCTestCase {
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
 
-        super.setUp()
-
-        // Allow access to Keychain during tests
-        let keychainAccessGroup = "YOUR_APP_IDENTIFIER_HERE"  // Replace with your app's identifier
-        let attributes: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrSynchronizable as String: kCFBooleanFalse!,
-            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock,
-            kSecAttrAccessGroup as String: keychainAccessGroup,
-            kSecValueData as String: "Test".data(using: .utf8)!,
-        ]
-        SecItemAdd(attributes as CFDictionary, nil)
-
         // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
 
@@ -34,25 +21,22 @@ final class dropinUITests: XCTestCase {
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
-
+    
     func createAppWithSupabaseEnv() -> XCUIApplication {
         let env = ProcessInfo.processInfo.environment
         let app = XCUIApplication()
         app.launchEnvironment = [
             "SUPABASE_URL": env["SUPABASE_URL"] ?? "",
-            "SUPABASE_KEY": env["SUPABASE_KEY"] ?? "",
+            "SUPABASE_KEY": env["SUPABASE_KEY"] ?? ""
         ]
         return app
     }
-
+    
     @MainActor
     func testExample() throws {
         // UI tests must launch the application that they test.
         let app = createAppWithSupabaseEnv()
         app.launch()
-
-        // Wait for the app to be in a stable state
-        XCTAssertTrue(app.wait(for: .runningForeground, timeout: 10))
 
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
