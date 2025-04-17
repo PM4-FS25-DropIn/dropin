@@ -1,18 +1,21 @@
 import SwiftUI
 
-struct ProfileView: View {
 
-    @State private var headerHeight: CGFloat = 320
+struct ProfileView: View {
 
     var body: some View {
         ScrollView {
 
             GeometryReader { geometry in
-                headerContainer
-                    .ignoresSafeArea(edges: .top)
-                    .offset(y: -geometry.frame(in: .global).minY / 1.5)
+                VStack(spacing: 0) {
+                    profileHeader
+                    bioSection
+                    Divider()
+                        .padding(.vertical, 16)
+                }
+                .offset(y: -geometry.frame(in: .global).minY / 1.5)  // Header will move slower than the scroll -> offset correction
             }
-            .frame(height: headerHeight)  // Set dynamically from the measured content.
+            .frame(height: 400)
 
             feedSection
                 .background(Color(.systemBackground))
@@ -20,35 +23,9 @@ struct ProfileView: View {
                 .cornerRadius(16)
         }
         .edgesIgnoringSafeArea(.top)
-        .onPreferenceChange(HeaderHeightPreferenceKey.self) { newHeight in
-            withAnimation(.easeInOut) {
-                headerHeight = newHeight
-            }
-        }
     }
 
     // MARK: - Header Section
-    private var headerContainer: some View {
-        VStack(spacing: 0) {
-            profileHeader
-
-            bioSection
-                .padding(.top, 8)
-
-            Divider()
-                .padding(.vertical, 8)
-        }
-        // Use a background GeometryReader to measure the total height of the header container.
-        .background(
-            GeometryReader { geo in
-                Color.clear
-                    .preference(
-                        key: HeaderHeightPreferenceKey.self,
-                        value: geo.size.height
-                    )
-            }
-        )
-    }
 
     private var profileHeader: some View {
         ZStack(alignment: .top) {
@@ -161,20 +138,14 @@ struct ProfileView: View {
 
     // MARK: - Bio Section
     private var bioSection: some View {
-        ExpandableText(
-            text:
-                "This is a long description about the user. It can include hobbies, location, or anything relevant. If the text is very long, it will be collapsed to a maximum of five lines by default. Tap 'Read More' to expand and see all the content, and 'Close' to collapse it back.",
-            lineLimit: 3
-        )
-        .padding(.horizontal)
-        .foregroundColor(Color.primary.opacity(0.8))
+        Text("🍆✊💦💥😏")
+            .padding(.top, 32)
     }
-    
+
     // MARK: - Feed Section
     private var feedSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             DropInFeedView()
-            Spacer().frame(height: 40)
         }
         .padding(.horizontal)
         .padding(.top, 16)
@@ -196,8 +167,7 @@ struct ProfileView: View {
 
 // TODO: dynamic data for DropInFeedView
 struct DropInFeedView: View {
-    
-    
+
     // Example placeholder data
     let events = [
         "My Beach Party",
@@ -226,7 +196,7 @@ struct DropInFeedView: View {
                 eventRow(for: event)
             }
         }
-        
+
     }
 
     private func eventRow(for event: String) -> some View {
@@ -247,17 +217,8 @@ struct DropInFeedView: View {
 
             Spacer()
         }
+        .frame(maxWidth: .infinity)
         .padding(.vertical, 4)
-    }
-}
-
-// MARK: - Preferences
-struct HeaderHeightPreferenceKey: PreferenceKey {
-    static let defaultValue: CGFloat = 0
-
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        // We use the maximum height in case there are multiple children reporting
-        value = max(value, nextValue())
     }
 }
 
