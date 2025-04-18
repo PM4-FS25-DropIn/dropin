@@ -17,6 +17,7 @@ struct TabBar: View {
         }
         .sheet(isPresented: $isSheetPresented) {
             // Show the cockpit for your events here
+            // TODO: implement cockpit, use EventCreateView and EventEditView components
             Text("Create new dropin")
         }
     }
