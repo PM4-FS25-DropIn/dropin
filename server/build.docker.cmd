@@ -1,2 +1,2 @@
-xcopy /E ..\client\supabase\ .\supabase\
-docker build -t supabase:latest .
+xcopy /E /Y ..\client\supabase\ .\supabase\
+docker build -t dropin:latest .
