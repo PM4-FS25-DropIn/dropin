@@ -8,6 +8,18 @@
 import Foundation
 import CoreLocation
 
+struct Profile: Decodable {
+  let username: String?
+  let fullName: String?
+  let website: String?
+
+  enum CodingKeys: String, CodingKey {
+    case username
+    case fullName = "full_name"
+    case website
+  }
+}
+
 
 enum EventCategory: String, CaseIterable {
     case forYou = "For You"
