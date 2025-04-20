@@ -24,6 +24,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Copy Supabase Migrations
+        run: cp -r "./client/supabase" "./server/supabase"
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -41,6 +44,6 @@ jobs:
           context: ./server
           file: ./server/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_NAMESPACE }}/${{ env.DOCKER_IMAGE_NAME }}:latest,ghcr.io/${{ env.DOCKER_NAMESPACE }}/${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
+          tags: ${{ env.DOCKER_REGISTRY }}/pm4-fs25-dropin/${{ env.DOCKER_IMAGE_NAME }}:latest,ghcr.io/pm4-fs25-dropin/${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
