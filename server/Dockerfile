@@ -21,7 +21,7 @@ ENV DB_CONNECTION_STRING=""
 
 WORKDIR /app
 
-COPY --from=build /build/entrypoint.sh ./
+COPY --from=build /build/entrypoint.sh /app
 COPY --from=build /build/package.json /app
 COPY --from=build /build/supabase /app/supabase
 COPY --from=build /build/node_modules /app/node_modules
@@ -29,4 +29,6 @@ COPY --from=build /build/dist /app
 
 EXPOSE 3000
 
-ENTRYPOINT ["./entrypoint.sh"]
+RUN chmod +x /app/entrypoint.sh
+
+ENTRYPOINT ["/app/entrypoint.sh"]
