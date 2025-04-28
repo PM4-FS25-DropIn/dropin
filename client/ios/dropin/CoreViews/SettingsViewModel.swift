@@ -122,7 +122,10 @@ struct ChangePasswordView: View {
             return false
         }
         
-        guard newPassword == confirmPassword else {
+        let trimmedNewPassword = newPassword.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedConfirmPassword = confirmPassword.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        guard trimmedNewPassword == trimmedConfirmPassword else {
             errorMessage = "New passwords don't match"
             showError = true
             return false
