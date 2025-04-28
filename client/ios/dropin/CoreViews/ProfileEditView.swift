@@ -61,3 +61,56 @@ struct ProfileEditView: View {
         !viewModel.name.isEmpty && viewModel.isUsernameAvailable == true
     }
 }
+
+// MARK: - Modular Sections
+
+/// Section for picking a header/banner image
+struct BannerPickerSection: View {
+    @ObservedObject var viewModel: ProfileEditViewModel
+    @State private var pickerItem: PhotosPickerItem?
+    @State private var isPickerPresented = false
+
+    var body: some View {
+        Section(header: Text("Header Banner")) {
+            ZStack {
+                if let uiImage = viewModel.bannerImage {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(height: 150)
+                        .clipped()
+                } else {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.2))
+                        .frame(height: 150)
+                        .overlay(Text("Tap to select banner"))
+                }
+            }
+            .cornerRadius(8)
+            .onTapGesture { isPickerPresented = true }
+            .photosPicker(
+                isPresented: $isPickerPresented,
+                selection: $pickerItem,
+                matching: .images,
+                photoLibrary: .shared()
+            )
+            .onChange(of: pickerItem) { oldItem, newItem in
+                loadImage(from: newItem) { image in
+                    viewModel.bannerImage = image
+                }
+            }
+        }
+    }
+
+    private func loadImage(from item: PhotosPickerItem?, completion: @escaping (UIImage?) -> Void) {
+        guard let item = item else { return completion(nil) }
+        Task {
+            if let data = try? await item.loadTransferable(type: Data.self),
+               let image = UIImage(data: data) {
+                completion(image)
+            } else {
+                completion(nil)
+            }
+        }
+    }
+}
