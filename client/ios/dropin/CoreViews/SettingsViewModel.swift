@@ -12,7 +12,6 @@ import SwiftUI
 final class SettingsViewModel: ObservableObject {
     // Account
     @Published var email: String = ""
-    @Published var isTwoFactorEnabled: Bool = false
 
     // Notifications
     @Published var eventNotificationsEnabled: Bool = true
@@ -44,11 +43,6 @@ final class SettingsViewModel: ObservableObject {
         
         print("Password updated successfully")
         try await Task.sleep(nanoseconds: 500_000_000)
-    }
-
-    func toggleTwoFactor() async {
-        print("Two-Factor Auth enabled: \(isTwoFactorEnabled)")
-        try? await Task.sleep(nanoseconds: 500_000_000)
     }
 
     func deleteAccount() async {
@@ -177,9 +171,6 @@ private struct AccountSection: View {
             } label: {
                 Text("Change Password")
             }
-
-            Toggle("Two-Factor Authentication", isOn: $vm.isTwoFactorEnabled)
-                .onChange(of: vm.isTwoFactorEnabled) { _, _ in Task { await vm.toggleTwoFactor() } }
 
             Button(role: .destructive) {
                 Task { await vm.deleteAccount() }
