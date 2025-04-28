@@ -116,7 +116,10 @@ struct ChangePasswordView: View {
             return false
         }
         
-        guard newPassword == confirmPassword else {
+        let trimmedNewPassword = newPassword.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedConfirmPassword = confirmPassword.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        guard trimmedNewPassword == trimmedConfirmPassword else {
             errorMessage = "New passwords don't match"
             showError = true
             return false
@@ -126,7 +129,7 @@ struct ChangePasswordView: View {
         let predicate = NSPredicate(format: "SELF MATCHES %@", passwordRegex)
         
         guard predicate.evaluate(with: newPassword) else {
-            errorMessage = "Password must contain:\n• 8+ characters\n• A number\n• A special character"
+            errorMessage = "Password must contain:\n• 8+ characters\n• A number\n• A special character (@$!%*#?&)"
             showError = true
             return false
         }
