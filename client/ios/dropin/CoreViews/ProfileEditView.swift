@@ -166,3 +166,33 @@ struct AvatarPickerSection: View {
         }
     }
 }
+
+/// Section for editing basic textual profile info
+struct BasicInfoSection: View {
+    @ObservedObject var viewModel: ProfileEditViewModel
+
+    var body: some View {
+        Section(header: Text("Basic Info")) {
+            TextField("Name", text: $viewModel.name)
+                .autocapitalization(.words)
+            VStack(alignment: .leading, spacing: 4) {
+                TextField("Username", text: $viewModel.username)
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .onChange(of: viewModel.username) { oldItem, _ in
+                        viewModel.checkUsernameAvailability()
+                    }
+                if let available = viewModel.isUsernameAvailable {
+                    Text(available ? "Username is available" : "Username is taken")
+                        .font(.caption)
+                        .foregroundColor(available ? .green : .red)
+                }
+            }
+        }
+    }
+}
+
+#Preview {
+    ProfileEditView()
+        .environment(AuthService())
+}
