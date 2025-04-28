@@ -135,7 +135,7 @@ struct ChangePasswordView: View {
         let predicate = NSPredicate(format: "SELF MATCHES %@", passwordRegex)
         
         guard predicate.evaluate(with: newPassword) else {
-            errorMessage = "Password must contain:\n• 8+ characters\n• A number\n• A special character"
+            errorMessage = "Password must contain:\n• 8+ characters\n• A number\n• A special character (@$!%*#?&)"
             showError = true
             return false
         }
