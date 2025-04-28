@@ -114,3 +114,55 @@ struct BannerPickerSection: View {
         }
     }
 }
+
+/// Section for picking a profile/avatar image
+struct AvatarPickerSection: View {
+    @ObservedObject var viewModel: ProfileEditViewModel
+    @State private var pickerItem: PhotosPickerItem?
+    @State private var isPickerPresented = false
+
+    var body: some View {
+        Section(header: Text("Profile Picture")) {
+            HStack {
+                Spacer()
+                if let uiImage = viewModel.avatarImage {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 100, height: 100)
+                        .clipShape(Circle())
+                } else {
+                    Circle()
+                        .fill(Color.gray.opacity(0.2))
+                        .frame(width: 100, height: 100)
+                        .overlay(Text("Tap to select"))
+                }
+                Spacer()
+            }
+            .onTapGesture { isPickerPresented = true }
+            .photosPicker(
+                isPresented: $isPickerPresented,
+                selection: $pickerItem,
+                matching: .images,
+                photoLibrary: .shared()
+            )
+            .onChange(of: pickerItem) { oldItem, newItem in
+                loadImage(from: newItem) { image in
+                    viewModel.avatarImage = image
+                }
+            }
+        }
+    }
+
+    private func loadImage(from item: PhotosPickerItem?, completion: @escaping (UIImage?) -> Void) {
+        guard let item = item else { return completion(nil) }
+        Task {
+            if let data = try? await item.loadTransferable(type: Data.self),
+               let image = UIImage(data: data) {
+                completion(image)
+            } else {
+                completion(nil)
+            }
+        }
+    }
+}
