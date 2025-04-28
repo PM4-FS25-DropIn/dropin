@@ -55,3 +55,9 @@ struct ProfileEditView: View {
             }
         }
     }
+
+    /// Determines if "Save" should be enabled
+    private var canSave: Bool {
+        !viewModel.name.isEmpty && viewModel.isUsernameAvailable == true
+    }
+}
