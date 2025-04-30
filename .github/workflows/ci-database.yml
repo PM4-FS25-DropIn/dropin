@@ -5,6 +5,7 @@ on:
     branches: [ main, dev ]
     paths:
       - 'client/supabase/**'
+      - 'server/test/database/**'
   workflow_dispatch:
 
 jobs:
