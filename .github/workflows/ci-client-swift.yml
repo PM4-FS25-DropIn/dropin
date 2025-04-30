@@ -33,6 +33,28 @@ jobs:
     - name: List available simulators
       run: xcrun simctl list devices
 
-    - name: Build & Test
+    - name: Install xcpretty
+      run: gem install xcpretty
+
+    - name: Build & Test and generate JUnit report
       run: |
-        xcodebuild clean test -scheme "dropin" -destination "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro" CODE_SIGNING_ALLOWED=NO
+        mkdir -p build/reports
+        xcodebuild clean test \
+          -scheme "dropin" \
+          -destination "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro" \
+          CODE_SIGNING_ALLOWED=NO | \
+          xcpretty --report junit --output build/reports/junit.xml
+
+    - name: Upload JUnit test results
+      uses: actions/upload-artifact@v3
+      with:
+        name: junit-test-results
+        path: client/ios/build/reports/junit.xml
+
+    - name: Publish Test Report on GitHub
+      uses: dorny/test-reporter@v1
+      if: always()  # Ensures it runs even if tests fail
+      with:
+        name: iOS Unit Tests
+        path: client/ios/build/reports/junit.xml
+        reporter: java-junit
