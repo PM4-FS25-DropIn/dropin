@@ -46,7 +46,7 @@ jobs:
           xcpretty --report junit --output build/reports/junit.xml
 
     - name: Upload JUnit test results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: junit-test-results
         path: client/ios/build/reports/junit.xml
