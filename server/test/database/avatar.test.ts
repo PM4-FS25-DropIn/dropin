@@ -102,7 +102,7 @@ test('Disallow deleting other users avatars', async (t) => {
   const uploadResult = await clientA.storage.from('avatars')
     .upload(targetFile, generateRandomBlob(1024));
 
-  assert.ifError(uploadResult.error);
+  assert.equal(uploadResult.error, null, "Expected upload to succeed, but it failed: " + uploadResult.error?.message);
   
   const { client: clientB } = await setupRandomClientAndLogin();
 
@@ -156,6 +156,11 @@ test('An unaithenticated user should not be able to get another users avatar', a
   assert.notEqual(downloadResult.error, null, "Expected download action to fail, but it succeeded: " + downloadResult.error?.message);
 });
 
+
+/**
+ * Creates a new client and creates a new user using random credentials.
+ * @return {client: SupabaseClient, user: User} The client and the user created.
+ */
 async function setupRandomClientAndLogin(): Promise<{client: SupabaseClient<any, any, any>, user: User}> {
   const client = createClientHelper();
   
@@ -165,14 +170,22 @@ async function setupRandomClientAndLogin(): Promise<{client: SupabaseClient<any,
     throw new Error('No email returned from user creation');
   }
 
-  assert.ifError((await client.auth.signInWithPassword({
+  const signInResult = await client.auth.signInWithPassword({
     email: user.email!,
     password: password,
-  })).error);
+  });
+
+  assert.equal(signInResult.error, null, "Expected sign in to succeed, but it failed: " + signInResult.error?.message);
 
   return {client, user};
 }
 
+/**
+ * Creates a random blob of the given size and type.
+ * @param size The size of the blob in bytes.
+ * @param type The type of the blob. Default is 'image/png'.
+ * @returns {Blob} The created blob.
+ */
 function generateRandomBlob(size: number, type: string = 'image/png'): Blob {
     return new Blob([new ArrayBuffer(size)], { type });
 };
