@@ -6,33 +6,50 @@
 --   - Only allows png, jpeg, webp, gifs and apng for avatar images
 --   - Only allows up to 10 avatar images per user
 -- ============================================
-CREATE POLICY "Limit avatar file size to 5MB"
+
+DROP POLICY IF EXISTS "Authenticated users can upload an avatar" on storage.objects;
+
+CREATE OR REPLACE FUNCTION public.count_user_uploads_in(bucket text)
+RETURNS INTEGER AS $$
+BEGIN
+  RETURN (
+    SELECT COUNT(*) FROM storage.objects
+    WHERE (bucket_id = bucket)
+      AND (owner = auth.uid())
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Basic RLS policy to allow authenticated users to upload, update and delete avatar images
+
+CREATE POLICY "Authenticated users can upload an avatar"
     ON storage.objects
     FOR INSERT TO authenticated WITH CHECK (
-        bucket_id = 'avatars'
-        AND (metadata->>'size')::int <= 5 * 1024 * 1024
+        (bucket_id = 'avatars'::text) AND (( SELECT (auth.uid())::text AS uid) = (storage.foldername(name))[1])
     );
 
-CREATE POLICY "Only allow png, jpeg, webp, gifs and apng for avatar images"
+CREATE POLICY "Allow owner files to delete their own avatars"
     ON storage.objects
-    FOR INSERT TO authenticated WITH CHECK (
-        bucket_id = 'avatars'
-        AND (metadata->>'mime_type') IN (
-            'image/png', 
-            'image/jpeg', 
-            'image/webp', 
-            'image/gif',
-            'image/apng'
-        )
+    FOR DELETE TO authenticated USING (
+        (bucket_id = 'avatars'::text) 
+        AND (( SELECT (auth.uid())::text AS uid) = (storage.foldername(name))[1])
     );
+
+CREATE POLICY "Allow owner files to update their own avatars"
+    ON storage.objects
+    FOR DELETE TO authenticated USING (
+        (bucket_id = 'avatars'::text) 
+        AND (( SELECT (auth.uid())::text AS uid) = (storage.foldername(name))[1])
+    );
+
+-- Limit amout of avatar images to 10 per user
 
 CREATE POLICY "Only allow up to 10 avatar images per user"
-    ON storage.objects
+    ON storage.objects AS RESTRICTIVE
     FOR INSERT TO authenticated WITH CHECK (
-        bucket_id = 'avatars'
-        AND (
-            SELECT count(*) FROM storage.objects 
-            WHERE bucket_id = 'avatars' 
-            AND owner = (SELECT auth.uid())
-        ) < 10
+        (bucket_id = 'avatars')
+        AND (count_user_uploads_in('avatars') <= 10)
     );
+
+-- Limit file size to 5MB and limit mime types to images only
+UPDATE storage.buckets SET file_size_limit = 5242880, allowed_mime_types = ARRAY['image/*'] WHERE id = 'avatars';
