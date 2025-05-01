@@ -4,16 +4,14 @@ import Auth
 @MainActor
 @Observable
 final class AuthService {
-    
-    enum AuthServiceError: Error {
-        case profileNotFound
-    }
-    
     private(set) var isAuthenticated = false
+    
+    var userId: UUID?
     
     init() {
         Task {
             await setupAuthListeners()
+            userId = try await getCurrentUser().id
         }
     }
     
@@ -21,7 +19,6 @@ final class AuthService {
         for await state in supabase.auth.authStateChanges {
             if [.initialSession, .signedIn, .signedOut].contains(state.event) {
                 isAuthenticated = state.session != nil
-            //    print("Authentication status is: \(isAuthenticated)")
             }
         }
     }
@@ -31,11 +28,7 @@ final class AuthService {
     }
     
     func signUp(authData: AuthCredentials) async throws {
-        try await supabase.auth.signUp(email: authData.email, password: authData.password,data: ["username": .string(authData.username)])
-    }
-    
-    func signUpOTP(authData: AuthCredentials, code: String) async throws {
-        try await supabase.auth.verifyOTP(email: authData.email, token: code, type: .signup)
+        try await supabase.auth.signUp(email: authData.email, password: authData.password, data: ["username": .string(authData.username)])
     }
     
     func signOut() async throws {
@@ -46,13 +39,12 @@ final class AuthService {
         return try await supabase.auth.session.user
     }
     
-    
-    func getUser() async throws -> Profile {
+    func getUsername() async throws -> String {
         let user = try await getCurrentUser()
 
         let profiles: [Profile] = try await supabase
             .from("profiles")
-            .select("id, username, avatar_url")
+            .select("username")
             .eq("id", value: user.id)
             .limit(1)
             .execute()
@@ -62,8 +54,11 @@ final class AuthService {
             throw AuthServiceError.profileNotFound
         }
 
-        return profile
+        return profile.username ?? "unknown"
     }
     
-    
+}
+
+enum AuthServiceError: Error {
+    case profileNotFound
 }
