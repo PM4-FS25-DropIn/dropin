@@ -15,6 +15,7 @@ begin
 	values (new.id, new.user_id, true);
 	return new;
 end;
+
 $$ language plpgsql security definer;
 create trigger on_new_event_created_autojoin
 	after insert on public.events

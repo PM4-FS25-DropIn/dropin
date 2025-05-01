@@ -18,7 +18,7 @@ struct ContentView: View {
              if authService.isAuthenticated {
                  AppView()
              } else {
-                 SignUpView()
+                 AuthView()
              }
         }
     }

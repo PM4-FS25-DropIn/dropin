@@ -8,15 +8,11 @@
 -- ===========================================
 alter table public.events enable row level security;
 
-create policy "Users can select non-banned events" on public.events
+create policy "Users can see all events" on public.events
     for select
     to authenticated
     using (
-        not exists (
-        select 1 from public.event_bans eb
-        where eb.event_id = id
-        and eb.user_id = (select auth.uid())
-        )
+        true
     );
 
 create policy "Users can insert their own events" on public.events

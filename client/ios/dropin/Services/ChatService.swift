@@ -6,7 +6,7 @@ import Supabase
 final class ChatService: ObservableObject {
     
     private let authService: AuthService
-    @Published private(set) var currentUser: Profile?
+    //@Published private(set) var currentUser: Profile?
     @Published var messages: [Message] = []
     private var channel: RealtimeChannelV2?
 
@@ -16,7 +16,8 @@ final class ChatService: ObservableObject {
         didSet {
             if let event = event {
                 Task {
-                    await fetchMessages(for: event.id)
+                    guard let id = event.id else { return }
+                    await fetchMessages(for: id)
                     
                 }
             }
@@ -26,29 +27,33 @@ final class ChatService: ObservableObject {
     
     init(authService: AuthService, event: DropInEvent) {
         self.authService = authService
-        self.eventId = event.id
+        // TODO: Handle error
+        guard let id = event.id else {
+            self.eventId = 0
+            return
+        }
+        self.eventId = id
         
         Task {
-            await loadCurrentUser()
+            //await loadCurrentUser()
             await fetchMessages(for: eventId)
         }
     }
-    
-    
 
     
-    func loadCurrentUser() async {
+    /*func loadCurrentUser() async {
         do {
             currentUser = try await authService.getUser()
         } catch {
             print("Failed to load current user: \(error)")
         }
-    }
+    }*/
 
     func fetchMessages(for eventId: Int) async {
         do {
-            guard let user = currentUser else { return }
-            let sessionId = user.id
+            //guard let user = currentUser else { return }
+            let sessionId = authService.userId
+            guard let sessionId else { return } // TODO: handle error
             let data: [MessageDTO] = try await supabase
                 .from("messages")
                 .select()
@@ -65,10 +70,11 @@ final class ChatService: ObservableObject {
 
     func sendMessage(_ content: String) async throws {
         do {
-            guard let user = currentUser else { return }
+            //guard let user = currentUser else { return }
+            guard let userId = authService.userId, let userName = try? await authService.getUsername() else { return }
             let data = MessageDTO(
-                sender_id: user.id,
-                session_name: user.username,
+                sender_id: userId,
+                session_name: userName,
                 content: content,
                 created_at: Date(),
                 chat_room_id: eventId
@@ -106,8 +112,8 @@ final class ChatService: ObservableObject {
 
     func handleInserted(_ action: HasRecord) async {
         do {
-            guard let user = currentUser else { return }
-            let sessionId = user.id
+            guard let userId = authService.userId else { return }
+            let sessionId = userId
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
             let decodedMessage = try action.decodeRecord(decoder: decoder) as MessageDTO

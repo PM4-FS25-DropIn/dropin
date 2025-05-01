@@ -2,29 +2,22 @@ import Foundation
 import CoreLocation
 import SwiftUI
 
-struct Profile: Decodable {
+struct Profile: Codable {
     let id: UUID
     let username: String
     let avatarUrl: String?
-
+    let emojicode: String?
+    let city: String?
+    
     enum CodingKeys: String, CodingKey {
         case id
         case username
         case avatarUrl = "avatar_url"
+        case emojicode
+        case city
     }
 }
 
-struct UpdateProfileParams: Encodable {
-  let username: String
-  let fullName: String
-  let website: String
-
-  enum CodingKeys: String, CodingKey {
-    case username
-    case fullName = "full_name"
-    case website
-  }
-}
 
 struct Message: Identifiable, Equatable {
     let id: UUID = UUID()
@@ -170,8 +163,14 @@ struct OperationState {
     var error: Error?
 }
 
+enum AuthMode {
+    case signIn
+    case signUp
+}
+
 // - MARK: Error Types
 
 enum TransferError: Error {
     case importFailed
 }
+

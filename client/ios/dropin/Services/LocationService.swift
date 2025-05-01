@@ -34,6 +34,7 @@ final class LocationService {
     private init() { }
     
     func enable() {
+        print("Enabling location service...")
         isEnabled = true
         serviceSession = CLServiceSession(authorization: .whenInUse)
         runDiagnostics()

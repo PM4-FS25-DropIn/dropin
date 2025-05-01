@@ -7,8 +7,6 @@
 --   - Includes constraints, default values, and a custom enum 'event_status'
 -- ===========================================
 
-create type event_status as enum ('upcoming', 'live', 'closing');
-
 -- Events table
 
 create table public.events (
@@ -18,7 +16,7 @@ create table public.events (
     title text not null,
     description text not null,
     image_paths text[] not null default array['default.event.thumbnail'],
-    user_id uuid references auth.users on delete cascade not null,
+    user_id uuid references auth.users on delete cascade not null default auth.uid(),
     start timestamp with time zone not null,
     "end" timestamp with time zone not null,
     latitude double precision not null check (latitude >= -90 and latitude <= 90),
@@ -26,8 +24,7 @@ create table public.events (
     slot_limit integer not null check (slot_limit >= 1),
     slots_taken integer not null default 0 check (slots_taken <= slot_limit),
     age_restricted boolean not null default false,
-    chat_enabled boolean not null default true,
-    status event_status not null default 'upcoming'
+    chat_enabled boolean not null default true
 );
 
 

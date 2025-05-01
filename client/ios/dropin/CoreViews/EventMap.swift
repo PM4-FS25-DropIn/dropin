@@ -81,8 +81,8 @@ struct EventMap: View {
             }
             .overlay(alignment: .bottomTrailing) {
                 VStack(alignment: .trailing, spacing: 4) {
-                    Text("Latitude: \(viewModel.locationService.lastLocation.coordinate.latitude.formatted(.number.precision(.fractionLength(4))))")
-                    Text("Longitude: \(viewModel.locationService.lastLocation.coordinate.longitude.formatted(.number.precision(.fractionLength(4))))")
+                    Text(formatCoordinates(latitude: viewModel.locationService.lastLocation.coordinate.latitude,
+                                           longitude: viewModel.locationService.lastLocation.coordinate.longitude))
                 }
                 .font(.caption)
                 .padding(8)

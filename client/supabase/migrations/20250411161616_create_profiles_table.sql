@@ -11,6 +11,8 @@ create table public.profiles (
     updated_at timestamp with time zone not null default now(),
     username text not null unique,
     avatar_url text,
+    emojicode text,
+    city text,
     constraint username check (char_length(username) >= 3)
 );
 

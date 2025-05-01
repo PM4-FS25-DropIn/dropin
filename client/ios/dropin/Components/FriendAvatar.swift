@@ -19,7 +19,7 @@ struct FriendAvatar: View {
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     ),
-                    lineWidth: 7
+                    lineWidth: 4
                 )
 
             Image("profilepicture1")

@@ -7,14 +7,6 @@
 
 import SwiftUI
 
-enum EventCategory: String, CaseIterable {
-    case forYou = "For You"
-    case trending = "Trending"
-    case nearby = "Nearby"
-    case startingSoon = "Starting Soon"
-    case ongoing = "Ongoing"
-    case sponsored = "Sponsored"
-}
 
 struct EventCategoryTabView: View {
     @Binding var selectedCategory: EventCategory
