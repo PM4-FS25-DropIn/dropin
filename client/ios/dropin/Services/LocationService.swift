@@ -1,11 +1,3 @@
-//
-//  LocationPermissionError.swift
-//  dropin
-//
-//  Created by Moritz Feuchter on 01/05/2025.
-//
-
-
 import SwiftUI
 import MapKit
 
@@ -108,5 +100,5 @@ final class LocationService {
     private func stopLocationUpdates() {
         print("Stopping location updates")
     }
-    
 }
+

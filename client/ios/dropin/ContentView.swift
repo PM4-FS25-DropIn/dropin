@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
+    @AppStorage("showOnboarding") private var showOnboarding = true
     @Environment(AuthService.self) private var authService
-    @State private var showOnboarding = true
 
     var body: some View {
         if showOnboarding {
