@@ -1,4 +1,4 @@
-name: CI Database
+name: Database CI
 
 on:
   pull_request:
