@@ -7,6 +7,11 @@ on:
       - 'client/supabase/**'
       - 'server/test/database/**'
   workflow_dispatch:
+  
+permissions:
+  contents: read
+  actions: read
+  checks: write
 
 jobs:
   run_database_tests:
@@ -31,7 +36,7 @@ jobs:
       - name: Start Supabase Local DB
         working-directory: ./client
         run: supabase start
-        
+
       - run: npm ci      
       - run: npm run test:db
 
@@ -39,4 +44,5 @@ jobs:
         if: success() || failure()
         with:
           name: DB Test Report
+          reporter: java-junit
           path: ./dbreport.xml
