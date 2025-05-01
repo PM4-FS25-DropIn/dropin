@@ -15,20 +15,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: supabase/setup-cli@v1
         with:
           version: latest
 
       - name: Start Supabase Local DB
         working-directory: ./client
-        run: supabase db start --no-wait --detach
-
-      - name: Run Tests
-        working-directory: ./server
-        run: supabase db start 
+        run: supabase db start
     
       - name: Run Database Tests
+        working-directory: ./server
         run: npm run test:db
 
       - uses: dorny/test-reporter@v2.0.0
