@@ -7,7 +7,7 @@ on:
       - 'client/supabase/**'
       - 'server/test/database/**'
   workflow_dispatch:
-  
+
 permissions:
   contents: read
   actions: read
@@ -39,10 +39,14 @@ jobs:
 
       - run: npm ci      
       - run: npm run test:db
+      
+      - run: dir 
+        working-directory: ./server
 
       - uses: dorny/test-reporter@v2.0.0
         if: success() || failure()
         with:
           name: DB Test Report
           reporter: java-junit
-          path: ./dbreport.xml
+          path: dbreport.xml
+          working-directory: ./server

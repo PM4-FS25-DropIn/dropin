@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "npm run build:ts && tsc -p test/tsconfig.json && FASTIFY_AUTOLOAD_TYPESCRIPT=1 node --test --test-reporter=junit --test-reporter-destination=report.xml --experimental-test-coverage --loader ts-node/esm test/**/*.test.ts",
-    "test:server": "npm run build:ts && tsc -p test/tsconfig.json && FASTIFY_AUTOLOAD_TYPESCRIPT=1 node --test --test-reporter=junit --test-reporter-destination=report.xml --experimental-test-coverage --loader ts-node/esm test/server/**/*.test.ts",
+    "test:server": "npm run build:ts && tsc -p test/tsconfig.json && FASTIFY_AUTOLOAD_TYPESCRIPT=1 node --test --experimental-test-coverage --test-reporter=junit --test-reporter-destination=report.xml --loader ts-node/esm test/server/**/*.test.ts",
     "test:db": "npm run build:ts && tsc -p test/tsconfig.json && node --test --experimental-test-coverage --test-reporter=junit --test-reporter-destination=dbreport.xml --loader ts-node/esm test/database/**/*.test.ts",
     "test-win:db": "npm run build:ts && tsc -p test/tsconfig.json && set FASTIFY_AUTOLOAD_TYPESCRIPT=1 && node --test --experimental-test-coverage --loader ts-node/esm test/database/**/*.test.ts",
     "test-win:server": "npm run build:ts && tsc -p test/tsconfig.json && set FASTIFY_AUTOLOAD_TYPESCRIPT=1 && node --test --experimental-test-coverage --loader ts-node/esm test/server/**/*.test.ts",
