@@ -8,8 +8,12 @@
 import SwiftUI
 
 struct EventQuickInfo: View {
+    @Environment(EventStore.self) private var eventStore
+
+    @State private var organizer = ""
+
     var event: DropInEvent
-    
+
     var body: some View {
         VStack(spacing: 20) {
             header
@@ -19,7 +23,7 @@ struct EventQuickInfo: View {
         .background(Color(.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 20))
     }
-    
+
     private var header: some View {
         VStack(alignment: .center, spacing: 5) {
             Image(systemName: "megaphone.fill")
@@ -33,28 +37,48 @@ struct EventQuickInfo: View {
                 .foregroundStyle(.secondary)
         }
     }
-    
+
     private var quickInfoGrid: some View {
         Grid(alignment: .leading, verticalSpacing: 15) {
             GridRow {
-                infoItem("Organizer", "person.fill")
-                infoItem("\(event.takenSlots)/\(event.maxSlots) Slots", "person.3.fill")
+                infoItem(organizer, "person.fill")
+                    .task {
+                        do {
+                            organizer = try await eventStore.getHostUsername(
+                                of: event
+                            )
+                        } catch {
+                            organizer = "Unknown"
+                        }
+                    }
+                infoItem(
+                    "\(event.slotsTaken ?? 1)/\(event.slotLimit) Slots",
+                    "person.3.fill"
+                )
             }
             GridRow {
-                infoItem(event.start.formatted(date: .omitted, time: .shortened), "play.circle.fill")
-                infoItem(event.end.formatted(date: .omitted, time: .shortened), "stop.circle.fill")
+                infoItem(
+                    event.start.formatted(date: .omitted, time: .shortened),
+                    "play.circle.fill"
+                )
+                infoItem(
+                    event.end.formatted(date: .omitted, time: .shortened),
+                    "stop.circle.fill"
+                )
             }
             GridRow {
-                infoItem("Public", "eye")
-                infoItem("\(event.ageRestricted ? "Age Restricted" : "Not Age Restricted")", "hand.raised.palm.facing.fill")
-            }
-            GridRow {
-                infoItem("Location", "mappin.and.ellipse")
-                infoItem("\(event.chatEnabled ? "Enabled" : "Disabled")", "bubble.left.and.bubble.right.fill")
+                infoItem(
+                    "\(event.chatEnabled ? "Enabled" : "Disabled")",
+                    "bubble.left.and.bubble.right.fill"
+                )
+                infoItem(
+                    "\(event.ageRestricted ? "Age Restricted" : "All Ages")",
+                    "hand.raised.palm.facing.fill"
+                )
             }
         }
     }
-    
+
     private func infoItem(_ text: String, _ systemImage: String) -> some View {
         HStack {
             Image(systemName: systemImage)
@@ -69,5 +93,6 @@ struct EventQuickInfo: View {
 }
 
 #Preview {
-    EventQuickInfo(event: dummyEvent)
+    EventQuickInfo(event: sampleEvent)
+        .environment(EventStore())
 }
