@@ -8,10 +8,15 @@
 import SwiftUI
 
 struct EventCard: View {
-    @State private var username = ""
-    @State private var isShowingSheet = false
+    @Environment(EventStore.self) private var eventStore
     
     let event: DropInEvent
+    var onJoinHandler: (DropInEvent) async throws -> Void
+    
+    @State private var username = "unknown"
+    @State private var attendanceStatus: AttendanceStatus = .undetermined
+    @State private var isShowingSheet = false
+   
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -25,6 +30,9 @@ struct EventCard: View {
         .background(Color(.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .shadow(radius: 5)
+        .onAppear() {
+            attendanceStatus = .undetermined
+        }
         .onTapGesture {
             isShowingSheet = true
         }
@@ -35,25 +43,23 @@ struct EventCard: View {
     
     private var eventImageCarousel: some View {
         TabView {
-            ForEach(event.imagePaths!.indices, id: \.self) { index in
-                Image(event.imagePaths![index])
-                    .resizable()
-                    .scaledToFill()
-                    .clipped()
+            ForEach(event.imagePaths, id: \.self) { imagePath in
+                AsyncImage(url: URL(string: imagePath)) { phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .clipped()
+                    }
+                }
             }
         }
         .tabViewStyle(.page)
         .containerRelativeFrame(.vertical, count: 12, span: 5, spacing: 0)
         .overlay {
-            EventStatusBadge(status: event.status)
+            EventCardStatusBadge(status: event.status)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
                 .padding()
-            Image(systemName: "location.fill")
-                .foregroundColor(.white)
-                .padding()
-                .background(Circle().fill(.lightCyan))
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-                .padding(12)
         }
     }
     
@@ -68,7 +74,16 @@ struct EventCard: View {
             
             VStack(alignment: .leading, spacing: 12) {
                 Label(username, systemImage: "person.fill")
-                Label("\(event.takenSlots)/\(event.maxSlots) Slots", systemImage: "person.3.fill")
+                    .task {
+                        do {
+                            username = try await eventStore.getHostUsername(of: event)
+                        } catch {
+                            print("Couldn't get username")
+                        }
+                    }
+                Label(event.start.formatted(date: .omitted, time: .shortened), systemImage: "play.circle.fill")
+                Label(event.end.formatted(date: .omitted, time: .shortened), systemImage: "stop.circle.fill")
+                Label("\(event.slotsTaken ?? 1)/\(event.slotLimit) Slots", systemImage: "person.3.fill")
             }
             .font(.caption2)
             .foregroundColor(.gray)
@@ -78,24 +93,25 @@ struct EventCard: View {
     
     private var buttonGroup: some View {
         HStack(spacing: 15) {
-            Button("Drop In") {
-                // TODO: Implement drop in action
+            Button(attendanceStatus == .joined ? "Dropped In" : "Drop In") {
+                Task {
+                    do {
+                        try await onJoinHandler(event)
+                        attendanceStatus = .joined
+                        print("Joined event")
+                    } catch {
+                        print("Couldn't join event")
+                    }
+                }
             }
-            .buttonStyle(.primary)
+            .buttonStyle(.borderedProminent)
             .font(.subheadline)
-            
-            Button("Not Going") {
-                // TODO: Implement not going action
-            }
-            .foregroundStyle(.secondary)
-            .buttonStyle(.borderless)
-            .font(.caption)
+            .disabled(attendanceStatus == .joined)
         }
-        .controlSize(.large)
-        .bold()
     }
 }
 
 #Preview {
-    EventCard(event: dummyEvent)
+    EventCard(event: sampleEvent, onJoinHandler: { event in })
+        .environment(EventStore())
 }
