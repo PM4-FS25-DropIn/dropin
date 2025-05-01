@@ -17,56 +17,88 @@ struct ChatListView: View {
 
     // State variable to hold our dummy chat data
     @State private var chats: [Chat] = []
+    @State private var events: [DropInEvent] = []
+    @Environment(AuthService.self) private var authService
 
     var body: some View {
-        // Use NavigationStack for modern navigation
         NavigationStack {
-            // List provides efficient scrolling for rows
             List {
-                // Iterate over the chats data
-                ForEach(chats) { chat in
-                    // NavigationLink makes the row tappable
+                ForEach(events) { event in
                     NavigationLink {
                         // Placeholder destination view for when a chat is tapped
-                        ChatDetailPlaceholderView(groupName: chat.groupName)
+                        ChatRoomView(event: event, authService: authService)
+                        
                     } label: {
                         // Custom view for how each chat row looks
-                        ChatRow(chat: chat)
+                        ChatRow(event: event)
                     }
                 }
             }
             .listStyle(.plain) // Optional: Removes default inset grouped styling
             .navigationTitle("Chats") // Sets the title in the navigation bar
-            .onAppear(perform: loadDummyData) // Load data when the view appears
+            .onAppear(perform: loadDummyEvents) // Load data when the view appears
         }
     }
 
     // MARK: - Data Loading
 
-    // Function to populate the chats array with dummy data
-    private func loadDummyData() {
-        // Simulate fetching data (replace with actual fetch later)
-        chats = [
-            Chat(groupName: "Weekend BBQ Crew",
-                 lastMessage: "Sounds good! See you Saturday.",
-                 lastMessageTimestamp: Calendar.current.date(byAdding: .minute, value: -5, to: Date())!, // 5 mins ago
-                 unreadCount: 2),
-            Chat(groupName: "Project Phoenix Team",
-                 lastMessage: "Meeting notes are uploaded.",
-                 lastMessageTimestamp: Calendar.current.date(byAdding: .hour, value: -2, to: Date())!, // 2 hours ago
-                 unreadCount: 0),
-            Chat(groupName: "Hiking Trip Planning",
-                 lastMessage: "Don't forget your water bottles!",
-                 lastMessageTimestamp: Calendar.current.date(byAdding: .day, value: -1, to: Date())!, // Yesterday
-                 unreadCount: 5),
-            Chat(groupName: "Book Club",
-                 lastMessage: "What did everyone think of the ending?",
-                 lastMessageTimestamp: Calendar.current.date(byAdding: .day, value: -3, to: Date())!, // 3 days ago
-                 unreadCount: 0),
-            Chat(groupName: "Apartment Neighbors",
-                 lastMessage: "Package for Apt 3B at the front desk.",
-                 lastMessageTimestamp: Calendar.current.date(byAdding: .minute, value: -35, to: Date())!, // 35 mins ago
-                 unreadCount: 1)
+    
+    private func loadDummyEvents() {
+        events = [
+            DropInEvent(
+                id: 1,
+                createdAt: Date(),
+                title: "Pizza Night",
+                description: "Join us for free pizza and chill vibes.",
+                imagePaths: ["pizza.jpg"],
+                userId: UUID(),
+                start: Calendar.current.date(byAdding: .hour, value: 1, to: Date())!,
+                end: Calendar.current.date(byAdding: .hour, value: 3, to: Date())!,
+                latitude: 47.3769,
+                longitude: 8.5417,
+                maxSlots: 10,
+                takenSlots: 3,
+                visibility: .public,
+                ageRestricted: false,
+                chatEnabled: true,
+                status: .upcoming
+            ),
+            DropInEvent(
+                id: 2,
+                createdAt: Date(),
+                title: "Sunset Hike",
+                description: "Evening hike with a view. Bring water!",
+                imagePaths: ["hike.jpg"],
+                userId: UUID(),
+                start: Calendar.current.date(byAdding: .day, value: 1, to: Date())!,
+                end: Calendar.current.date(byAdding: .day, value: 1, to: Calendar.current.date(byAdding: .hour, value: 2, to: Date())!)!,
+                latitude: 47.2654,
+                longitude: 8.6741,
+                maxSlots: 15,
+                takenSlots: 12,
+                visibility: .public,
+                ageRestricted: false,
+                chatEnabled: true,
+                status: .upcoming
+            ),
+            DropInEvent(
+                id: 3,
+                createdAt: Date(),
+                title: "Late Night Coding",
+                description: "Bring your laptop and snacks. We'll build something cool.",
+                imagePaths: ["coding.jpg"],
+                userId: UUID(),
+                start: Calendar.current.date(byAdding: .hour, value: -2, to: Date())!,
+                end: Calendar.current.date(byAdding: .hour, value: 2, to: Date())!,
+                latitude: 47.5000,
+                longitude: 8.3500,
+                maxSlots: 8,
+                takenSlots: 8,
+                visibility: .public,
+                ageRestricted: true,
+                chatEnabled: true,
+                status: .live
+            )
         ]
     }
 }
@@ -74,7 +106,7 @@ struct ChatListView: View {
 // MARK: - Chat Row View
 
 struct ChatRow: View {
-    let chat: Chat
+    let event: DropInEvent
 
     var body: some View {
         HStack(spacing: 10) {
@@ -94,27 +126,27 @@ struct ChatRow: View {
 
     private var chatPreview: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(chat.groupName)
+            Text(event.title)
                 .font(.headline)
                 .lineLimit(1)
-            Text(chat.lastMessage)
-                .font(.subheadline)
-                .foregroundColor(.gray)
-                .lineLimit(1)
+            //Text(chat.lastMessage)
+            //  .font(.subheadline)
+            //.foregroundColor(.gray)
+            // .lineLimit(1)
         }
     }
 
     private var timestampAndBadge: some View {
         VStack(alignment: .trailing, spacing: 5) {
-            Text(formatDate(chat.lastMessageTimestamp))
+            Text(formatDate(Calendar.current.date(byAdding: .minute, value: -35, to: Date())!))
                 .font(.caption)
                 .foregroundColor(.gray)
 
-            if chat.unreadCount > 0 {
+            if 5 > 0 {
                 ZStack {
                     Circle()
                         .fill(.blue)
-                    Text("\(chat.unreadCount)")
+                    Text("\(2)")
                         .font(.caption2)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
@@ -142,21 +174,3 @@ struct ChatRow: View {
     }
 }
 
-// MARK: - Placeholder Detail View
-
-struct ChatDetailPlaceholderView: View {
-    let groupName: String
-
-    var body: some View {
-        Text("Chat Detail for \(groupName)")
-            .navigationTitle(groupName)
-            .navigationBarTitleDisplayMode(.inline) // Optional: smaller title
-    }
-}
-
-
-// MARK: - Preview
-
-#Preview {
-    ChatListView()
-}

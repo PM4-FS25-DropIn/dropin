@@ -27,8 +27,13 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      shouldAutocreateTestPlan = "YES">
+      shouldUseLaunchSchemeArgsEnv = "YES">
+      <TestPlans>
+         <TestPlanReference
+            reference = "container:dropin.xctestplan"
+            default = "YES">
+         </TestPlanReference>
+      </TestPlans>
       <Testables>
          <TestableReference
             skipped = "NO"
@@ -49,6 +54,16 @@
                BlueprintIdentifier = "B3B716252D872E1F0023465A"
                BuildableName = "dropinUITests.xctest"
                BlueprintName = "dropinUITests"
+               ReferencedContainer = "container:dropin.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3B7161B2D872E1F0023465A"
+               BuildableName = "dropinTests.xctest"
+               BlueprintName = "dropinTests"
                ReferencedContainer = "container:dropin.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -74,6 +89,18 @@
             ReferencedContainer = "container:dropin.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "SUPABASE_URL"
+            value = "http://160.85.252.162:8080"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "SUPABASE_KEY"
+            value = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICJyb2xlIjogImFub24iLAogICJpc3MiOiAic3VwYWJhc2UiLAogICJpYXQiOiAxNzQ0MTQ5NjAwLAogICJleHAiOiAxOTAxOTE2MDAwCn0.8vzFDrqMsw3ebkPVpk4CbwOGccnj5mQ7eXGZ4hVkXkU"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

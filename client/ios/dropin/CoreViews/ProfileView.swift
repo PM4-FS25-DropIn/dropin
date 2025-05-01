@@ -1,22 +1,25 @@
 import SwiftUI
 
+
 struct ProfileView: View {
+    
+    @Environment(AuthService.self) private var authService
+    
+    @State private var username: String = "Loading..."
+
     var body: some View {
         ScrollView {
 
             GeometryReader { geometry in
                 VStack(spacing: 0) {
                     profileHeader
-
                     bioSection
-                        .padding(.top, 16)
-
                     Divider()
                         .padding(.vertical, 16)
                 }
                 .offset(y: -geometry.frame(in: .global).minY / 1.5)  // Header will move slower than the scroll -> offset correction
             }
-            .frame(height: 420)
+            .frame(height: 400)
 
             feedSection
                 .background(Color(.systemBackground))
@@ -24,9 +27,17 @@ struct ProfileView: View {
                 .cornerRadius(16)
         }
         .edgesIgnoringSafeArea(.top)
+        .task {
+            do {
+                username = try await authService.getUser().username
+            } catch {
+                username = "Error loading username..."
+            }
+        }
     }
 
     // MARK: - Header Section
+
     private var profileHeader: some View {
         ZStack(alignment: .top) {
             backgroundGradient
@@ -79,7 +90,7 @@ struct ProfileView: View {
         }) {
             Image(systemName: "gearshape.fill")
                 .font(.title2)
-                .foregroundColor(.white)
+                .foregroundColor(.primary)
                 .padding()
         }
         .padding(.top, 160)
@@ -91,7 +102,7 @@ struct ProfileView: View {
         }) {
             Image(systemName: "pencil.line")
                 .font(.title2)
-                .foregroundColor(.white)
+                .foregroundColor(.primary)
                 .padding()
         }
         .padding(.top, 160)
@@ -114,14 +125,15 @@ struct ProfileView: View {
     // Name and username texts
     private var nameAndUsername: some View {
         VStack {
-            Text("NAME")
+            Text("\(username)")
                 .font(.title)
                 .fontWeight(.bold)
-            Text("@username")
+            Text("@\(username)")
                 .font(.subheadline)
                 .foregroundColor(.gray)
         }
     }
+    
 
     // Evenly spaced stats row
     private var statsRow: some View {
@@ -138,17 +150,14 @@ struct ProfileView: View {
 
     // MARK: - Bio Section
     private var bioSection: some View {
-        Text(
-            "This is a short description about the user. It can include hobbies, location, or anything relevant."
-        )
-        .font(.body)
+        Text("🍆✊💦💥😏")
+            .padding(.top, 32)
     }
 
     // MARK: - Feed Section
     private var feedSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             DropInFeedView()
-            Spacer().frame(height: 40)
         }
         .padding(.horizontal)
         .padding(.top, 16)
@@ -170,6 +179,8 @@ struct ProfileView: View {
 
 // TODO: dynamic data for DropInFeedView
 struct DropInFeedView: View {
+    @Environment(AuthService.self) private var authService
+
     // Example placeholder data
     let events = [
         "My Beach Party",
@@ -190,6 +201,8 @@ struct DropInFeedView: View {
     ]
 
     var body: some View {
+        
+        
         VStack(alignment: .leading, spacing: 8) {
             Text("My DropIns")
                 .font(.headline)
@@ -198,7 +211,28 @@ struct DropInFeedView: View {
                 eventRow(for: event)
             }
         }
+        VStack {
+            Button(action: {
+                Task {
+                    do {
+                        try await authService.signOut()
+                    } catch {
+                        print(error)
+                    }
+                }
+            }) {
+                Text("Sign out")
+            }
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color.red)
+            .foregroundColor(.white)
+            .cornerRadius(8)
+            .padding(.top, 16)
+        }
+
     }
+    
 
     private func eventRow(for event: String) -> some View {
         HStack {
@@ -218,10 +252,12 @@ struct DropInFeedView: View {
 
             Spacer()
         }
+        .frame(maxWidth: .infinity)
         .padding(.vertical, 4)
     }
 }
 
 #Preview {
     ProfileView()
+        .environment(AuthService())
 }

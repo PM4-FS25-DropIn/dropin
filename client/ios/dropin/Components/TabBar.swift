@@ -17,6 +17,7 @@ struct TabBar: View {
         }
         .sheet(isPresented: $isSheetPresented) {
             // Show the cockpit for your events here
+            // TODO: implement cockpit, use EventCreateView and EventEditView components
             Text("Create new dropin")
         }
     }
@@ -62,11 +63,11 @@ struct TabBar: View {
                 }
                 Tab("DropIns", systemImage: "drop.fill") {
                     // The view with dropins you've joined
-                    Text("DropIns View")
+                    // TODO
                 }
                 Tab("Profile", systemImage: "person") {
                     // Profile View here
-                    Text("Profile View")
+                    ProfileView()
                 }
             }
             .tabViewStyle(DefaultTabViewStyle())

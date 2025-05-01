@@ -8,6 +8,65 @@
 import Foundation
 import CoreLocation
 
+struct Profile: Decodable {
+    let id: UUID
+    let username: String
+    let avatarUrl: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case username
+        case avatarUrl = "avatar_url"
+    }
+}
+
+struct Message: Identifiable, Equatable {
+    let id: UUID = UUID()
+    let chatRoomId: Int
+    let username: String
+    let content: String
+    let isCurrentSession: Bool
+    let timestamp: Date
+    
+    static let formatter = DateFormatter()
+    
+    func formattedTimestamp() -> String {
+        Self.formatter.dateStyle = .none
+        Self.formatter.timeStyle = .short
+        return Self.formatter.string(from: timestamp)
+    }
+    
+    func formattedDate() -> String {
+        Self.formatter.dateStyle = .medium
+        Self.formatter.timeStyle = .none
+        return Self.formatter.string(from: timestamp)
+    }
+}
+
+struct MessageDTO: Codable {
+    let sender_id: UUID
+    let session_name: String
+    let content: String
+    let created_at: Date
+    let chat_room_id: Int
+    
+    func toModel(currentSessionId: UUID) -> Message {
+        .init(
+            chatRoomId: chat_room_id,
+            username: session_name,
+            content: content,
+            isCurrentSession: sender_id == currentSessionId,
+            timestamp: created_at
+        )
+    }
+}
+
+struct ChatRoom: Identifiable {
+    let id: UUID
+    let eventId: UUID
+    let createdAt: Date
+}
+
 
 enum EventCategory: String, CaseIterable {
     case forYou = "For You"
@@ -30,8 +89,8 @@ enum EventStatus: String, CaseIterable, Codable {
     case closing
 }
 
-struct DropInEvent: Codable {
-    var id: Int?
+struct DropInEvent: Identifiable, Codable {
+    var id: Int
     var createdAt: Date?
     var title: String
     var description: String

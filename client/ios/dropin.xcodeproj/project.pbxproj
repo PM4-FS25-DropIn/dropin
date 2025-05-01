@@ -33,9 +33,22 @@
 		B3B716262D872E1F0023465A /* dropinUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = dropinUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		EE33859A2DACFDD1006C95F4 /* Exceptions for "dropin" folder in "dropin" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = B3B7160B2D872E1D0023465A /* dropin */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B3B7160E2D872E1D0023465A /* dropin */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				EE33859A2DACFDD1006C95F4 /* Exceptions for "dropin" folder in "dropin" target */,
+			);
 			path = dropin;
 			sourceTree = "<group>";
 		};
