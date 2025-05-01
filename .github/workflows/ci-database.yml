@@ -1,0 +1,39 @@
+name: Publish Docker Image
+
+on:
+  pull_request:
+    branches: [ main, dev ]
+    paths:
+      - 'client/supabase/**'
+      - 'server/test/database/**'
+  workflow_dispatch:
+
+jobs:
+  run_database_tests:
+    name: Run Database Tests
+    
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start Supabase Local DB
+        working-directory: ./client
+        run: supabase db start --no-wait --detach
+
+      - name: Run Tests
+        working-directory: ./server
+        run: supabase db start 
+    
+      - name: Run Database Tests
+        run: npm run test:db
+
+      - name: Test Reporter
+        working-directory: ./server
+        uses: dorny/test-reporter@v2.0.0
+        with:
+          name: DB Test Report
+          path: ./server/dbreport.xml
