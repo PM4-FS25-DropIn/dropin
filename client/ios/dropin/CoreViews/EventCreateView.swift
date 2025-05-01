@@ -1,39 +1,78 @@
-//
-//  EventCreatedView.swift
-//  dropin
-//
-//  Created by Michael Voemel on 15.04.2025.
-//
-
-
 import SwiftUI
+import PhotosUI
 
-// TODO: connect to rest of the application (in the tab bar component)
 struct EventCreateView: View {
-    @State private var event = DropInEvent(
-        id: 1,
-        title: "",
-        description: "",
-        start: Date(),
-        end: Calendar.current.date(byAdding: .minute, value: 90, to: Date()) ?? Date(),
-        latitude: 47.3769, // Zurich
-        longitude: 8.5417, // Zurich
-        maxSlots: 1,
-        takenSlots: 0,
-        visibility: .public,
-        ageRestricted: false,
-        chatEnabled: true,
-        status: .upcoming
-    )
+    @Environment(EventStore.self) private var eventStore
+    @Environment(\.dismiss) private var dismiss
+    
+    @State private var launchState: AsyncStatus = .idle
+    
+    @State private var selectedPhotos: [PhotosPickerItem] = []
+    @State private var event: DropInEvent = DropInEvent(title: "", description: "", imagePaths: ["default.event.thumbnail"], start: Date(), end: Date(), latitude: 0, longitude: 0, slotLimit: 2, ageRestricted: false, chatEnabled: true)
+    
+    @State private var showAlert = false
+    
+    var defaultEvent: DropInEvent?
+
+    private let dateRange: ClosedRange<Date> = {
+        let now = Date()
+        let maxDate = Calendar.current.date(byAdding: .hour, value: 24, to: now) ?? .now
+        return now...maxDate
+    }()
     
     var body: some View {
-        DropInEventFormView(event: $event) {
-            // TODO: implement creation mechanism
-            print("Creating event: \(event.title)")
+        ZStack {
+            Color(.systemGroupedBackground)
+                .ignoresSafeArea()
+            VStack {
+                Text("New DropIn")
+                    .font(.title)
+                    .bold()
+                    .foregroundStyle(.primary)
+                    .padding()
+                DropInEventForm(event: $event, selectedPhotos: $selectedPhotos, isEditing: false)
+                    .onAppear {
+                        if let defaultEvent {
+                            event = defaultEvent
+                        }
+                    }
+
+                Button("Launch") {
+                    onLaunchButtonTapped()
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .bold()
+                .disabled(launchState.isRunning)
+                .padding()
+            }
+        }
+        .alert("Error", isPresented: $showAlert) {
+            Button("Ok", role: .cancel) { }
+        } message: {
+            Text(launchState.error)
         }
     }
+    
+    
+    private func onLaunchButtonTapped() {
+        Task {
+            launchState = .running
+            
+            do {
+                try await eventStore.createEvent(event, photos: selectedPhotos)
+                dismiss()
+                launchState = .success
+            } catch {
+                launchState = .failure(error)
+                showAlert = true
+            }
+        }
+    }
+
 }
 
 #Preview {
     EventCreateView()
+        .environment(EventStore())
 }
