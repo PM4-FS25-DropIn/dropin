@@ -11,6 +11,7 @@ import SwiftUI
 // TODO: connect to rest of the application (in the tab bar component)
 struct EventCreateView: View {
     @State private var event = DropInEvent(
+        id: 1,
         title: "",
         description: "",
         start: Date(),
