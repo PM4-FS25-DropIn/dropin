@@ -23,7 +23,10 @@ jobs:
       - name: Start Supabase Local DB
         working-directory: ./client
         run: supabase db start
-    
+
+      - run: npm ci
+        working-directory: ./server 
+      
       - name: Run Database Tests
         working-directory: ./server
         run: npm run test:db
