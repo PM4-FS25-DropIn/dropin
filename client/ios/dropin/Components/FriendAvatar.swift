@@ -5,28 +5,24 @@
 //  Created by leo on 02.04.2025.
 //
 
-import SwiftUI
-
-
 /// Simple Circular Shaped Profile Image with a status ring.
 /// Status Ring can be enabled by setting isHighlighted to true.
+import SwiftUI
+
 struct FriendAvatar: View {
-    var imageURL: URL
-    var isHighlighted = false
-    
     var body: some View {
         ZStack {
             Circle()
                 .stroke(
                     LinearGradient(
-                        gradient: Gradient(colors: isHighlighted ? [.lightCyan, .pacificCyan] : [.gray, .black]),
+                        gradient: Gradient(colors: [.lightCyan, .pacificCyan]),
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     ),
                     lineWidth: 7
                 )
-            
-            Image(imageURL.absoluteString)
+
+            Image("profilepicture1")
                 .resizable()
                 .scaledToFill()
                 .clipShape(Circle())
@@ -36,5 +32,5 @@ struct FriendAvatar: View {
 }
 
 #Preview {
-    FriendAvatar(imageURL: URL(filePath: "profileImage")!)
+    FriendAvatar()
 }

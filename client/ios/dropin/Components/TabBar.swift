@@ -9,19 +9,17 @@ import SwiftUI
 
 struct TabBar: View {
     @State private var isSheetPresented = false
-    
+
     var body: some View {
         ZStack {
             coreViews
             eventHubActionButton
         }
         .sheet(isPresented: $isSheetPresented) {
-            // Show the cockpit for your events here
-            // TODO: implement cockpit, use EventCreateView and EventEditView components
-            Text("Create new dropin")
+            EventCreateView()
         }
     }
-    
+
     var eventHubActionButton: some View {
         VStack {
             Spacer()
@@ -34,6 +32,7 @@ struct TabBar: View {
                         .resizable()
                         .frame(width: 15, height: 15)
                         .padding()
+                        .bold()
                         .background(.accent)
                         .foregroundStyle(.white)
                         .clipShape(Circle())
@@ -43,7 +42,7 @@ struct TabBar: View {
             }
         }
     }
-    
+
     var coreViews: some View {
         let isPhone = UIDevice.current.userInterfaceIdiom == .phone
 
@@ -53,20 +52,17 @@ struct TabBar: View {
                     HomeView()
                 }
                 Tab("Map", systemImage: "map") {
-                    // Mapview here
-                    Text("Map View")
+                    MapView()
                 }
                 if isPhone {
-                    Tab() {
+                    Tab {
                         Spacer()
                     }
                 }
                 Tab("DropIns", systemImage: "drop.fill") {
-                    // The view with dropins you've joined
-                    // TODO
+                    DropInsView()
                 }
-                Tab("Profile", systemImage: "person") {
-                    // Profile View here
+                Tab("Profile", systemImage: "person.circle") {
                     ProfileView()
                 }
             }
@@ -77,4 +73,5 @@ struct TabBar: View {
 
 #Preview {
     TabBar()
+        .environment(AuthService())
 }
