@@ -16,7 +16,10 @@ struct AuthSecureField: View {
     
     var body: some View {
         SecureField(placeholder, text: value)
-            .roundedTextFieldStyle()
+            .padding()
+            .padding(.horizontal, 15.0)
+            .overlay(RoundedRectangle(cornerRadius: 30)
+                .stroke(.tertiary, lineWidth: 1))
     }
 }
 

@@ -100,6 +100,5 @@ final class LocationService {
     private func stopLocationUpdates() {
         print("Stopping location updates")
     }
-    
 }
 

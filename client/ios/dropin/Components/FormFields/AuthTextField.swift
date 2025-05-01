@@ -16,7 +16,12 @@ struct AuthTextField: View {
     
     var body: some View {
         TextField(placeholder, text: value)
-            .roundedTextFieldStyle()
+            .padding()
+            .padding(.horizontal, 15.0)
+            .overlay(RoundedRectangle(cornerRadius: 30)
+                .stroke(.tertiary, lineWidth: 1))
+            .autocorrectionDisabled()
+            .textInputAutocapitalization(.never)
     }
 }
 
