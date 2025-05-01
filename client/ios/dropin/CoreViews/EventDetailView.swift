@@ -1,22 +1,28 @@
-//
-//  EventDetailView.swift
-//  dropin
-//
-//  Created by leo on 02.04.2025.
-//
-
 import SwiftUI
 
 struct EventDetailView: View {
+    @Environment(EventStore.self) private var eventStore
+    
+    @State private var joinEventTaskStatus: AsyncStatus = .idle
+    
     var event: DropInEvent
     
     var body: some View {
         ScrollView {
-            Image(event.imagePaths![0])
-                .resizable()
-                .scaledToFill()
-                .containerRelativeFrame(.vertical, count: 12, span: 4, spacing: 0)
-                .clipped()
+            TabView {
+                ForEach(event.imagePaths, id: \.self) { imagePath in
+                    AsyncImage(url: URL(string: imagePath)) { phase in
+                        if let image = phase.image {
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .clipped()
+                        }
+                    }
+                }
+            }
+            .tabViewStyle(.page)
+            .containerRelativeFrame(.vertical, count: 12, span: 5, spacing: 0)
             Text(event.title)
                 .font(.title)
                 .bold()
@@ -30,30 +36,34 @@ struct EventDetailView: View {
     }
     
     private var buttonGroup: some View {
-        HStack {
-            Button {
-                // TODO: Drop In Action
-            } label: {
-                Text("Drop In")
-                    .frame(maxWidth: .infinity)
-                    .bold()
-            }
-            .buttonStyle(.borderedProminent)
-            Button {
-                // TODO: Not Going Action
-            } label: {
-                Text("Not Going")
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.bordered)
-            .foregroundStyle(.secondary)
+        Button {
+            joinEvent()
+        } label: {
+            Text("Drop In")
+                .frame(maxWidth: .infinity)
+                .bold()
         }
+        .buttonStyle(.borderedProminent)
         .padding()
+        .disabled(joinEventTaskStatus.isRunning)
     }
     
+    private func joinEvent() {
+        Task {
+            joinEventTaskStatus = .running
+            do {
+                try await eventStore.joinEvent(event)
+                joinEventTaskStatus = .success
+            } catch {
+                joinEventTaskStatus = .failure(error)
+            }
+        }
+    }
    
 }
 
 #Preview {
-    EventDetailView(event: dummyEvent)
+    EventDetailView(event: sampleEvent)
+        .environment(EventStore())
 }
+
