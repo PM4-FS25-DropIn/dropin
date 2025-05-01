@@ -1,4 +1,4 @@
-name: Publish Docker Image
+name: Database CI
 
 on:
   pull_request:
@@ -31,9 +31,8 @@ jobs:
       - name: Run Database Tests
         run: npm run test:db
 
-      - name: Test Reporter
+      - uses: dorny/test-reporter@v2.0.0
         working-directory: ./server
-        uses: dorny/test-reporter@v2.0.0
         with:
           name: DB Test Report
           path: ./server/dbreport.xml
