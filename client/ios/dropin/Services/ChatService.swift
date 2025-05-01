@@ -86,7 +86,7 @@ final class ChatService: ObservableObject {
         let insertions = channel.postgresChange(
             InsertAction.self,
             schema: "public",
-            table: "messages",
+            table: "messages"
         )
         
         Task {
