@@ -4,6 +4,11 @@ import Auth
 @MainActor
 @Observable
 final class AuthService {
+    
+    enum AuthServiceError: Error {
+        case profileNotFound
+    }
+    
     private(set) var isAuthenticated = false
     
     init() {
@@ -26,7 +31,7 @@ final class AuthService {
     }
     
     func signUp(authData: AuthCredentials) async throws {
-        try await supabase.auth.signUp(email: authData.email, password: authData.password)
+        try await supabase.auth.signUp(email: authData.email, password: authData.password,data: ["username": .string(authData.username)])
     }
     
     func signUpOTP(authData: AuthCredentials, code: String) async throws {
@@ -39,6 +44,25 @@ final class AuthService {
     
     func getCurrentUser() async throws -> User {
         return try await supabase.auth.session.user
+    }
+    
+    
+    func getUser() async throws -> Profile {
+        let user = try await getCurrentUser()
+
+        let profiles: [Profile] = try await supabase
+            .from("profiles")
+            .select("id, username, avatar_url")
+            .eq("id", value: user.id)
+            .limit(1)
+            .execute()
+            .value
+
+        guard let profile = profiles.first else {
+            throw AuthServiceError.profileNotFound
+        }
+
+        return profile
     }
     
     

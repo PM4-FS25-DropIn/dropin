@@ -63,7 +63,7 @@ struct TabBar: View {
                 }
                 Tab("DropIns", systemImage: "drop.fill") {
                     // The view with dropins you've joined
-                    Text("DropIns View")
+                    // TODO
                 }
                 Tab("Profile", systemImage: "person") {
                     // Profile View here

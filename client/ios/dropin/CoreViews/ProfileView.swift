@@ -2,6 +2,10 @@ import SwiftUI
 
 
 struct ProfileView: View {
+    
+    @Environment(AuthService.self) private var authService
+    
+    @State private var username: String = "Loading..."
 
     var body: some View {
         ScrollView {
@@ -23,6 +27,13 @@ struct ProfileView: View {
                 .cornerRadius(16)
         }
         .edgesIgnoringSafeArea(.top)
+        .task {
+            do {
+                username = try await authService.getUser().username
+            } catch {
+                username = "Error loading username..."
+            }
+        }
     }
 
     // MARK: - Header Section
@@ -114,14 +125,15 @@ struct ProfileView: View {
     // Name and username texts
     private var nameAndUsername: some View {
         VStack {
-            Text("NAME")
+            Text("\(username)")
                 .font(.title)
                 .fontWeight(.bold)
-            Text("@username")
+            Text("@\(username)")
                 .font(.subheadline)
                 .foregroundColor(.gray)
         }
     }
+    
 
     // Evenly spaced stats row
     private var statsRow: some View {
@@ -167,6 +179,7 @@ struct ProfileView: View {
 
 // TODO: dynamic data for DropInFeedView
 struct DropInFeedView: View {
+    @Environment(AuthService.self) private var authService
 
     // Example placeholder data
     let events = [
@@ -188,6 +201,8 @@ struct DropInFeedView: View {
     ]
 
     var body: some View {
+        
+        
         VStack(alignment: .leading, spacing: 8) {
             Text("My DropIns")
                 .font(.headline)
@@ -196,8 +211,28 @@ struct DropInFeedView: View {
                 eventRow(for: event)
             }
         }
+        VStack {
+            Button(action: {
+                Task {
+                    do {
+                        try await authService.signOut()
+                    } catch {
+                        print(error)
+                    }
+                }
+            }) {
+                Text("Sign out")
+            }
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color.red)
+            .foregroundColor(.white)
+            .cornerRadius(8)
+            .padding(.top, 16)
+        }
 
     }
+    
 
     private func eventRow(for event: String) -> some View {
         HStack {
