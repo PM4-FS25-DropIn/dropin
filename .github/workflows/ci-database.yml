@@ -40,7 +40,7 @@ jobs:
       - run: npm ci      
       - run: npm run test:db
       
-      - run: dir 
+      - run: cat dbreport.xml
         working-directory: ./server
 
       - uses: dorny/test-reporter@v2.0.0
