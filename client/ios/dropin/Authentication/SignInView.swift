@@ -3,59 +3,79 @@ import SwiftUI
 struct SignInView: View {
     @Environment(AuthService.self) private var authService
     
-    @State private var authDetails = AuthCredentials()
-    
-    
+    @State private var authData = AuthCredentials()
+    @State private var signInState: AsyncStatus = .idle
+    @State private var showAlert = false
+    @Binding var selectedAuthMode: AuthMode
     
     var body: some View {
+        VStack(alignment: .center, spacing: 30) {
+            Spacer()
+            header
+            loginForm
+                .alert("Error", isPresented: $showAlert) {
+                    Button("Ok", role: .cancel) { }
+                } message: {
+                    Text(signInState.error)
+                }
+            Spacer()
+            footer
+        }
+        .padding(30)
+    }
+    
+    private var footer: some View {
+        HStack {
+            Text("Don't have an account?")
+                .foregroundStyle(.secondary)
+            Button("Create new one") {
+                selectedAuthMode = .signUp
+            }
+            .foregroundStyle(.accent)
+        }
+        .font(.footnote)
+    }
+    
+    private var header: some View {
         VStack {
-            Text("Welcome Back!")
-                .font(.system(size: 32))
-                .fontWeight(.bold)
+            Text("Welcome back!")
+                .font(.title)
+                .bold()
                 .padding()
-            Text("Log in to your existing account")
+            Text("Log in to your existing account.")
+                .font(.subheadline)
+                .foregroundStyle(.gray)
         }
-        Spacer()
-        
-        inputForm
-        Spacer()
-        buttonSection
-        
-        
-        Spacer()
     }
     
-    private var inputForm: some View {
+    private var loginForm: some View {
         VStack(spacing: 35) {
-            Section {
-                AuthTextField("Email",value: $authDetails.email)
-                AuthSecureField("Password",value: $authDetails.password)
+            AuthTextField("Email", value: $authData.email)
+            AuthSecureField("Password", value: $authData.password)
+            Button {
+                signIn()
+            } label: {
+                Text("Sign in")
+                    .frame(maxWidth: .infinity)
             }
-            .padding(.horizontal,35)
+            .buttonStyle(.primary)
+            .controlSize(.large)
+            .bold()
+            .padding(.top, 40)
+            .disabled(signInState.isRunning)
         }
     }
     
-    private var buttonSection: some View {
-        VStack() {
-            Button(action: signIn) {
-                Text("Sign In")
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .background(Color("AccentColor"))
-                    .cornerRadius(30)
-            }
-            .padding(.horizontal, 35)
-        }
-    }
     
     private func signIn() {
         Task {
+            signInState = .running
             do {
-                try await authService.signIn(authData: authDetails)
+                try await authService.signIn(authData: authData)
+                signInState = .success
             } catch {
-                print(error)
+                signInState = .failure(error)
+                showAlert = true
             }
         }
     }
@@ -63,6 +83,6 @@ struct SignInView: View {
 
 
 #Preview {
-    SignInView()
+    SignInView(selectedAuthMode: .constant(.signIn))
         .environment(AuthService())
 }

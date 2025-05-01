@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct EventEditView: View {
-    @Environment(EventStore.self) private var eventService
+    @Environment(EventStore.self) private var eventStore
     @Environment(\.dismiss) private var dismiss
     
     @State var event: DropInEvent
@@ -62,7 +62,7 @@ struct EventEditView: View {
             updateAsyncState = .running
             
             do {
-                try await eventService.updateEvent(event)
+                try await eventStore.updateEvent(event)
                 dismiss()
                 updateAsyncState = .success
             } catch {

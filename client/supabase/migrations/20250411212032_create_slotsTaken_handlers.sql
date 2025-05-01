@@ -27,7 +27,7 @@ begin
     update public.events
     set slots_taken = slots_taken - 1
     where id = old.event_id;
-    return new;
+    return old;
 end;
 $$ language plpgsql security definer;
 

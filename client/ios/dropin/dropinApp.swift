@@ -9,6 +9,8 @@ import SwiftUI
 
 @main
 struct dropinApp: App {
+    @UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
+    
     @State private var authService = AuthService()
 
     var body: some Scene {

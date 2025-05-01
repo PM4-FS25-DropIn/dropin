@@ -104,7 +104,7 @@ struct ChatRoomView: View {
 
 
 struct ChatRoomPreviewWrapper: View {
-    @State private var profile = Profile(id: UUID(), username: "PreviewUser", avatarUrl: nil)
+    @State private var profile = Profile(id: UUID(), username: "PreviewUser", avatarUrl: nil, emojicode: "", city: "")
     @State private var event: DropInEvent = DropInEvent(
         id: 1,
         createdAt: Date(),
@@ -116,12 +116,10 @@ struct ChatRoomPreviewWrapper: View {
         end: Calendar.current.date(byAdding: .hour, value: 3, to: Date())!,
         latitude: 47.3769,
         longitude: 8.5417,
-        maxSlots: 10,
-        takenSlots: 3,
-        visibility: .public,
+        slotLimit: 10,
+        slotsTaken: 3,
         ageRestricted: false,
         chatEnabled: true,
-        status: .upcoming
     )
     
     var body: some View {

@@ -7,11 +7,11 @@
 --     and filters out any events with IDs in the excluded_ids array
 -- ===========================================
 create or replace function fetch_events_feed(excluded_ids int[])
-returns setof events_not_responded_to
+returns setof public.events_not_joined
 language sql
 as $$
     select *
-    from events_not_responded_to
+    from public.events_not_joined
     where id != all(excluded_ids)
     limit 5;
 $$;

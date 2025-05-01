@@ -27,11 +27,11 @@ struct ProfileView: View {
                 .cornerRadius(16)
         }
         .edgesIgnoringSafeArea(.top)
-        .task {
-            do {
-                username = try await authService.getUser().username
-            } catch {
-                username = "Error loading username..."
+        .onAppear {
+            Task {
+                print("Getting username")
+                username = try await authService.getUsername()
+                print("Username is: \(username)")
             }
         }
     }

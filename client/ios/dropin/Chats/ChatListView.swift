@@ -56,12 +56,10 @@ struct ChatListView: View {
                 end: Calendar.current.date(byAdding: .hour, value: 3, to: Date())!,
                 latitude: 47.3769,
                 longitude: 8.5417,
-                maxSlots: 10,
-                takenSlots: 3,
-                visibility: .public,
+                slotLimit: 10,
+                slotsTaken: 3,
                 ageRestricted: false,
                 chatEnabled: true,
-                status: .upcoming
             ),
             DropInEvent(
                 id: 2,
@@ -74,12 +72,10 @@ struct ChatListView: View {
                 end: Calendar.current.date(byAdding: .day, value: 1, to: Calendar.current.date(byAdding: .hour, value: 2, to: Date())!)!,
                 latitude: 47.2654,
                 longitude: 8.6741,
-                maxSlots: 15,
-                takenSlots: 12,
-                visibility: .public,
+                slotLimit: 15,
+                slotsTaken: 12,
                 ageRestricted: false,
                 chatEnabled: true,
-                status: .upcoming
             ),
             DropInEvent(
                 id: 3,
@@ -92,12 +88,10 @@ struct ChatListView: View {
                 end: Calendar.current.date(byAdding: .hour, value: 2, to: Date())!,
                 latitude: 47.5000,
                 longitude: 8.3500,
-                maxSlots: 8,
-                takenSlots: 8,
-                visibility: .public,
+                slotLimit: 8,
+                slotsTaken: 8,
                 ageRestricted: true,
                 chatEnabled: true,
-                status: .live
             )
         ]
     }

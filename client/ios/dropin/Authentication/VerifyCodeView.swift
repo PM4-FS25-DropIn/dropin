@@ -25,14 +25,13 @@ struct VerifyCodeView: View {
                     .background(Color("AccentColor"))
                     .cornerRadius(30)
             }
-            HStack {
-                Text("Already verified?")
+            /*HStack {
                 NavigationLink(destination: SignInView()) {
                     Text("Log in")
                         .foregroundColor(Color("AccentColor"))
                         .fontWeight(.bold)
                 }
-            }
+            }*/
         }
         .padding(.horizontal,35)
         
