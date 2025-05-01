@@ -32,7 +32,6 @@ jobs:
         run: npm run test:db
 
       - uses: dorny/test-reporter@v2.0.0
-        working-directory: ./server
         with:
           name: DB Test Report
           path: ./server/dbreport.xml
