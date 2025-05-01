@@ -1,12 +1,6 @@
-//
-//  Models.swift
-//  dropin
-//
-//  Created by leo on 02.04.2025.
-//
-
 import Foundation
 import CoreLocation
+import SwiftUI
 
 struct Profile: Decodable {
     let id: UUID
@@ -18,6 +12,18 @@ struct Profile: Decodable {
         case username
         case avatarUrl = "avatar_url"
     }
+}
+
+struct UpdateProfileParams: Encodable {
+  let username: String
+  let fullName: String
+  let website: String
+
+  enum CodingKeys: String, CodingKey {
+    case username
+    case fullName = "full_name"
+    case website
+  }
 }
 
 struct Message: Identifiable, Equatable {
@@ -77,39 +83,70 @@ enum EventCategory: String, CaseIterable {
     case sponsored = "Sponsored"
 }
 
-enum EventVisibility: String, CaseIterable, Codable {
-    case `public`
-    case friends
-    case invite
-}
-
-enum EventStatus: String, CaseIterable, Codable {
-    case upcoming
-    case live
-    case closing
-}
-
-struct DropInEvent: Identifiable, Codable {
-    var id: Int
+struct EventJoins: Codable, Identifiable {
+    var id: Int?
+    var eventId: Int
+    var userId: UUID
     var createdAt: Date?
+    var isHost: Bool?
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case eventId = "event_id"
+        case userId = "user_id"
+        case createdAt = "created_at"
+        case isHost = "is_host"
+    }
+}
+
+struct EventThumbnail: Transferable, Equatable {
+    let image: Image
+    let data: Data
+    
+    static var transferRepresentation: some TransferRepresentation {
+        DataRepresentation(importedContentType: .image) { data in
+            guard let image = EventThumbnail(data: data) else {
+                throw TransferError.importFailed
+            }
+            
+            return image
+        }
+    }
+}
+
+extension EventThumbnail {
+    init?(data: Data) {
+        guard let uiImage = UIImage(data: data) else {
+            return nil
+        }
+        
+        let image = Image(uiImage: uiImage)
+        self.init(image: image, data: data)
+    }
+    
+}
+
+struct DropInEvent: Codable, Identifiable, Equatable {
+    var id: Int?
+    var createdAt: Date?
+    var updatedAt: Date?
     var title: String
     var description: String
-    var imagePaths: [String]?
+    var imagePaths: [String]
     var userId: UUID?
     var start: Date
     var end: Date
     var latitude: CLLocationDegrees
     var longitude: CLLocationDegrees
-    var maxSlots: Int
-    var takenSlots: Int
-    var visibility: EventVisibility
+    var slotLimit: Int
+    var slotsTaken: Int?
     var ageRestricted: Bool
     var chatEnabled: Bool
-    var status: EventStatus
     
     enum CodingKeys: String, CodingKey {
         case id
         case createdAt = "created_at"
+        case updatedAt = "updated_at"
         case title
         case description
         case imagePaths = "image_paths"
@@ -118,11 +155,23 @@ struct DropInEvent: Identifiable, Codable {
         case end
         case latitude
         case longitude
-        case maxSlots = "max_slots"
-        case takenSlots = "taken_slots"
-        case visibility
+        case slotLimit = "slot_limit"
+        case slotsTaken = "slots_taken"
         case ageRestricted = "age_restricted"
         case chatEnabled = "chat_enabled"
-        case status
     }
+}
+
+extension DropInEvent: Hashable { }
+
+struct OperationState {
+    var isRunning = false
+    var hasError = false
+    var error: Error?
+}
+
+// - MARK: Error Types
+
+enum TransferError: Error {
+    case importFailed
 }
