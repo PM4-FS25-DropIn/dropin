@@ -26,7 +26,7 @@ final class SettingsViewModel: ObservableObject {
 
     // MARK: - Account Actions
     func updateEmail() async {
-        print("Updating email to: \(email)")
+        print("Updating email address")
         try? await Task.sleep(nanoseconds: 500_000_000)
     }
 
