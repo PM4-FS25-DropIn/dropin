@@ -30,12 +30,10 @@ jobs:
 
       - name: Start Supabase Local DB
         working-directory: ./client
-        run: supabase db start
-
+        run: supabase start
+        
       - run: npm ci      
-      - run: npm run build:ts
-      - run: tsc -p test/tsconfig.json
-      - run: node --test --experimental-test-coverage --test-reporter=junit --test-reporter-destination=dbreport.xml --loader ts-node/esm test/database/**/*.test.ts
+      - run: npm run test:db
 
       - uses: dorny/test-reporter@v2.0.0
         if: success() || failure()
