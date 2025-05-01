@@ -43,7 +43,3 @@ struct ChatTextFieldView: View {
     }
 }
 
-#Preview {
-    @State var message = ""
-    ChatTextFieldView(message: $message, onSend: { })
-}

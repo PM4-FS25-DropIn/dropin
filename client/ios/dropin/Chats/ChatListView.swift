@@ -174,9 +174,3 @@ struct ChatRow: View {
     }
 }
 
-
-// MARK: - Preview
-
-#Preview {
-    ChatListView()
-}

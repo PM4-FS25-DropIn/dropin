@@ -130,6 +130,3 @@ struct ChatRoomPreviewWrapper: View {
     }
 }
 
-#Preview {
-    ChatRoomPreviewWrapper()
-}
