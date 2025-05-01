@@ -1,0 +1,180 @@
+//
+//  MapContentView.swift
+//  dropin-prototype
+//
+//  Created by leo on 23.04.2025.
+//
+
+import SwiftUI
+@preconcurrency import MapKit
+
+struct EventMap: View {
+    @Environment(EventStore.self) private var eventStore
+    @Bindable var viewModel: EventMapViewModel
+    
+    @State private var eventFetchState: AsyncStatus = .idle
+    
+    @State var cameraPosition: MapCameraPosition = .userLocation(fallback: .region(.bellevueRegion))
+
+    @State private var showEventDetailSheet = false
+    @State private var showCreateViewSheet = false
+    
+    @State private var selectedItem: MapSelection<Int>?
+    @State private var pinLocation: CLLocationCoordinate2D?
+    
+    var body: some View {
+        map
+            .onAppear {
+                viewModel.eventStore = eventStore
+                updateMapEvents()
+                cameraPosition = .userLocation(fallback: .region(.bellevueRegion))
+            }
+    }
+    
+    var map: some View {
+        MapReader { proxy in
+            Map(position: $cameraPosition, selection: $selectedItem) {
+                UserAnnotation()
+                if let pinLocation {
+                    Marker("Marked", systemImage: "pin.fill", coordinate: pinLocation)
+                        .tint(.indigo)
+                }
+                ForEach(eventStore.mapEvents.indices, id: \.self) { index in
+                    let event = eventStore.mapEvents[index]
+                    Marker(event.title, systemImage: getDropIcon(event: event), coordinate: CLLocationCoordinate2D(latitude: event.latitude, longitude: event.longitude))
+                        .tag(MapSelection(index))
+                        .tint(getEventStatusColor(event.status))
+                }
+                
+                if let route = viewModel.route {
+                    MapPolyline(route)
+                        .stroke(.accent, lineWidth: 5)
+                }
+            }
+            .sheet(isPresented: $showEventDetailSheet) {
+                dropInDetailSheet
+            }
+            .sheet(isPresented: $showCreateViewSheet) {
+                pinLocation = nil
+            } content: {
+                EventCreateView(defaultEvent: DropInEvent(title: "", description: "", imagePaths: ["default.event.thumbnail"], start: Date(), end: Date(), latitude: pinLocation?.latitude ?? 0, longitude: pinLocation?.longitude ?? 0, slotLimit: 2, ageRestricted: false, chatEnabled: true))
+            }
+            .onChange(of: selectedItem) {
+                guard let selectedItem else { return }
+                if let _ = selectedItem.value {
+                    showEventDetailSheet = true
+                    getDirectionsOfSelectedItem()
+                }
+            }
+            .mapFeatureSelectionAccessory(.callout)
+            .mapControls {
+                MapCompass()
+                MapUserLocationButton()
+                MapPitchToggle()
+            }
+            .onMapCameraChange { context in
+                onMapCameraChangeUpdate(context: context)
+            }
+            .overlay(alignment: .topLeading) {
+                fetchIndicator
+                    .padding(.horizontal)
+            }
+            .overlay(alignment: .bottomTrailing) {
+                VStack(alignment: .trailing, spacing: 4) {
+                    Text("Latitude: \(viewModel.locationService.lastLocation.coordinate.latitude.formatted(.number.precision(.fractionLength(4))))")
+                    Text("Longitude: \(viewModel.locationService.lastLocation.coordinate.longitude.formatted(.number.precision(.fractionLength(4))))")
+                }
+                .font(.caption)
+                .padding(8)
+                .background(.ultraThinMaterial)
+                .foregroundStyle(.secondary)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .padding()
+            }
+            .gesture(MyLongPressGesture { position in
+                pinLocation = proxy.convert(position, from: .global)
+                if (!showEventDetailSheet) {
+                    showCreateViewSheet = true
+                }
+            })
+        }
+    }
+    
+    var dropInDetailSheet: some View {
+        Group {
+            if let value = selectedItem?.value {
+                if value < eventStore.mapEvents.count {
+                    MapEventItemDetailSheet(viewModel: viewModel, event: eventStore.mapEvents[value], travelTime: viewModel.travelTime)
+                }
+            } else {
+                ContentUnavailableView {
+                    Label("No Event", systemImage: "texclamationmark.triangle")
+                } description: {
+                    Text("Event not found.")
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
+    }
+    
+    
+    /// Indicate if it's currently updating the map (fetching new events).
+    var fetchIndicator: some View {
+        Text(eventFetchState.isRunning ? "Searching nearby events…" : "Events up to date")
+            .font(.caption)
+            .foregroundColor(.secondary)
+            .padding(6)
+            .background(.thinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+    
+    /// If camera is currently following user, only fetch new updates every 5 seconds. Otherwise fetch,
+    /// whenever the camera position gets changed by the user.
+    private func onMapCameraChangeUpdate(context: MapCameraUpdateContext) {
+        let now = Date()
+        if cameraPosition.followsUserLocation && now.timeIntervalSince(viewModel.lastCameraUpdate) > 5 {
+            viewModel.lastCameraUpdate = now
+            viewModel.visibleRegion = context.region
+            updateMapEvents()
+        } else if cameraPosition.positionedByUser {
+            viewModel.visibleRegion = context.region
+            updateMapEvents()
+        }
+    }
+    
+    /// Fetch new events.
+    private func updateMapEvents() {
+        Task {
+            eventFetchState = .running
+            do {
+                try await eventStore.fetchEventsInRegion(latitude: 0, longitude: 0, latitudeDelta: 0, longitudeDelta: 0)
+                print("Fetching new events")
+                eventFetchState = .success
+            } catch {
+                print("Couldn't fetch events")
+                eventFetchState = .failure(error)
+            }
+        }
+    }
+    
+    func getDropIcon(event: DropInEvent) -> String {
+        guard let eventId = event.id else { return "drop" }
+        return eventStore.getAttendanceStatus(of: eventId) == .joined ? "drop.fill" : "drop"
+    }
+    
+    /// Getting directions to a selected item.
+    private func getDirectionsOfSelectedItem() {
+        guard let selectedItem else {
+            print("No item selected")
+            return
+        }
+        viewModel.getDirections(of: selectedItem)
+    }
+    
+    
+}
+
+#Preview {
+    EventMap(viewModel: EventMapViewModel())
+        .environment(EventStore())
+}
