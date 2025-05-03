@@ -188,6 +188,8 @@ private struct AccountSection: View {
 
     var body: some View {
         Section(header: Text("Account")) {
+            
+            // TODO Change email logic with verification
             TextField("Email", text: $vm.email)
                 .keyboardType(.emailAddress)
                 .textContentType(.emailAddress)
@@ -246,10 +248,7 @@ private struct SupportSection: View {
                 "Help & Feedback",
                 destination: URL(string: "mailto:support@example.com")!
             )
-            Link(
-                "Privacy Policy",
-                destination: URL(string: "https://example.com/privacy")!
-            )
+            
             HStack {
                 Text("Version")
                 Spacer()
