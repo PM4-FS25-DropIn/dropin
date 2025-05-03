@@ -64,7 +64,7 @@ final class SettingsViewModel: ObservableObject {
         print("Deleting account...")
         try? await Task.sleep(nanoseconds: 500_000_000)
     }
-    
+
 }
 
 // MARK: - Change Password View
@@ -180,12 +180,12 @@ private struct AccountSection: View {
     @ObservedObject var vm: SettingsViewModel
 
     @Environment(AuthService.self) private var authService
-    
+
     @State private var showSignOutAlert = false
 
     var body: some View {
         Section(header: Text("Account")) {
-            
+
             // TODO Change email logic with verification
             TextField("Email", text: $vm.email)
                 .keyboardType(.emailAddress)
@@ -253,7 +253,7 @@ private struct SupportSection: View {
                 "Help & Feedback",
                 destination: URL(string: "mailto:support@example.com")!
             )
-            
+
             HStack {
                 Text("Version")
                 Spacer()
