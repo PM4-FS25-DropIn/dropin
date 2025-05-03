@@ -211,25 +211,6 @@ struct DropInFeedView: View {
                 eventRow(for: event)
             }
         }
-        VStack {
-            Button(action: {
-                Task {
-                    do {
-                        try await authService.signOut()
-                    } catch {
-                        print(error)
-                    }
-                }
-            }) {
-                Text("Sign out")
-            }
-            .padding()
-            .frame(maxWidth: .infinity)
-            .background(Color.red)
-            .foregroundColor(.white)
-            .cornerRadius(8)
-            .padding(.top, 16)
-        }
 
     }
     
