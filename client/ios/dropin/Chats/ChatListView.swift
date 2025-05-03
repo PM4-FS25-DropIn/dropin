@@ -59,7 +59,7 @@ struct ChatListView: View {
                 slotLimit: 10,
                 slotsTaken: 3,
                 ageRestricted: false,
-                chatEnabled: true,
+                chatEnabled: true
             ),
             DropInEvent(
                 id: 2,
@@ -75,7 +75,7 @@ struct ChatListView: View {
                 slotLimit: 15,
                 slotsTaken: 12,
                 ageRestricted: false,
-                chatEnabled: true,
+                chatEnabled: true
             ),
             DropInEvent(
                 id: 3,
@@ -91,7 +91,7 @@ struct ChatListView: View {
                 slotLimit: 8,
                 slotsTaken: 8,
                 ageRestricted: true,
-                chatEnabled: true,
+                chatEnabled: true
             )
         ]
     }
