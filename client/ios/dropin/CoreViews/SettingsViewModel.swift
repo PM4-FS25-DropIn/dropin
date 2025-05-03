@@ -10,6 +10,7 @@ import SwiftUI
 // MARK: - ViewModel
 @MainActor
 final class SettingsViewModel: ObservableObject {
+
     // Account
     @Published var email: String = ""
 
@@ -34,22 +35,37 @@ final class SettingsViewModel: ObservableObject {
         // TODO: Implement actual password update logic
         // Simulated validation
         guard !oldPassword.isEmpty else {
-            throw NSError(domain: "Auth", code: 1, userInfo: [NSLocalizedDescriptionKey: "Old password is required"])
+            throw NSError(
+                domain: "Auth",
+                code: 1,
+                userInfo: [
+                    NSLocalizedDescriptionKey: "Old password is required"
+                ]
+            )
         }
-        
+
         guard newPassword.count >= 8 else {
-            throw NSError(domain: "Auth", code: 2, userInfo: [NSLocalizedDescriptionKey: "Password must be at least 8 characters"])
+            throw NSError(
+                domain: "Auth",
+                code: 2,
+                userInfo: [
+                    NSLocalizedDescriptionKey:
+                        "Password must be at least 8 characters"
+                ]
+            )
         }
-        
+
         print("Password updated successfully")
         try await Task.sleep(nanoseconds: 500_000_000)
     }
 
+    // TODO: Implement verification logic and then delete account
     func deleteAccount() async {
         print("Deleting account...")
         try? await Task.sleep(nanoseconds: 500_000_000)
     }
 
+    // TODO: Implement sign out logic
     func signOut() async {
         print("Signing out...")
         try? await Task.sleep(nanoseconds: 200_000_000)
@@ -73,11 +89,11 @@ struct ChangePasswordView: View {
                 SecureField("New Password", text: $newPassword)
                 SecureField("Confirm New Password", text: $confirmPassword)
             }
-            
+
             Section {
                 Button("Change Password") {
                     guard validatePasswords() else { return }
-                    
+
                     Task {
                         do {
                             try await vm.updatePassword(
@@ -95,45 +111,51 @@ struct ChangePasswordView: View {
             }
         }
         .alert("Password Error", isPresented: $showError) {
-            Button("OK") { }
+            Button("OK") {}
         } message: {
             Text(errorMessage)
         }
         .navigationTitle("Change Password")
         .navigationBarTitleDisplayMode(.inline)
     }
-    
+
     private func validatePasswords() -> Bool {
         guard !oldPassword.isEmpty else {
             errorMessage = "Please enter your current password"
             showError = true
             return false
         }
-        
+
         guard !newPassword.isEmpty else {
             errorMessage = "Please enter a new password"
             showError = true
             return false
         }
-        
-        let trimmedNewPassword = newPassword.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedConfirmPassword = confirmPassword.trimmingCharacters(in: .whitespacesAndNewlines)
-        
+
+        let trimmedNewPassword = newPassword.trimmingCharacters(
+            in: .whitespacesAndNewlines
+        )
+        let trimmedConfirmPassword = confirmPassword.trimmingCharacters(
+            in: .whitespacesAndNewlines
+        )
+
         guard trimmedNewPassword == trimmedConfirmPassword else {
             errorMessage = "New passwords don't match"
             showError = true
             return false
         }
-        
-        let passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+
+        let passwordRegex =
+            "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
         let predicate = NSPredicate(format: "SELF MATCHES %@", passwordRegex)
-        
+
         guard predicate.evaluate(with: newPassword) else {
-            errorMessage = "Password must contain:\n• 8+ characters\n• A number\n• A special character (@$!%*#?&)"
+            errorMessage =
+                "Password must contain:\n• 8+ characters\n• A number\n• A special character (@$!%*#?&)"
             showError = true
             return false
         }
-        
+
         return true
     }
 }
@@ -220,13 +242,38 @@ private struct AppearanceSection: View {
 private struct SupportSection: View {
     var body: some View {
         Section(header: Text("Support & About")) {
-            Link("Help & Feedback", destination: URL(string: "mailto:support@example.com")!)
-            Link("Privacy Policy", destination: URL(string: "https://example.com/privacy")!)
+            Link(
+                "Help & Feedback",
+                destination: URL(string: "mailto:support@example.com")!
+            )
+            Link(
+                "Privacy Policy",
+                destination: URL(string: "https://example.com/privacy")!
+            )
             HStack {
                 Text("Version")
                 Spacer()
-                Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
-                    .foregroundStyle(.secondary)
+                Text(
+                    Bundle.main.infoDictionary?["CFBundleShortVersionString"]
+                        as? String ?? "1.0"
+                )
+                .foregroundStyle(.secondary)
+            }
+        }
+    }
+}
+
+private struct DangerZoneSection: View {
+
+    @ObservedObject var vm: SettingsViewModel
+
+    var body: some View {
+        Section(header: Text("Danger Zone")) {
+
+            Button(role: .destructive) {
+                Task { await vm.deleteAccount() }
+            } label: {
+                Text("Delete Account")
             }
         }
     }
