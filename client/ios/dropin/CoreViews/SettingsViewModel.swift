@@ -64,12 +64,7 @@ final class SettingsViewModel: ObservableObject {
         print("Deleting account...")
         try? await Task.sleep(nanoseconds: 500_000_000)
     }
-
-    // TODO: Implement sign out logic
-    func signOut() async {
-        print("Signing out...")
-        try? await Task.sleep(nanoseconds: 200_000_000)
-    }
+    
 }
 
 // MARK: - Change Password View
