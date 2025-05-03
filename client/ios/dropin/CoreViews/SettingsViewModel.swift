@@ -149,6 +149,7 @@ struct SettingsView: View {
                 NotificationsSection(vm: vm)
                 AppearanceSection(vm: vm)
                 SupportSection()
+                DangerZoneSection(vm: vm)
             }
             .listStyle(.insetGrouped)
             .listSectionSpacing(5)
@@ -160,7 +161,9 @@ struct SettingsView: View {
 // MARK: - Sections
 private struct AccountSection: View {
     @ObservedObject var vm: SettingsViewModel
-    
+
+    @Environment(AuthService.self) private var authService
+
     var body: some View {
         Section(header: Text("Account")) {
             TextField("Email", text: $vm.email)
@@ -175,14 +178,14 @@ private struct AccountSection: View {
                 Text("Change Password")
             }
 
-            Button(role: .destructive) {
-                Task { await vm.deleteAccount() }
-            } label: {
-                Text("Delete Account")
-            }
-
             Button {
-                Task { await vm.signOut() }
+                Task {
+                    do {
+                        try await authService.signOut()
+                    } catch {
+                        print(error)
+                    }
+                }
             } label: {
                 Text("Sign Out")
             }
