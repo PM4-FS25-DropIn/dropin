@@ -185,6 +185,8 @@ private struct AccountSection: View {
     @ObservedObject var vm: SettingsViewModel
 
     @Environment(AuthService.self) private var authService
+    
+    @State private var showSignOutAlert = false
 
     var body: some View {
         Section(header: Text("Account")) {
@@ -203,15 +205,23 @@ private struct AccountSection: View {
             }
 
             Button {
-                Task {
-                    do {
-                        try await authService.signOut()
-                    } catch {
-                        print(error)
-                    }
-                }
+                showSignOutAlert = true
             } label: {
                 Text("Sign Out")
+            }
+            .alert("Confirm Sign Out", isPresented: $showSignOutAlert) {
+                Button("Cancel", role: .cancel) {}
+                Button("Sign Out", role: .destructive) {
+                    Task {
+                        do {
+                            try await authService.signOut()
+                        } catch {
+                            print(error)
+                        }
+                    }
+                }
+            } message: {
+                Text("Are you sure you want to sign out from this device?")
             }
         }
     }
