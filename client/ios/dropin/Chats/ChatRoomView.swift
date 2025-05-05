@@ -130,7 +130,7 @@ struct ChatRoomPreviewWrapper: View {
         slotLimit: 10,
         slotsTaken: 3,
         ageRestricted: false,
-        chatEnabled: true,
+        chatEnabled: true
     )
     
     var body: some View {
