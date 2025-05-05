@@ -19,6 +19,6 @@ create table "public"."messages" (
     "session_name" text not null,
     "content" text not null,
     "created_at" timestamp with time zone not null default timezone('utc'::text, now()),
-    "chat_room_id" bigint references public.events on delete cascade not null,
+    "chat_room_id" bigint references public.events on delete cascade not null
 );
 

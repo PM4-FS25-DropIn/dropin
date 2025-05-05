@@ -1,29 +1,15 @@
 import SwiftUI
 
-// MARK: - Data Model
-
-struct Chat: Identifiable {
-    let id = UUID() // Conforms to Identifiable for ForEach
-    let groupName: String
-    let lastMessage: String
-    let lastMessageTimestamp: Date
-    let unreadCount: Int
-    // No profileImageURL needed yet, using placeholder
-}
-
 // MARK: - Chats View
 
 struct ChatListView: View {
-
-    // State variable to hold our dummy chat data
-    @State private var chats: [Chat] = []
-    @State private var events: [DropInEvent] = []
     @Environment(AuthService.self) private var authService
+    @Environment(EventStore.self) private var eventStore
 
     var body: some View {
         NavigationStack {
             List {
-                ForEach(events) { event in
+                ForEach(eventStore.joinedEvents) { event in
                     NavigationLink {
                         // Placeholder destination view for when a chat is tapped
                         ChatRoomView(event: event, authService: authService)
@@ -35,66 +21,11 @@ struct ChatListView: View {
                 }
             }
             .listStyle(.plain) // Optional: Removes default inset grouped styling
-            .navigationTitle("Chats") // Sets the title in the navigation bar
-            .onAppear(perform: loadDummyEvents) // Load data when the view appears
+            .navigationTitle("Chats")
         }
     }
 
-    // MARK: - Data Loading
-
     
-    private func loadDummyEvents() {
-        events = [
-            DropInEvent(
-                id: 1,
-                createdAt: Date(),
-                title: "Pizza Night",
-                description: "Join us for free pizza and chill vibes.",
-                imagePaths: ["pizza.jpg"],
-                userId: UUID(),
-                start: Calendar.current.date(byAdding: .hour, value: 1, to: Date())!,
-                end: Calendar.current.date(byAdding: .hour, value: 3, to: Date())!,
-                latitude: 47.3769,
-                longitude: 8.5417,
-                slotLimit: 10,
-                slotsTaken: 3,
-                ageRestricted: false,
-                chatEnabled: true,
-            ),
-            DropInEvent(
-                id: 2,
-                createdAt: Date(),
-                title: "Sunset Hike",
-                description: "Evening hike with a view. Bring water!",
-                imagePaths: ["hike.jpg"],
-                userId: UUID(),
-                start: Calendar.current.date(byAdding: .day, value: 1, to: Date())!,
-                end: Calendar.current.date(byAdding: .day, value: 1, to: Calendar.current.date(byAdding: .hour, value: 2, to: Date())!)!,
-                latitude: 47.2654,
-                longitude: 8.6741,
-                slotLimit: 15,
-                slotsTaken: 12,
-                ageRestricted: false,
-                chatEnabled: true,
-            ),
-            DropInEvent(
-                id: 3,
-                createdAt: Date(),
-                title: "Late Night Coding",
-                description: "Bring your laptop and snacks. We'll build something cool.",
-                imagePaths: ["coding.jpg"],
-                userId: UUID(),
-                start: Calendar.current.date(byAdding: .hour, value: -2, to: Date())!,
-                end: Calendar.current.date(byAdding: .hour, value: 2, to: Date())!,
-                latitude: 47.5000,
-                longitude: 8.3500,
-                slotLimit: 8,
-                slotsTaken: 8,
-                ageRestricted: true,
-                chatEnabled: true,
-            )
-        ]
-    }
 }
 
 // MARK: - Chat Row View

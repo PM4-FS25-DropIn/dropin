@@ -32,7 +32,7 @@ struct ChatRoomView: View {
                 Spacer()
             }
             .padding()
-            .background(Color.white)
+            .background(Color(.systemBackground).ignoresSafeArea())
             .overlay(
                 Rectangle()
                     .frame(height: 1)
@@ -96,8 +96,19 @@ struct ChatRoomView: View {
 
     
     private func groupedMessages() -> [(key: String, value: [Message])] {
-        let grouped = Dictionary(grouping: viewModel.messages) { $0.formattedDate() }
-        return grouped.sorted { $0.key > $1.key }
+        let grouped: [String: [Message]] = Dictionary(grouping: viewModel.messages) { $0.formattedDate() }
+
+        let sorted: [(key: String, value: [Message])] = grouped.sorted { (firstDate: (key: String, value: [Message]), secondDate: (key: String, value: [Message])) in
+            guard
+                let firstDate = firstDate.value.first?.timestamp,
+                let secondDate = secondDate.value.first?.timestamp
+            else {
+                return false
+            }
+            return firstDate < secondDate
+        }
+
+        return sorted
     }
     
 }

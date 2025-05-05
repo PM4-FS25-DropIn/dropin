@@ -33,7 +33,7 @@ struct ChatTextFieldView: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .background(Color.white)
+        .background(Color(.systemBackground).ignoresSafeArea())
         .overlay(
             Rectangle()
                 .frame(height: 1)

@@ -20,7 +20,7 @@ struct ChatBubbleView: View {
                 if !message.isCurrentSession {
                     Text(message.username)
                         .font(.caption)
-                        .foregroundColor(.gray)
+                        .foregroundColor(.primary)
                         .padding(.leading, 8)
                 }
                 
@@ -28,7 +28,7 @@ struct ChatBubbleView: View {
                     Text(message.content)
                         .padding(12)
                         .background(message.isCurrentSession ? .accent : Color.gray.opacity(0.2))
-                        .foregroundColor(message.isCurrentSession ? .white : .black)
+                        .foregroundColor(message.isCurrentSession ? .white : .primary)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                     
                     Text(message.formattedTimestamp())
@@ -48,5 +48,5 @@ struct ChatBubbleView: View {
 }
 
 #Preview {
-    ChatBubbleView(message: .init(chatRoomId: 1, username: "Shpetim", content: "Hello, I am looking forward to this DropIn!", isCurrentSession: true, timestamp: Date()))
+    ChatBubbleView(message: .init(chatRoomId: 1, username: "Shpetim", content: "Hello, I am looking forward to this DropIn!", isCurrentSession: false, timestamp: Date()))
 }
