@@ -28,18 +28,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		B3B7160C2D872E1D0023465A /* dropin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = dropin.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3B7161C2D872E1F0023465A /* dropinTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = dropinTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3B716262D872E1F0023465A /* dropinUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = dropinUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3B7160C2D872E1D0023465A /* pm4-dropin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "pm4-dropin.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3B7161C2D872E1F0023465A /* pm4-dropinTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "pm4-dropinTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3B716262D872E1F0023465A /* pm4-dropinUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "pm4-dropinUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		B3FCBA722DC38A1000FFAC24 /* Exceptions for "dropin" folder in "dropin" target */ = {
+		B3FCBA722DC38A1000FFAC24 /* Exceptions for "dropin" folder in "pm4-dropin" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = B3B7160B2D872E1D0023465A /* dropin */;
+			target = B3B7160B2D872E1D0023465A /* pm4-dropin */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -47,7 +47,7 @@
 		B3B7160E2D872E1D0023465A /* dropin */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				B3FCBA722DC38A1000FFAC24 /* Exceptions for "dropin" folder in "dropin" target */,
+				B3FCBA722DC38A1000FFAC24 /* Exceptions for "dropin" folder in "pm4-dropin" target */,
 			);
 			path = dropin;
 			sourceTree = "<group>";
@@ -103,9 +103,9 @@
 		B3B7160D2D872E1D0023465A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B3B7160C2D872E1D0023465A /* dropin.app */,
-				B3B7161C2D872E1F0023465A /* dropinTests.xctest */,
-				B3B716262D872E1F0023465A /* dropinUITests.xctest */,
+				B3B7160C2D872E1D0023465A /* pm4-dropin.app */,
+				B3B7161C2D872E1F0023465A /* pm4-dropinTests.xctest */,
+				B3B716262D872E1F0023465A /* pm4-dropinUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -113,9 +113,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		B3B7160B2D872E1D0023465A /* dropin */ = {
+		B3B7160B2D872E1D0023465A /* pm4-dropin */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3B716302D872E1F0023465A /* Build configuration list for PBXNativeTarget "dropin" */;
+			buildConfigurationList = B3B716302D872E1F0023465A /* Build configuration list for PBXNativeTarget "pm4-dropin" */;
 			buildPhases = (
 				B3B716082D872E1D0023465A /* Sources */,
 				B3B716092D872E1D0023465A /* Frameworks */,
@@ -128,17 +128,17 @@
 			fileSystemSynchronizedGroups = (
 				B3B7160E2D872E1D0023465A /* dropin */,
 			);
-			name = dropin;
+			name = "pm4-dropin";
 			packageProductDependencies = (
 				EE3385902DAC5D25006C95F4 /* Supabase */,
 			);
 			productName = dropin;
-			productReference = B3B7160C2D872E1D0023465A /* dropin.app */;
+			productReference = B3B7160C2D872E1D0023465A /* pm4-dropin.app */;
 			productType = "com.apple.product-type.application";
 		};
-		B3B7161B2D872E1F0023465A /* dropinTests */ = {
+		B3B7161B2D872E1F0023465A /* pm4-dropinTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3B716332D872E1F0023465A /* Build configuration list for PBXNativeTarget "dropinTests" */;
+			buildConfigurationList = B3B716332D872E1F0023465A /* Build configuration list for PBXNativeTarget "pm4-dropinTests" */;
 			buildPhases = (
 				B3B716182D872E1F0023465A /* Sources */,
 				B3B716192D872E1F0023465A /* Frameworks */,
@@ -152,16 +152,16 @@
 			fileSystemSynchronizedGroups = (
 				B3B7161F2D872E1F0023465A /* dropinTests */,
 			);
-			name = dropinTests;
+			name = "pm4-dropinTests";
 			packageProductDependencies = (
 			);
 			productName = dropinTests;
-			productReference = B3B7161C2D872E1F0023465A /* dropinTests.xctest */;
+			productReference = B3B7161C2D872E1F0023465A /* pm4-dropinTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		B3B716252D872E1F0023465A /* dropinUITests */ = {
+		B3B716252D872E1F0023465A /* pm4-dropinUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3B716362D872E1F0023465A /* Build configuration list for PBXNativeTarget "dropinUITests" */;
+			buildConfigurationList = B3B716362D872E1F0023465A /* Build configuration list for PBXNativeTarget "pm4-dropinUITests" */;
 			buildPhases = (
 				B3B716222D872E1F0023465A /* Sources */,
 				B3B716232D872E1F0023465A /* Frameworks */,
@@ -175,11 +175,11 @@
 			fileSystemSynchronizedGroups = (
 				B3B716292D872E1F0023465A /* dropinUITests */,
 			);
-			name = dropinUITests;
+			name = "pm4-dropinUITests";
 			packageProductDependencies = (
 			);
 			productName = dropinUITests;
-			productReference = B3B716262D872E1F0023465A /* dropinUITests.xctest */;
+			productReference = B3B716262D872E1F0023465A /* pm4-dropinUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -205,7 +205,7 @@
 					};
 				};
 			};
-			buildConfigurationList = B3B716072D872E1D0023465A /* Build configuration list for PBXProject "dropin" */;
+			buildConfigurationList = B3B716072D872E1D0023465A /* Build configuration list for PBXProject "pm4-dropin" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -222,9 +222,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B3B7160B2D872E1D0023465A /* dropin */,
-				B3B7161B2D872E1F0023465A /* dropinTests */,
-				B3B716252D872E1F0023465A /* dropinUITests */,
+				B3B7160B2D872E1D0023465A /* pm4-dropin */,
+				B3B7161B2D872E1F0023465A /* pm4-dropinTests */,
+				B3B716252D872E1F0023465A /* pm4-dropinUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -280,12 +280,12 @@
 /* Begin PBXTargetDependency section */
 		B3B7161E2D872E1F0023465A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3B7160B2D872E1D0023465A /* dropin */;
+			target = B3B7160B2D872E1D0023465A /* pm4-dropin */;
 			targetProxy = B3B7161D2D872E1F0023465A /* PBXContainerItemProxy */;
 		};
 		B3B716282D872E1F0023465A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3B7160B2D872E1D0023465A /* dropin */;
+			target = B3B7160B2D872E1D0023465A /* pm4-dropin */;
 			targetProxy = B3B716272D872E1F0023465A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -511,7 +511,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/dropin.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/dropin";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/pm4-dropin.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/pm4-dropin";
 			};
 			name = Debug;
 		};
@@ -533,7 +533,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/dropin.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/dropin";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/pm4-dropin.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/pm4-dropin";
 			};
 			name = Release;
 		};
@@ -583,7 +583,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		B3B716072D872E1D0023465A /* Build configuration list for PBXProject "dropin" */ = {
+		B3B716072D872E1D0023465A /* Build configuration list for PBXProject "pm4-dropin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3B7162E2D872E1F0023465A /* Debug */,
@@ -592,7 +592,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3B716302D872E1F0023465A /* Build configuration list for PBXNativeTarget "dropin" */ = {
+		B3B716302D872E1F0023465A /* Build configuration list for PBXNativeTarget "pm4-dropin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3B716312D872E1F0023465A /* Debug */,
@@ -601,7 +601,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3B716332D872E1F0023465A /* Build configuration list for PBXNativeTarget "dropinTests" */ = {
+		B3B716332D872E1F0023465A /* Build configuration list for PBXNativeTarget "pm4-dropinTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3B716342D872E1F0023465A /* Debug */,
@@ -610,7 +610,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3B716362D872E1F0023465A /* Build configuration list for PBXNativeTarget "dropinUITests" */ = {
+		B3B716362D872E1F0023465A /* Build configuration list for PBXNativeTarget "pm4-dropinUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3B716372D872E1F0023465A /* Debug */,
