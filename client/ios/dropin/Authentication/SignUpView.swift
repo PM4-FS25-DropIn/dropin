@@ -25,18 +25,6 @@ struct SignUpView: View {
         .padding(30)
     }
     
-    private var footer: some View {
-        HStack {
-            Text("Already have an account?")
-                .foregroundStyle(.secondary)
-            Button("Sign In") {
-                selectedAuthMode = .signIn
-            }
-            .foregroundStyle(.accent)
-        }
-        .font(.footnote)
-    }
-    
     private var header: some View {
         VStack {
             Text("Sign Up")
@@ -48,7 +36,7 @@ struct SignUpView: View {
                 .foregroundStyle(.gray)
         }
     }
-    
+
     private var signUpForm: some View {
         VStack(spacing: 35) {
             AuthTextField("Username", value: $authData.username)
@@ -82,6 +70,18 @@ struct SignUpView: View {
                 showAlert = true
             }
         }
+    }
+    
+    private var footer: some View {
+        HStack {
+            Text("Already have an account?")
+                .foregroundStyle(.secondary)
+            Button("Sign In") {
+                selectedAuthMode = .signIn
+            }
+            .foregroundStyle(.accent)
+        }
+        .font(.footnote)
     }
 }
 
