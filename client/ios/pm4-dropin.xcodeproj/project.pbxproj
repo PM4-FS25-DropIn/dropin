@@ -31,6 +31,7 @@
 		B3B7160C2D872E1D0023465A /* pm4-dropin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "pm4-dropin.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B7161C2D872E1F0023465A /* pm4-dropinTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "pm4-dropinTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B716262D872E1F0023465A /* pm4-dropinUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "pm4-dropinUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3DA2F192DCA4F5400F1593A /* pm4-dropin.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "pm4-dropin.xctestplan"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -93,6 +94,7 @@
 		B3B716032D872E1D0023465A = {
 			isa = PBXGroup;
 			children = (
+				B3DA2F192DCA4F5400F1593A /* pm4-dropin.xctestplan */,
 				B3B7160E2D872E1D0023465A /* pm4-dropin */,
 				B3B7161F2D872E1F0023465A /* dropinTests */,
 				B3B716292D872E1F0023465A /* dropinUITests */,
@@ -564,6 +566,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4S8GV8LXP7;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0;

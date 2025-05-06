@@ -30,7 +30,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:dropin.xctestplan"
+            reference = "container:pm4-dropin.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
