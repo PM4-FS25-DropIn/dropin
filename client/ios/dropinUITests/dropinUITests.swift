@@ -51,4 +51,24 @@ final class dropinUITests: XCTestCase {
              }
          }
     }*/
+    
+    func testEventCategoryTab() throws {
+        let app = XCUIApplication()
+        app.launch()
+
+        let labels = ["For You", "Trending", "Nearby", "Starting Soon", "Ongoing", "Sponsored"]
+
+        measure {
+            for label in labels {
+                let element = app.staticTexts[label]
+                XCTAssertTrue(element.waitForExistence(timeout: 5), "\(label) should exist")
+                element.tap()
+            }
+
+            // Swipe interaction
+            let ongoing = app.scrollViews.staticTexts["Ongoing"]
+            XCTAssertTrue(ongoing.exists, "Ongoing label should exist in scroll view")
+            ongoing.swipeLeft()
+        }
+    }
 }
