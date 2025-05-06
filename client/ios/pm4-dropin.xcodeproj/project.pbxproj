@@ -34,7 +34,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		B3FCBA722DC38A1000FFAC24 /* Exceptions for "dropin" folder in "pm4-dropin" target */ = {
+		B3FCBA722DC38A1000FFAC24 /* Exceptions for "pm4-dropin" folder in "pm4-dropin" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -44,12 +44,12 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		B3B7160E2D872E1D0023465A /* dropin */ = {
+		B3B7160E2D872E1D0023465A /* pm4-dropin */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				B3FCBA722DC38A1000FFAC24 /* Exceptions for "dropin" folder in "pm4-dropin" target */,
+				B3FCBA722DC38A1000FFAC24 /* Exceptions for "pm4-dropin" folder in "pm4-dropin" target */,
 			);
-			path = dropin;
+			path = "pm4-dropin";
 			sourceTree = "<group>";
 		};
 		B3B7161F2D872E1F0023465A /* dropinTests */ = {
@@ -93,7 +93,7 @@
 		B3B716032D872E1D0023465A = {
 			isa = PBXGroup;
 			children = (
-				B3B7160E2D872E1D0023465A /* dropin */,
+				B3B7160E2D872E1D0023465A /* pm4-dropin */,
 				B3B7161F2D872E1F0023465A /* dropinTests */,
 				B3B716292D872E1F0023465A /* dropinUITests */,
 				B3B7160D2D872E1D0023465A /* Products */,
@@ -126,7 +126,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				B3B7160E2D872E1D0023465A /* dropin */,
+				B3B7160E2D872E1D0023465A /* pm4-dropin */,
 			);
 			name = "pm4-dropin";
 			packageProductDependencies = (
@@ -351,6 +351,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
 		};
@@ -406,6 +407,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 6.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -415,15 +417,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = dropin/dropin.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"dropin/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"pm4-dropin/Preview Content\"";
 				DEVELOPMENT_TEAM = 4S8GV8LXP7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = dropin/Info.plist;
+				INFOPLIST_FILE = "pm4-dropin/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to show you nearby DropIns.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app lets you upload event thumbnails.";
@@ -457,14 +458,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = dropin/dropin.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"dropin/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"pm4-dropin/Preview Content\"";
 				DEVELOPMENT_TEAM = 4S8GV8LXP7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = dropin/Info.plist;
+				INFOPLIST_FILE = "pm4-dropin/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to show you nearby DropIns.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app lets you upload event thumbnails.";
@@ -555,7 +555,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = dropin;
+				TEST_TARGET_NAME = "pm4-dropin";
 			};
 			name = Debug;
 		};
@@ -576,7 +576,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = dropin;
+				TEST_TARGET_NAME = "pm4-dropin";
 			};
 			name = Release;
 		};
