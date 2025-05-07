@@ -47,3 +47,4 @@ jobs:
         if: success() || failure()
         with:
           report_paths: './server/test-results/*.xml'
+          detailed_summary: true
