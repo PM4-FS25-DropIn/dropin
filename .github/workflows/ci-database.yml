@@ -48,3 +48,4 @@ jobs:
         with:
           report_paths: './server/test-results/*.xml'
           detailed_summary: true
+          include_passed: true
