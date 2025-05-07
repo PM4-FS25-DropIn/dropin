@@ -41,7 +41,7 @@ jobs:
       - run: npm run test:db
       
       - run: cat dbreport.xml
-        working-directory: ./server
+        working-directory: ./server/test-results/
 
       - uses: mikepenz/action-junit-report@v5
         if: success() || failure()
