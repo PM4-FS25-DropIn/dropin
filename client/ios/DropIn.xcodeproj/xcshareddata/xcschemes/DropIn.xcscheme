@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3B7160B2D872E1D0023465A"
-               BuildableName = "pm4-dropin.app"
-               BlueprintName = "pm4-dropin"
-               ReferencedContainer = "container:pm4-dropin.xcodeproj">
+               BuildableName = "DropIn.app"
+               BlueprintName = "DropIn"
+               ReferencedContainer = "container:DropIn.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -30,7 +30,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:pm4-dropin.xctestplan"
+            reference = "container:DropIn.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
@@ -41,9 +41,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3B7161B2D872E1F0023465A"
-               BuildableName = "pm4-dropinTests.xctest"
-               BlueprintName = "pm4-dropinTests"
-               ReferencedContainer = "container:pm4-dropin.xcodeproj">
+               BuildableName = "DropInTests.xctest"
+               BlueprintName = "DropInTests"
+               ReferencedContainer = "container:DropIn.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -52,9 +52,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3B716252D872E1F0023465A"
-               BuildableName = "pm4-dropinUITests.xctest"
-               BlueprintName = "pm4-dropinUITests"
-               ReferencedContainer = "container:pm4-dropin.xcodeproj">
+               BuildableName = "DropInUITests.xctest"
+               BlueprintName = "DropInUITests"
+               ReferencedContainer = "container:DropIn.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -62,9 +62,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3B7161B2D872E1F0023465A"
-               BuildableName = "pm4-dropinTests.xctest"
-               BlueprintName = "pm4-dropinTests"
-               ReferencedContainer = "container:pm4-dropin.xcodeproj">
+               BuildableName = "DropInTests.xctest"
+               BlueprintName = "DropInTests"
+               ReferencedContainer = "container:DropIn.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -84,9 +84,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3B7160B2D872E1D0023465A"
-            BuildableName = "pm4-dropin.app"
-            BlueprintName = "pm4-dropin"
-            ReferencedContainer = "container:pm4-dropin.xcodeproj">
+            BuildableName = "DropIn.app"
+            BlueprintName = "DropIn"
+            ReferencedContainer = "container:DropIn.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <EnvironmentVariables>
@@ -113,9 +113,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3B7160B2D872E1D0023465A"
-            BuildableName = "pm4-dropin.app"
-            BlueprintName = "pm4-dropin"
-            ReferencedContainer = "container:pm4-dropin.xcodeproj">
+            BuildableName = "DropIn.app"
+            BlueprintName = "DropIn"
+            ReferencedContainer = "container:DropIn.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

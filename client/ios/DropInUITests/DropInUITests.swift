@@ -7,7 +7,7 @@
 
 import XCTest
 
-final class dropinUITests: XCTestCase {
+final class DropInUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -22,7 +22,7 @@ final class dropinUITests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
-    func createAppWithSupabaseEnv() -> XCUIApplication {
+    @MainActor func createAppWithSupabaseEnv() -> XCUIApplication {
         let env = ProcessInfo.processInfo.environment
         let app = XCUIApplication()
         app.launchEnvironment = [

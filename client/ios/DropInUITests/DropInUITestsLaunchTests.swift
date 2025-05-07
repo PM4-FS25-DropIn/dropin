@@ -7,7 +7,7 @@
 
 import XCTest
 
-final class dropinUITestsLaunchTests: XCTestCase {
+final class DropInUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
@@ -17,7 +17,7 @@ final class dropinUITestsLaunchTests: XCTestCase {
         continueAfterFailure = false
     }
     
-    func createAppWithSupabaseEnv() -> XCUIApplication {
+    @MainActor func createAppWithSupabaseEnv() -> XCUIApplication {
         let env = ProcessInfo.processInfo.environment
         let app = XCUIApplication()
         app.launchEnvironment = [
