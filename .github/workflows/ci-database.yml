@@ -43,10 +43,7 @@ jobs:
       - run: cat dbreport.xml
         working-directory: ./server
 
-      - uses: dorny/test-reporter@v2.0.0
+      - uses: mikepenz/action-junit-report@v5
         if: success() || failure()
         with:
-          name: DB Test Report
-          reporter: java-junit
-          path: dbreport.xml
-          working-directory: ./server
+          report_paths: './server/test-results/*.xml'
