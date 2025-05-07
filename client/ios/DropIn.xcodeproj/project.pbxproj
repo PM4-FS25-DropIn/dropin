@@ -28,39 +28,39 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		B3B7160C2D872E1D0023465A /* pm4-dropin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "pm4-dropin.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3B7161C2D872E1F0023465A /* pm4-dropinTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "pm4-dropinTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3B716262D872E1F0023465A /* pm4-dropinUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "pm4-dropinUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3DA2F192DCA4F5400F1593A /* pm4-dropin.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "pm4-dropin.xctestplan"; sourceTree = "<group>"; };
+		B3B7160C2D872E1D0023465A /* DropIn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DropIn.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3B7161C2D872E1F0023465A /* DropInTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DropInTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3B716262D872E1F0023465A /* DropInUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DropInUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3DA19172DCBA15F000A8E7B /* DropIn.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = DropIn.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		B3FCBA722DC38A1000FFAC24 /* Exceptions for "pm4-dropin" folder in "pm4-dropin" target */ = {
+		B3FCBA722DC38A1000FFAC24 /* Exceptions for "DropIn" folder in "DropIn" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = B3B7160B2D872E1D0023465A /* pm4-dropin */;
+			target = B3B7160B2D872E1D0023465A /* DropIn */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		B3B7160E2D872E1D0023465A /* pm4-dropin */ = {
+		B3B7160E2D872E1D0023465A /* DropIn */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				B3FCBA722DC38A1000FFAC24 /* Exceptions for "pm4-dropin" folder in "pm4-dropin" target */,
+				B3FCBA722DC38A1000FFAC24 /* Exceptions for "DropIn" folder in "DropIn" target */,
 			);
-			path = "pm4-dropin";
+			path = DropIn;
 			sourceTree = "<group>";
 		};
-		B3B7161F2D872E1F0023465A /* dropinTests */ = {
+		B3B7161F2D872E1F0023465A /* DropInTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = dropinTests;
+			path = DropInTests;
 			sourceTree = "<group>";
 		};
-		B3B716292D872E1F0023465A /* dropinUITests */ = {
+		B3B716292D872E1F0023465A /* DropInUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = dropinUITests;
+			path = DropInUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -94,10 +94,10 @@
 		B3B716032D872E1D0023465A = {
 			isa = PBXGroup;
 			children = (
-				B3DA2F192DCA4F5400F1593A /* pm4-dropin.xctestplan */,
-				B3B7160E2D872E1D0023465A /* pm4-dropin */,
-				B3B7161F2D872E1F0023465A /* dropinTests */,
-				B3B716292D872E1F0023465A /* dropinUITests */,
+				B3DA19172DCBA15F000A8E7B /* DropIn.xctestplan */,
+				B3B7160E2D872E1D0023465A /* DropIn */,
+				B3B7161F2D872E1F0023465A /* DropInTests */,
+				B3B716292D872E1F0023465A /* DropInUITests */,
 				B3B7160D2D872E1D0023465A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -105,9 +105,9 @@
 		B3B7160D2D872E1D0023465A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B3B7160C2D872E1D0023465A /* pm4-dropin.app */,
-				B3B7161C2D872E1F0023465A /* pm4-dropinTests.xctest */,
-				B3B716262D872E1F0023465A /* pm4-dropinUITests.xctest */,
+				B3B7160C2D872E1D0023465A /* DropIn.app */,
+				B3B7161C2D872E1F0023465A /* DropInTests.xctest */,
+				B3B716262D872E1F0023465A /* DropInUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -115,9 +115,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		B3B7160B2D872E1D0023465A /* pm4-dropin */ = {
+		B3B7160B2D872E1D0023465A /* DropIn */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3B716302D872E1F0023465A /* Build configuration list for PBXNativeTarget "pm4-dropin" */;
+			buildConfigurationList = B3B716302D872E1F0023465A /* Build configuration list for PBXNativeTarget "DropIn" */;
 			buildPhases = (
 				B3B716082D872E1D0023465A /* Sources */,
 				B3B716092D872E1D0023465A /* Frameworks */,
@@ -128,19 +128,19 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				B3B7160E2D872E1D0023465A /* pm4-dropin */,
+				B3B7160E2D872E1D0023465A /* DropIn */,
 			);
-			name = "pm4-dropin";
+			name = DropIn;
 			packageProductDependencies = (
 				EE3385902DAC5D25006C95F4 /* Supabase */,
 			);
 			productName = dropin;
-			productReference = B3B7160C2D872E1D0023465A /* pm4-dropin.app */;
+			productReference = B3B7160C2D872E1D0023465A /* DropIn.app */;
 			productType = "com.apple.product-type.application";
 		};
-		B3B7161B2D872E1F0023465A /* pm4-dropinTests */ = {
+		B3B7161B2D872E1F0023465A /* DropInTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3B716332D872E1F0023465A /* Build configuration list for PBXNativeTarget "pm4-dropinTests" */;
+			buildConfigurationList = B3B716332D872E1F0023465A /* Build configuration list for PBXNativeTarget "DropInTests" */;
 			buildPhases = (
 				B3B716182D872E1F0023465A /* Sources */,
 				B3B716192D872E1F0023465A /* Frameworks */,
@@ -152,18 +152,18 @@
 				B3B7161E2D872E1F0023465A /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				B3B7161F2D872E1F0023465A /* dropinTests */,
+				B3B7161F2D872E1F0023465A /* DropInTests */,
 			);
-			name = "pm4-dropinTests";
+			name = DropInTests;
 			packageProductDependencies = (
 			);
 			productName = dropinTests;
-			productReference = B3B7161C2D872E1F0023465A /* pm4-dropinTests.xctest */;
+			productReference = B3B7161C2D872E1F0023465A /* DropInTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		B3B716252D872E1F0023465A /* pm4-dropinUITests */ = {
+		B3B716252D872E1F0023465A /* DropInUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3B716362D872E1F0023465A /* Build configuration list for PBXNativeTarget "pm4-dropinUITests" */;
+			buildConfigurationList = B3B716362D872E1F0023465A /* Build configuration list for PBXNativeTarget "DropInUITests" */;
 			buildPhases = (
 				B3B716222D872E1F0023465A /* Sources */,
 				B3B716232D872E1F0023465A /* Frameworks */,
@@ -175,13 +175,13 @@
 				B3B716282D872E1F0023465A /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				B3B716292D872E1F0023465A /* dropinUITests */,
+				B3B716292D872E1F0023465A /* DropInUITests */,
 			);
-			name = "pm4-dropinUITests";
+			name = DropInUITests;
 			packageProductDependencies = (
 			);
 			productName = dropinUITests;
-			productReference = B3B716262D872E1F0023465A /* pm4-dropinUITests.xctest */;
+			productReference = B3B716262D872E1F0023465A /* DropInUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -192,7 +192,8 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1620;
-				LastUpgradeCheck = 1620;
+				LastUpgradeCheck = 1630;
+				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					B3B7160B2D872E1D0023465A = {
 						CreatedOnToolsVersion = 16.2;
@@ -207,7 +208,7 @@
 					};
 				};
 			};
-			buildConfigurationList = B3B716072D872E1D0023465A /* Build configuration list for PBXProject "pm4-dropin" */;
+			buildConfigurationList = B3B716072D872E1D0023465A /* Build configuration list for PBXProject "DropIn" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -224,9 +225,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B3B7160B2D872E1D0023465A /* pm4-dropin */,
-				B3B7161B2D872E1F0023465A /* pm4-dropinTests */,
-				B3B716252D872E1F0023465A /* pm4-dropinUITests */,
+				B3B7160B2D872E1D0023465A /* DropIn */,
+				B3B7161B2D872E1F0023465A /* DropInTests */,
+				B3B716252D872E1F0023465A /* DropInUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -282,12 +283,12 @@
 /* Begin PBXTargetDependency section */
 		B3B7161E2D872E1F0023465A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3B7160B2D872E1D0023465A /* pm4-dropin */;
+			target = B3B7160B2D872E1D0023465A /* DropIn */;
 			targetProxy = B3B7161D2D872E1F0023465A /* PBXContainerItemProxy */;
 		};
 		B3B716282D872E1F0023465A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3B7160B2D872E1D0023465A /* pm4-dropin */;
+			target = B3B7160B2D872E1D0023465A /* DropIn */;
 			targetProxy = B3B716272D872E1F0023465A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -328,6 +329,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 4S8GV8LXP7;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -392,6 +394,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 4S8GV8LXP7;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -422,11 +425,11 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"pm4-dropin/Preview Content\"";
-				DEVELOPMENT_TEAM = 4S8GV8LXP7;
+				DEVELOPMENT_ASSET_PATHS = "\"DropIn/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "pm4-dropin/Info.plist";
+				INFOPLIST_FILE = DropIn/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DropIn;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to show you nearby DropIns.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app lets you upload event thumbnails.";
@@ -442,7 +445,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ch.zhaw.pm4.fs25.dropin;
+				PRODUCT_BUNDLE_IDENTIFIER = me.dropinwith.DropIn;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -462,11 +465,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"pm4-dropin/Preview Content\"";
-				DEVELOPMENT_TEAM = 4S8GV8LXP7;
+				DEVELOPMENT_ASSET_PATHS = "\"DropIn/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "pm4-dropin/Info.plist";
+				INFOPLIST_FILE = DropIn/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DropIn;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to show you nearby DropIns.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app lets you upload event thumbnails.";
@@ -482,7 +485,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ch.zhaw.pm4.fs25.dropin;
+				PRODUCT_BUNDLE_IDENTIFIER = me.dropinwith.DropIn;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -500,20 +503,19 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4S8GV8LXP7;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ch.zhaw.pm4.fs25.dropin;
+				PRODUCT_BUNDLE_IDENTIFIER = me.dropinwith.DropIn;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/pm4-dropin.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/pm4-dropin";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DropIn.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DropIn";
 			};
 			name = Debug;
 		};
@@ -526,16 +528,16 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ch.zhaw.pm4.fs25.dropin;
+				PRODUCT_BUNDLE_IDENTIFIER = me.dropinwith.DropIn;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/pm4-dropin.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/pm4-dropin";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DropIn.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DropIn";
 			};
 			name = Release;
 		};
@@ -544,20 +546,19 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4S8GV8LXP7;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ch.zhaw.pm4.fs25.dropin;
+				PRODUCT_BUNDLE_IDENTIFIER = me.dropinwith.DropIn;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "pm4-dropin";
+				TEST_TARGET_NAME = DropIn;
 			};
 			name = Debug;
 		};
@@ -566,27 +567,26 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4S8GV8LXP7;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ch.zhaw.pm4.fs25.dropin;
+				PRODUCT_BUNDLE_IDENTIFIER = me.dropinwith.DropIn;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "pm4-dropin";
+				TEST_TARGET_NAME = DropIn;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		B3B716072D872E1D0023465A /* Build configuration list for PBXProject "pm4-dropin" */ = {
+		B3B716072D872E1D0023465A /* Build configuration list for PBXProject "DropIn" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3B7162E2D872E1F0023465A /* Debug */,
@@ -595,7 +595,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3B716302D872E1F0023465A /* Build configuration list for PBXNativeTarget "pm4-dropin" */ = {
+		B3B716302D872E1F0023465A /* Build configuration list for PBXNativeTarget "DropIn" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3B716312D872E1F0023465A /* Debug */,
@@ -604,7 +604,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3B716332D872E1F0023465A /* Build configuration list for PBXNativeTarget "pm4-dropinTests" */ = {
+		B3B716332D872E1F0023465A /* Build configuration list for PBXNativeTarget "DropInTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3B716342D872E1F0023465A /* Debug */,
@@ -613,7 +613,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3B716362D872E1F0023465A /* Build configuration list for PBXNativeTarget "pm4-dropinUITests" */ = {
+		B3B716362D872E1F0023465A /* Build configuration list for PBXNativeTarget "DropInUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3B716372D872E1F0023465A /* Debug */,

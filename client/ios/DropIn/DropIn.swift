@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct dropinApp: App {
+struct DropIn: App {
     @UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
     
     @State private var authService = AuthService()
