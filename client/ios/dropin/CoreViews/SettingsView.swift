@@ -112,3 +112,109 @@ struct ChangePasswordView: View {
         return true
     }
 }
+
+// MARK: - Sections
+
+private struct AccountSection: View {
+    @Bindable var vm: SettingsViewModel
+    @Environment(AuthService.self) private var authService
+    @State private var showSignOutAlert = false
+
+    var body: some View {
+        Section(header: Text("Account")) {
+            TextField("Email", text: $vm.email)
+                .keyboardType(.emailAddress)
+                .textContentType(.emailAddress)
+                .autocapitalization(.none)
+                .onSubmit { Task { await vm.updateEmail() } }
+
+            NavigationLink("Change Password") {
+                ChangePasswordView(vm: vm)
+            }
+
+            Button("Sign Out") {
+                showSignOutAlert = true
+            }
+            .alert("Confirm Sign Out", isPresented: $showSignOutAlert) {
+                Button("Cancel", role: .cancel) {}
+                Button("Sign Out", role: .destructive) {
+                    Task {
+                        do {
+                            try await authService.signOut()
+                        } catch {
+                            print(error)
+                        }
+                    }
+                }
+            } message: {
+                Text("Are you sure you want to sign out from this device?")
+            }
+        }
+    }
+}
+
+private struct NotificationsSection: View {
+    @Bindable var vm: SettingsViewModel
+
+    var body: some View {
+        Section(header: Text("Notifications")) {
+            Toggle("Event Notifications", isOn: $vm.eventNotificationsEnabled)
+            Toggle("Chat Notifications", isOn: $vm.chatNotificationsEnabled)
+        }
+    }
+}
+
+private struct AppearanceSection: View {
+    @Bindable var vm: SettingsViewModel
+
+    var body: some View {
+        Section(header: Text("Appearance")) {
+            Picker("Theme", selection: $vm.selectedTheme) {
+                ForEach(SettingsViewModel.AppTheme.allCases) { theme in
+                    Text(theme.rawValue.capitalized).tag(theme)
+                }
+            }
+            .pickerStyle(.segmented)
+        }
+    }
+}
+
+private struct SupportSection: View {
+    var body: some View {
+        Section(header: Text("Support & About")) {
+            Link(
+                "Help & Feedback",
+                destination: URL(string: "mailto:support@example.com")!
+            )
+
+            HStack {
+                Text("Version")
+                Spacer()
+                Text(
+                    Bundle.main.infoDictionary?["CFBundleShortVersionString"]
+                        as? String ?? "1.0"
+                )
+                .foregroundStyle(.secondary)
+            }
+        }
+    }
+}
+
+private struct DangerZoneSection: View {
+    let vm: SettingsViewModel
+
+    var body: some View {
+        Section(header: Text("Danger Zone")) {
+            Button(role: .destructive) {
+                Task { await vm.deleteAccount() }
+            } label: {
+                Text("Delete Account")
+            }
+        }
+    }
+}
+
+#Preview {
+    SettingsView()
+        .environment(AuthService())
+}
