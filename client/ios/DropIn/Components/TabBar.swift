@@ -17,7 +17,7 @@ struct TabBar: View {
             eventHubActionButton
         }
         .sheet(isPresented: $isSheetPresented) {
-            EventCreateView()
+            CreateEventWizard()
         }
     }
 
