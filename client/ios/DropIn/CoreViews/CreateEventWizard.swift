@@ -18,6 +18,14 @@ struct CreateEventWizard: View {
     
     @State private var launchState: AsyncStatus = .idle
     
+    init(pinLocation: CLLocationCoordinate2D? = nil) {
+        if let pinLocation {
+            vm.pinLocation = pinLocation
+            vm.event.latitude = pinLocation.latitude
+            vm.event.longitude = pinLocation.longitude
+        }
+    }
+    
     var body: some View {
         TabView {
             Tab {
@@ -229,7 +237,6 @@ struct CreateEventWizard: View {
             }
         }
     }
-    
     
     private var launchSuccessfullView: some View {
         Group {
