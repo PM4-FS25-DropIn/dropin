@@ -9,7 +9,7 @@ import SwiftUI
 import Observation
 
 struct SettingsView: View {
-    @State private var vm = SettingsViewModel()
+    @StateObject private var vm = SettingsViewModel()
 
     var body: some View {
         NavigationStack {
