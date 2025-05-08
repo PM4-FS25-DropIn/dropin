@@ -108,6 +108,10 @@ struct MapEventItemDetailSheet: View {
                             .resizable()
                             .scaledToFill()
                             .clipped()
+                    } else if phase.error != nil {
+                        ContentUnavailableView("Image Unavailable", systemImage: "exclamationmark.circle.fill")
+                    } else {
+                        ProgressView()
                     }
                 }
             }

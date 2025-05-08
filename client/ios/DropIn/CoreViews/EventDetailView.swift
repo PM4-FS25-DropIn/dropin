@@ -11,14 +11,7 @@ struct EventDetailView: View {
         ScrollView {
             TabView {
                 ForEach(event.imagePaths, id: \.self) { imagePath in
-                    AsyncImage(url: URL(string: imagePath)) { phase in
-                        if let image = phase.image {
-                            image
-                                .resizable()
-                                .scaledToFill()
-                                .clipped()
-                        }
-                    }
+                    image(imagePath: imagePath)
                 }
             }
             .tabViewStyle(.page)
@@ -32,6 +25,21 @@ struct EventDetailView: View {
             EventQuickInfo(event: event)
                 .padding()
             Spacer()
+        }
+    }
+    
+    private func image(imagePath: String) -> some View {
+        AsyncImage(url: URL(string: imagePath)) { phase in
+            if let image = phase.image {
+                image
+                    .resizable()
+                    .scaledToFill()
+                    .clipped()
+            } else if phase.error != nil {
+                ContentUnavailableView("Image Unavailable", systemImage: "exclamationmark.circle.fill")
+            } else {
+                ProgressView()
+            }
         }
     }
     

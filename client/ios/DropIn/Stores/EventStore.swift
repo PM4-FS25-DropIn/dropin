@@ -187,8 +187,8 @@ class EventStore {
                     print("Path is: \(imagePaths[0])")
                     
                     try await updateEvent(event)
-                    joinedEvents.append(contentsOf: insertedEvents)
-                    mapEvents.append(contentsOf: insertedEvents)
+                    joinedEvents.append(event)
+                    mapEvents.append(event)
                 }
             } catch {
                 try await deleteEvent(event)
