@@ -3,12 +3,10 @@ import SwiftUI
 struct HomeView: View {
     
     var body: some View {
-        NavigationStack {
-            VStack {
-                header
-                FriendAvatarCarousel()
-                DiscoveryEventList()
-            }
+        VStack {
+            header
+            FriendAvatarCarousel()
+            DiscoveryEventList()
         }
     }
     

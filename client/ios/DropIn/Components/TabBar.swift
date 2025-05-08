@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct TabBar: View {
     @State private var isSheetPresented = false
@@ -49,7 +50,9 @@ struct TabBar: View {
         return VStack {
             TabView {
                 Tab("Home", systemImage: "house") {
-                    HomeView()
+                    NavigationStack {
+                        HomeView()
+                    }
                 }
                 Tab("Map", systemImage: "map") {
                     MapView()
@@ -60,10 +63,14 @@ struct TabBar: View {
                     }
                 }
                 Tab("DropIns", systemImage: "drop.fill") {
-                    DropInsView()
+                    NavigationStack {
+                        DropInsView()
+                    }
                 }
                 Tab("Profile", systemImage: "person.circle") {
-                    ProfileView()
+                    NavigationStack {
+                        ProfileView()
+                    }
                 }
             }
             .tabViewStyle(DefaultTabViewStyle())
@@ -74,4 +81,5 @@ struct TabBar: View {
 #Preview {
     TabBar()
         .environment(AuthService())
+        .environment(EventStore())
 }

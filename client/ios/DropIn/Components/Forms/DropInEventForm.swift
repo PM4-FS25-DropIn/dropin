@@ -44,21 +44,37 @@ struct DropInEventForm: View {
     
     private var location: some View {
         Section(header: Text("Where?")) {
-            MapReader { proxy in
-                Map(initialPosition: .automatic) {
-                    Marker("DropIn", systemImage: "drop", coordinate: pinLocation)
-                        .tint(.indigo)
-                }
-                .gesture(MyLongPressGesture { position in
-                    if let loc = proxy.convert(position, from: .local) {
-                        pinLocation = loc
-                        event.latitude = loc.latitude
-                        event.longitude = loc.longitude
-                    }
-                })
+            NavigationLink("Set the Drop Zone") {
+                map
             }
+            .navigationBarTitleDisplayMode(.inline)
+            minimap
+                .frame(height: 200)
             Text(formatCoordinates(latitude: event.latitude, longitude: event.longitude))
                 .foregroundStyle(.secondary)
+        }
+    }
+    
+    private var minimap: some View {
+        Map(initialPosition: .automatic) {
+            Marker("DropIn", systemImage: "drop", coordinate: pinLocation)
+                .tint(.indigo)
+        }
+    }
+    
+    private var map: some View {
+        MapReader { proxy in
+            Map(initialPosition: .automatic) {
+                Marker("DropIn", systemImage: "drop", coordinate: pinLocation)
+                    .tint(.indigo)
+            }
+            .gesture(MyLongPressGesture { position in
+                if let loc = proxy.convert(position, from: .local) {
+                    pinLocation = loc
+                    event.latitude = loc.latitude
+                    event.longitude = loc.longitude
+                }
+            })
         }
     }
     
