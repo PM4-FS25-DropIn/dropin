@@ -41,6 +41,11 @@ extension AsyncStatus {
         if case .failure = self { return true }
         return false
     }
+    
+    var isSuccess: Bool {
+        if case .success = self { return true }
+        return false
+    }
 
     var error: String {
         if case let .failure(error) = self {

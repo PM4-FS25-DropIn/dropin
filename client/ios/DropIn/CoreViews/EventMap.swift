@@ -36,7 +36,7 @@ struct EventMap: View {
             Map(position: $cameraPosition, selection: $selectedItem) {
                 UserAnnotation()
                 if let pinLocation {
-                    Marker("Marked", systemImage: "pin.fill", coordinate: pinLocation)
+                    Marker("DropIn", systemImage: "drop", coordinate: pinLocation)
                         .tint(.indigo)
                 }
                 ForEach(eventStore.mapEvents.indices, id: \.self) { index in
@@ -57,7 +57,7 @@ struct EventMap: View {
             .sheet(isPresented: $showCreateViewSheet) {
                 pinLocation = nil
             } content: {
-                EventCreateView(defaultEvent: DropInEvent(title: "", description: "", imagePaths: ["default.event.thumbnail"], start: Date(), end: Date(), latitude: pinLocation?.latitude ?? 0, longitude: pinLocation?.longitude ?? 0, slotLimit: 2, ageRestricted: false, chatEnabled: true))
+                CreateEventWizard()
             }
             .onChange(of: selectedItem) {
                 guard let selectedItem else { return }

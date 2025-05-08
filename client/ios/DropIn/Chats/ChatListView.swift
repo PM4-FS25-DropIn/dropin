@@ -7,22 +7,20 @@ struct ChatListView: View {
     @Environment(EventStore.self) private var eventStore
 
     var body: some View {
-        NavigationStack {
-            List {
-                ForEach(eventStore.joinedEvents) { event in
-                    NavigationLink {
-                        // Placeholder destination view for when a chat is tapped
-                        ChatRoomView(event: event, authService: authService)
-                        
-                    } label: {
-                        // Custom view for how each chat row looks
-                        ChatRow(event: event)
-                    }
+        List {
+            ForEach(eventStore.joinedEvents) { event in
+                NavigationLink {
+                    // Placeholder destination view for when a chat is tapped
+                    ChatRoomView(event: event, authService: authService)
+                    
+                } label: {
+                    // Custom view for how each chat row looks
+                    ChatRow(event: event)
                 }
             }
-            .listStyle(.plain) // Optional: Removes default inset grouped styling
-            .navigationTitle("Chats")
         }
+        .listStyle(.plain) // Optional: Removes default inset grouped styling
+        .navigationTitle("Chats")
     }
 
     

@@ -18,6 +18,9 @@ struct PhotoSelector: View {
         PhotosPicker(selection: $selectedPhotos,
                      matching: .images) {
             Text(text)
+                .font(.title3)
+                .bold()
+                .foregroundStyle(.accent)
         }
     }
 }

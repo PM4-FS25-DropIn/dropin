@@ -7,6 +7,7 @@
 
 
 import SwiftUI
+import MapKit
 import PhotosUI
 @preconcurrency import MapKit
 
@@ -17,6 +18,8 @@ struct DropInEventForm: View {
     
     @Binding var selectedPhotos: [PhotosPickerItem]
     
+    @State private var pinLocation: CLLocationCoordinate2D = LocationService.shared.lastLocation.coordinate
+    
     var isEditing: Bool
     
     var body: some View {
@@ -26,6 +29,7 @@ struct DropInEventForm: View {
             time
             participants
             PhotoSelector(selectedPhotos: $selectedPhotos, text: "Add Photos")
+                .disabled(isEditing)
         }
     }
     
@@ -40,22 +44,50 @@ struct DropInEventForm: View {
     
     private var location: some View {
         Section(header: Text("Where?")) {
-            // TODO: Map search
-            TextField("Latitude", value: $event.latitude, formatter: decimalFormatter)
-            TextField("Longitude", value: $event.longitude, formatter: decimalFormatter)
+            NavigationLink("Set the Drop Zone") {
+                map
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            minimap
+                .frame(height: 200)
+            Text(formatCoordinates(latitude: event.latitude, longitude: event.longitude))
+                .foregroundStyle(.secondary)
+        }
+    }
+    
+    private var minimap: some View {
+        Map(initialPosition: .automatic) {
+            Marker("DropIn", systemImage: "drop", coordinate: pinLocation)
+                .tint(.indigo)
+        }
+    }
+    
+    private var map: some View {
+        MapReader { proxy in
+            Map(initialPosition: .automatic) {
+                Marker("DropIn", systemImage: "drop", coordinate: pinLocation)
+                    .tint(.indigo)
+            }
+            .gesture(MyLongPressGesture { position in
+                if let loc = proxy.convert(position, from: .local) {
+                    pinLocation = loc
+                    event.latitude = loc.latitude
+                    event.longitude = loc.longitude
+                }
+            })
         }
     }
     
     private var time: some View {
         Section(header: Text("When?")) {
-                // Create View
-                DatePicker("Start", selection: $event.start, in:
-                        .now...(Calendar.current.date(byAdding: .hour, value: 24, to: .now) ?? .now),
-                           displayedComponents: [.date, .hourAndMinute])
-                .disabled(isEditing)
-                DatePicker("End", selection: $event.end, in:
-                            event.start...(Calendar.current.date(byAdding: .hour, value: 24, to: event.start) ?? event.start), displayedComponents: [.date, .hourAndMinute])
-                .disabled(isEditing)
+            // Create View
+            DatePicker("Start", selection: $event.start, in:
+                    .now...(Calendar.current.date(byAdding: .hour, value: 24, to: .now) ?? .now),
+                       displayedComponents: [.date, .hourAndMinute])
+            .disabled(isEditing)
+            DatePicker("End", selection: $event.end, in:
+                        event.start...(Calendar.current.date(byAdding: .hour, value: 24, to: event.start) ?? event.start), displayedComponents: [.date, .hourAndMinute])
+            .disabled(isEditing)
             
         }
     }
