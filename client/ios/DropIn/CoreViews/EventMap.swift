@@ -36,7 +36,7 @@ struct EventMap: View {
             Map(position: $cameraPosition, selection: $selectedItem) {
                 UserAnnotation()
                 if let pinLocation {
-                    Marker("Marked", systemImage: "pin.fill", coordinate: pinLocation)
+                    Marker("DropIn", systemImage: "drop", coordinate: pinLocation)
                         .tint(.indigo)
                 }
                 ForEach(eventStore.mapEvents.indices, id: \.self) { index in
