@@ -57,7 +57,7 @@ struct EventMap: View {
             .sheet(isPresented: $showCreateViewSheet) {
                 pinLocation = nil
             } content: {
-                CreateEventWizard()
+                CreateEventWizard(pinLocation: pinLocation)
             }
             .onChange(of: selectedItem) {
                 guard let selectedItem else { return }
@@ -170,7 +170,6 @@ struct EventMap: View {
         }
         viewModel.getDirections(of: selectedItem)
     }
-    
     
 }
 
