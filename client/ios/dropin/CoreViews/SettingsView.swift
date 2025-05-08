@@ -5,11 +5,11 @@
 //  Created on 08/05/2025.
 //
 
-import SwiftUI
 import Observation
+import SwiftUI
 
 struct SettingsView: View {
-    @StateObject private var vm = SettingsViewModel()
+    @State private var vm = SettingsViewModel()
 
     var body: some View {
         NavigationStack {
@@ -87,15 +87,20 @@ struct ChangePasswordView: View {
             return false
         }
 
-        let trimmedNew = newPassword.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedConfirm = confirmPassword.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedNew = newPassword.trimmingCharacters(
+            in: .whitespacesAndNewlines
+        )
+        let trimmedConfirm = confirmPassword.trimmingCharacters(
+            in: .whitespacesAndNewlines
+        )
         guard trimmedNew == trimmedConfirm else {
             errorMessage = "New passwords don't match"
             showError = true
             return false
         }
 
-        let regex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+        let regex =
+            "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
         let predicate = NSPredicate(format: "SELF MATCHES %@", regex)
         guard predicate.evaluate(with: newPassword) else {
             errorMessage =
@@ -177,7 +182,10 @@ private struct AppearanceSection: View {
 private struct SupportSection: View {
     var body: some View {
         Section(header: Text("Support & About")) {
-            Link("Help & Feedback", destination: URL(string: "mailto:support@example.com")!)
+            Link(
+                "Help & Feedback",
+                destination: URL(string: "mailto:support@example.com")!
+            )
 
             HStack {
                 Text("Version")
