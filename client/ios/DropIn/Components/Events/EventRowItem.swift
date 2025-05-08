@@ -31,14 +31,26 @@ struct EventRowItem: View {
     }
     
     private var rowImage: some View {
-        AsyncImage(url: URL(string: event.imagePaths[0])) { image in
-            image
-                .resizable()
+        AsyncImage(url: URL(string: event.imagePaths[0])) { phase in
+            if let image = phase.image {
+                image
+                    .resizable()
+                    .scaledToFill()
+                    .containerRelativeFrame([.horizontal], count: 10, span: 4, spacing: 0)
+                    .clipped()
+            } else if phase.error != nil {
+                VStack(spacing: 5) {
+                    Image(systemName: "exclamationmark.circle.fill")
+                    Text("Image Unavailable")
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
                 .scaledToFill()
                 .containerRelativeFrame([.horizontal], count: 10, span: 4, spacing: 0)
                 .clipped()
-        } placeholder: {
-            ProgressView()
+            } else {
+                ProgressView()
+            }
         }
     }
     
