@@ -109,7 +109,7 @@ struct MapEventItemDetailSheet: View {
                             .scaledToFill()
                             .clipped()
                     } else if phase.error != nil {
-                        ContentUnavailableView("Image Unavailable", systemImage: "exclamationmark.circle.fill", )
+                        ContentUnavailableView("Image Unavailable", systemImage: "exclamationmark.circle.fill")
                     } else {
                         ProgressView()
                     }
