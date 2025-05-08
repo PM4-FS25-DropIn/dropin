@@ -8,31 +8,44 @@ on:
       - 'server/test/database/**'
   workflow_dispatch:
 
+permissions:
+  contents: read
+  actions: read
+  checks: write
+
 jobs:
   run_database_tests:
     name: Run Database Tests
-    
+
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: ./server
+
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: supabase/setup-cli@v1
         with:
           version: latest
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
 
       - name: Start Supabase Local DB
         working-directory: ./client
-        run: supabase db start --no-wait --detach
+        run: supabase start
 
-      - name: Run Tests
-        working-directory: ./server
-        run: supabase db start 
-    
-      - name: Run Database Tests
-        run: npm run test:db
+      - run: npm ci      
+      - run: npm run test:db
+      
+      - run: cat dbreport.xml
+        working-directory: ./server/test-results/
 
-      - uses: dorny/test-reporter@v2.0.0
-        working-directory: ./server
+      - uses: mikepenz/action-junit-report@v5
+        if: success() || failure()
         with:
-          name: DB Test Report
-          path: ./server/dbreport.xml
+          report_paths: './server/test-results/*.xml'
+          detailed_summary: true
+          include_passed: true
