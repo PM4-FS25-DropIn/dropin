@@ -57,10 +57,7 @@ struct EventMap: View {
             .sheet(isPresented: $showCreateViewSheet) {
                 pinLocation = nil
             } content: {
-                NavigationStack {
-                    EventCreateView(defaultEvent: DropInEvent(title: "", description: "", imagePaths: ["default.event.thumbnail"], start: Date(), end: Date(), latitude: pinLocation?.latitude ?? 0, longitude: pinLocation?.longitude ?? 0, slotLimit: 2, ageRestricted: false, chatEnabled: true))
-                        .toolbar(.hidden)
-                }
+                CreateEventWizard()
             }
             .onChange(of: selectedItem) {
                 guard let selectedItem else { return }
