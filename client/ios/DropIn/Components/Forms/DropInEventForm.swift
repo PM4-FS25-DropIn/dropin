@@ -71,7 +71,7 @@ struct DropInEventForm: View {
             .disabled(isEditing)
             DatePicker("End", selection: $event.end, in:
                         event.start...(Calendar.current.date(byAdding: .hour, value: 24, to: event.start) ?? event.start), displayedComponents: [.date, .hourAndMinute])
-                .disabled(isEditing)
+            .disabled(isEditing)
             
         }
     }
