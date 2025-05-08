@@ -1,4 +1,5 @@
 import SwiftUI
+import PhotosUI
 
 struct EventEditView: View {
     @Environment(EventStore.self) private var eventStore
@@ -22,7 +23,7 @@ struct EventEditView: View {
                 Text("Edit Event")
                     .font(.title)
                     .bold()
-                //DropInEventForm(event: $event, selectedPhotos: $ isEditing: true)
+                DropInEventForm(event: $event, selectedPhotos: .constant([]), isEditing: true)
             }
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
