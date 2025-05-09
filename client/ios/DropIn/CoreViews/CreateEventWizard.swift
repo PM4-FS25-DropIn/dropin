@@ -66,6 +66,7 @@ struct CreateEventWizard: View {
         .indexViewStyle(.page(backgroundDisplayMode: .always))
     }
     
+    // MARK: - Title and Subtitle Tab
     
     private var titleAndSubtitleTab: some View {
         VStack(alignment: .center, spacing: 40) {
@@ -88,6 +89,8 @@ struct CreateEventWizard: View {
         .textInputAutocapitalization(.sentences)
         .padding()
     }
+    
+    // MARK: - Location Tab
     
     private var locationTab: some View {
         VStack(alignment: .center, spacing: 25) {
@@ -122,6 +125,8 @@ struct CreateEventWizard: View {
         .padding()
     }
     
+    // MARK: Start-End Time Tab
+    
     private var timeTab: some View {
         VStack(alignment: .center, spacing: 40) {
             VStack(spacing: 10) {
@@ -142,6 +147,8 @@ struct CreateEventWizard: View {
         }
         .padding()
     }
+    
+    // MARK: Participants Tab
     
     private var participantsTab: some View {
         VStack(alignment: .center, spacing: 40) {
@@ -177,11 +184,32 @@ struct CreateEventWizard: View {
         .padding()
     }
     
+    // MARK: Photos Tab
+    
+    private var photosTab: some View {
+        VStack(alignment: .center, spacing: 40) {
+            VStack(spacing: 10) {
+                Text("Show it off!")
+                    .font(.title)
+                    .foregroundStyle(.primary)
+                    .bold()
+                Text("Upload some thumbnails to make your DropIn stand out!")
+                    .font(.subheadline)
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.secondary)
+            }
+            PhotoSelector(selectedPhotos: $vm.selectedPhotos, text: "Add")
+        }
+        .padding()
+    }
+    
+    // MARK: Launch Tab
+    
     private var launchTab: some View {
         VStack(alignment: .center, spacing: 30) {
             switch launchState {
             case .idle:
-                launchIdleView
+                readyToLaunch
             case .running:
                 launchingView
             case .success:
@@ -195,6 +223,8 @@ struct CreateEventWizard: View {
         .padding()
     }
     
+    // MARK: Launching View
+    
     private var launchingView: some View {
         Group {
             Text("Launching...")
@@ -206,7 +236,9 @@ struct CreateEventWizard: View {
         }
     }
     
-    private var launchIdleView: some View {
+    // MARK: Ready to Launch View
+    
+    private var readyToLaunch: some View {
         Group {
             Image(systemName: "hand.thumbsup.fill")
                 .font(.title)
@@ -230,6 +262,8 @@ struct CreateEventWizard: View {
         }
     }
     
+    // MARK: Failed View
+    
     private var launchFailedView: some View {
         Group {
             Image(systemName: "exclamationmark.triangle.fill")
@@ -246,6 +280,8 @@ struct CreateEventWizard: View {
         }
     }
     
+    // MARK: Success View
+    
     private var launchSuccessfullView: some View {
         Group {
             Image(systemName: "checkmark.circle.fill")
@@ -253,7 +289,7 @@ struct CreateEventWizard: View {
                 .foregroundStyle(.green)
             VStack(spacing: 10) {
                 Text("You're all set!")
-                    .font(.title)
+                    .font(.title2)
                     .foregroundStyle(.primary)
                     .bold()
                 Text("This window will close shortly.")
@@ -263,22 +299,7 @@ struct CreateEventWizard: View {
         }
     }
     
-    private var photosTab: some View {
-        VStack(alignment: .center, spacing: 40) {
-            VStack(spacing: 10) {
-                Text("Show it off!")
-                    .font(.title)
-                    .foregroundStyle(.primary)
-                    .bold()
-                Text("Upload some thumbnails to make your DropIn stand out!")
-                    .font(.subheadline)
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(.secondary)
-            }
-            PhotoSelector(selectedPhotos: $vm.selectedPhotos, text: "Add")
-        }
-        .padding()
-    }
+    // MARK: Launch Function
     
     private func onLaunchButtonTapped() {
         Task {
