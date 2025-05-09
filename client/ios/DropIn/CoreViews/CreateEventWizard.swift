@@ -70,20 +70,12 @@ struct CreateEventWizard: View {
     
     private var titleAndSubtitleTab: some View {
         VStack(alignment: .center, spacing: 40) {
-            VStack(spacing: 10) {
-                Text("What's going on?")
-                    .font(.title)
-                    .foregroundStyle(.primary)
-                    .bold()
-                Text("Give your DropIn a title and short description so others know what to expect.")
-                    .font(.subheadline)
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(.secondary)
-            }
+            header(title: "What's going on?", description: "Give your DropIn a title and short description so others know what to expect.")
             TextField("Title", text: $vm.event.title)
                 .roundedTextFieldStyle(strokeColor: .secondary)
-            TextField("Description", text: $vm.event.description)
+            TextEditor(text: $vm.event.description)
                 .roundedTextFieldStyle(strokeColor: .secondary)
+                .containerRelativeFrame(.vertical, count: 10, span: 2, spacing: 0)
         }
         .autocorrectionDisabled()
         .textInputAutocapitalization(.sentences)
@@ -94,16 +86,7 @@ struct CreateEventWizard: View {
     
     private var locationTab: some View {
         VStack(alignment: .center, spacing: 25) {
-            VStack(spacing: 10) {
-                Text("Where's the DropIn?")
-                    .font(.title)
-                    .foregroundStyle(.primary)
-                    .bold()
-                Text("Pick the spot where your DropIn will take place. This will be later displayed on the map.")
-                    .font(.subheadline)
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(.secondary)
-            }
+            header(title: "Where's the DropIn?", description: "Pick the spot where your DropIn will take place. This will be later displayed on the map.")
             MapReader { proxy in
                 Map(initialPosition: .region(MKCoordinateRegion(center: vm.pinLocation, span: .init(latitudeDelta: 0.01, longitudeDelta: 0.01)))) {
                     Marker("DropIn", systemImage: "drop", coordinate: vm.pinLocation)
@@ -112,7 +95,7 @@ struct CreateEventWizard: View {
                 .mapControlVisibility(.hidden)
                 .containerRelativeFrame(.vertical, count: 10, span: 5, spacing: 0)
                 .gesture(MyLongPressGesture { position in
-                    if let loc = proxy.convert(position, from: .local) {
+                    if let loc = proxy.convert(position, from: .global) {
                         vm.pinLocation = loc
                         vm.event.latitude = loc.latitude
                         vm.event.longitude = loc.longitude
@@ -129,16 +112,7 @@ struct CreateEventWizard: View {
     
     private var timeTab: some View {
         VStack(alignment: .center, spacing: 40) {
-            VStack(spacing: 10) {
-                Text("When is it happening?")
-                    .font(.title)
-                    .foregroundStyle(.primary)
-                    .bold()
-                Text("Set the start and end time.")
-                    .font(.subheadline)
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(.secondary)
-            }
+            header(title: "When is it happening?", description: "Set the start and end time.")
             DatePicker("Start", selection: $vm.event.start, in:
                     .now...(Calendar.current.date(byAdding: .hour, value: 24, to: .now) ?? .now),
                        displayedComponents: [.date, .hourAndMinute])
@@ -152,16 +126,7 @@ struct CreateEventWizard: View {
     
     private var participantsTab: some View {
         VStack(alignment: .center, spacing: 40) {
-            VStack(spacing: 10) {
-                Text("Who can join?")
-                    .font(.title)
-                    .foregroundStyle(.primary)
-                    .bold()
-                Text("Limit the number of participants and set age restrictions if needed.")
-                    .font(.subheadline)
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(.secondary)
-            }
+            header(title: "Who can join?", description: "Limit the number of participants and set age restrictions if needed.")
             Toggle(isOn: $vm.event.ageRestricted) {
                 Text("Age Restricted")
             }
@@ -188,16 +153,7 @@ struct CreateEventWizard: View {
     
     private var photosTab: some View {
         VStack(alignment: .center, spacing: 40) {
-            VStack(spacing: 10) {
-                Text("Show it off!")
-                    .font(.title)
-                    .foregroundStyle(.primary)
-                    .bold()
-                Text("Upload some thumbnails to make your DropIn stand out!")
-                    .font(.subheadline)
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(.secondary)
-            }
+            header(title: "Show it off!", description: "Upload some thumbnails to make your DropIn stand out!")
             PhotoSelector(selectedPhotos: $vm.selectedPhotos, text: "Add")
         }
         .padding()
@@ -221,6 +177,19 @@ struct CreateEventWizard: View {
         .multilineTextAlignment(.center)
         .frame(width: 320, height: 320)
         .padding()
+    }
+    
+    private func header(title: String, description: String) -> some View {
+        VStack(spacing: 10) {
+            Text(title)
+                .font(.title)
+                .foregroundStyle(.primary)
+                .bold()
+            Text(description)
+                .font(.subheadline)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.secondary)
+        }
     }
     
     // MARK: Launching View
