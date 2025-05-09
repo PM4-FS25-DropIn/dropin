@@ -82,6 +82,18 @@ class EventStore {
         return events
     }
     
+    func checkIfEventIsJoinedByUser(_ event: DropInEvent) -> Bool {
+        guard let eventId = event.id, let eventUserId = event.userId else { return false }
+        
+        for event in joinedEvents {
+            guard let joinedEventId = event.id, let joinedEventUserId = event.userId else { continue }
+            if eventId == joinedEventId && eventUserId == joinedEventUserId {
+                return true
+            }
+        }
+        return false
+    }
+    
     /// Fetch more events that haven't been fetched yet.
     //TODO: Might be broken with the excluded ids fetching. Logic should be already in here.
     func fetchMoreFeedEvents() async throws {
@@ -148,7 +160,10 @@ class EventStore {
         withAnimation {
             feedEvents.removeAll { $0.id == eventId }
         }
-        joinedEvents.append(event)
+        
+        var updatedEvent = event
+        updatedEvent.slotsTaken! += 1
+        joinedEvents.append(updatedEvent)
     }
     
     /// Leave a specific event.
