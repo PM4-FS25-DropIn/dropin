@@ -32,5 +32,6 @@ struct DropInsView: View {
 #Preview {
     DropInsView()
         .environment(EventStore())
+        .environment(AuthService())
 }
 
