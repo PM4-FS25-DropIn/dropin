@@ -4,6 +4,7 @@ struct EventDetailView: View {
     @Environment(EventStore.self) private var eventStore
     
     @State private var joinEventTaskStatus: AsyncStatus = .idle
+    @State private var attendanceStatus: AttendanceStatus = .undetermined
     
     var event: DropInEvent
     
@@ -26,6 +27,9 @@ struct EventDetailView: View {
                 .padding()
             Spacer()
         }
+        .onAppear {
+            attendanceStatus = eventStore.checkIfEventIsJoinedByUser(event) ? .joined : .undetermined
+        }
     }
     
     private func image(imagePath: String) -> some View {
@@ -44,16 +48,8 @@ struct EventDetailView: View {
     }
     
     private var buttonGroup: some View {
-        Button {
-            joinEvent()
-        } label: {
-            Text("Drop In")
-                .frame(maxWidth: .infinity)
-                .bold()
-        }
-        .buttonStyle(.borderedProminent)
-        .padding()
-        .disabled(joinEventTaskStatus.isRunning)
+        DropInButton(attendanceStatus: $attendanceStatus, action: joinEvent, extended: true)
+            .padding()
     }
     
     private func joinEvent() {
@@ -62,6 +58,7 @@ struct EventDetailView: View {
             do {
                 try await eventStore.joinEvent(event)
                 joinEventTaskStatus = .success
+                attendanceStatus = .joined
             } catch {
                 joinEventTaskStatus = .failure(error)
             }
