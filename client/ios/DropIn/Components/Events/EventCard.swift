@@ -109,6 +109,7 @@ struct EventCard: View {
                 }
             }
             .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.roundedRectangle(radius: 15))
             .font(.subheadline)
             .disabled(attendanceStatus == .joined)
         }

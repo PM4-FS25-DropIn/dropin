@@ -58,7 +58,8 @@ struct SignInView: View {
                 Text("Sign in")
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.primary)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.roundedRectangle(radius: 15))
             .controlSize(.large)
             .bold()
             .padding(.top, 40)

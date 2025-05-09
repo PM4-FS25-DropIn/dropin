@@ -223,7 +223,8 @@ struct CreateEventWizard: View {
             Button("Launch") {
                 onLaunchButtonTapped()
             }
-            .buttonStyle(.primary)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.roundedRectangle(radius: 15))
             .bold()
             .controlSize(.large)
         }

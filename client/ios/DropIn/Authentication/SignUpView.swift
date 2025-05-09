@@ -61,7 +61,8 @@ struct SignUpView: View {
                 Text("Sign Up")
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.primary)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.roundedRectangle(radius: 15))
             .controlSize(.large)
             .bold()
             .padding(.top, 40)
