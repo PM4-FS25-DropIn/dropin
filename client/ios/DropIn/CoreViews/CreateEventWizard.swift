@@ -31,26 +31,31 @@ struct CreateEventWizard: View {
             Tab {
                 Image(systemName: "hand.wave.fill")
                     .font(.title)
+                    .foregroundStyle(.accent)
                 titleAndSubtitleTab
             }
             Tab {
                 Image(systemName: "location.fill")
                     .font(.title)
+                    .foregroundStyle(.accent)
                 locationTab
             }
             Tab {
                 Image(systemName: "clock.arrow.trianglehead.counterclockwise.rotate.90")
                     .font(.title)
+                    .foregroundStyle(.accent)
                 timeTab
             }
             Tab {
                 Image(systemName: "person.3")
                     .font(.title)
+                    .foregroundStyle(.accent)
                 participantsTab
             }
             Tab {
                 Image(systemName: "photo")
                     .font(.title)
+                    .foregroundStyle(.accent)
                 photosTab
             }
             Tab {
@@ -112,6 +117,7 @@ struct CreateEventWizard: View {
                 })
                 .clipShape(RoundedRectangle(cornerRadius: 10))
             }
+            Text(formatCoordinates(latitude: vm.pinLocation.latitude, longitude: vm.pinLocation.longitude))
         }
         .padding()
     }
@@ -204,7 +210,7 @@ struct CreateEventWizard: View {
         Group {
             Image(systemName: "hand.thumbsup.fill")
                 .font(.title)
-                .tint(.primary)
+                .foregroundStyle(.accent)
             VStack(spacing: 10) {
                 Text("Ready to Launch?")
                     .font(.title)
@@ -217,7 +223,8 @@ struct CreateEventWizard: View {
             Button("Launch") {
                 onLaunchButtonTapped()
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.primary)
+            .bold()
             .controlSize(.large)
         }
     }
