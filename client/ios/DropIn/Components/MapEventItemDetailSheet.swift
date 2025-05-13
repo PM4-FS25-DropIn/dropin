@@ -145,7 +145,7 @@ struct MapEventItemDetailSheet: View {
         Task {
             joinEventTaskStatus = .running
             do {
-                try await eventStore.joinEvent(event)
+                _ = try await eventStore.joinEvent(event)
                 joinEventTaskStatus = .success
                 attendanceStatus = .joined
             } catch {
