@@ -23,7 +23,8 @@ struct OnboardingView: View {
                             Button("Sign Up") {
                                 showOnboarding.toggle()
                             }
-                            .buttonStyle(.primary)
+                            .buttonStyle(.borderedProminent)
+                            .buttonBorderShape(.roundedRectangle(radius: 15))
                             .padding()
                         }
                     } else {

@@ -12,14 +12,25 @@ struct DropInButton: View {
     @Binding var attendanceStatus: AttendanceStatus
     
     var action: () -> Void
+    var extended: Bool = false
     
     var body: some View {
-        Button(attendanceStatus == .joined ? "Dropped In" : "Drop In") {
+        Button {
             action()
+        } label: {
+            if extended {
+                Text(attendanceStatus == .joined ? "Dropped In": "Drop In")
+                    .frame(maxWidth: .infinity)
+                    .font(.subheadline)
+                    .bold()
+            } else {
+                Text(attendanceStatus == .joined ? "Dropped In": "Drop In")
+                    .font(.subheadline)
+                    .bold()
+            }
         }
         .buttonStyle(.borderedProminent)
-        .font(.headline)
-        .bold()
+        .buttonBorderShape(.roundedRectangle(radius: 30))
         .disabled(attendanceStatus == .joined)
     }
 }
