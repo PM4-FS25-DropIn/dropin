@@ -30,7 +30,7 @@ struct DropInButton: View {
             }
         }
         .buttonStyle(.borderedProminent)
-        .buttonBorderShape(.roundedRectangle(radius: 15))
+        .buttonBorderShape(.roundedRectangle(radius: 30))
         .disabled(attendanceStatus == .joined)
     }
 }

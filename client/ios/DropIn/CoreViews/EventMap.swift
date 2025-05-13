@@ -88,7 +88,7 @@ struct EventMap: View {
                 .padding(8)
                 .background(.ultraThinMaterial)
                 .foregroundStyle(.secondary)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .clipShape(RoundedRectangle(cornerRadius: 30))
                 .padding()
             }
             .gesture(MyLongPressGesture { position in
@@ -125,7 +125,7 @@ struct EventMap: View {
             .foregroundColor(.secondary)
             .padding(6)
             .background(.thinMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .clipShape(RoundedRectangle(cornerRadius: 30))
     }
     
     /// If camera is currently following user, only fetch new updates every 5 seconds. Otherwise fetch,
