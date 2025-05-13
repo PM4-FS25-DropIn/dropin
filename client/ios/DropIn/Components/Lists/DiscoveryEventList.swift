@@ -44,7 +44,7 @@ struct DiscoveryEventList: View {
         ScrollView {
             LazyVStack(alignment: .center, spacing: 25) {
                 ForEach(eventStore.feedEvents, id: \.self) { event in
-                    EventCard(event: event, onJoinHandler: eventStore.joinEvent)
+                    EventCard(event: event)
                         .onAppear {
                             if event == eventStore.feedEvents.last {
                                 Task {

@@ -31,7 +31,7 @@ struct AllEventsList: View {
                             event.userId == authService.userId ?
                             Label("Delete", systemImage: "trash")
                             :
-                            Label("Drop Out", systemImage: "figure.walk")
+                            Label("Drop Out", systemImage: "figure.walk.departure")
                         }
                     }
             }
