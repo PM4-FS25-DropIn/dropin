@@ -1,9 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { generateRandomString, setupRandomClientAndLogin } from './dbhelpers.js';
+import { createSuperClient, generateRandomString, setupRandomClientAndLogin } from './dbhelpers.js';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 test('An authenticated user can join an event', async (t) => {
+    const serviceClient = createSuperClient();
     const { client: creatingClient, user: creatingUser } = await setupRandomClientAndLogin();
     const { client: joiningClient, user: joiningUser } = await setupRandomClientAndLogin();
 
@@ -26,11 +27,13 @@ test('An authenticated user can join an event', async (t) => {
     assert.equal(response[0].event_id, testEvent.id, "Expected event_id to be " + testEvent.id + ", but got: " + response[0].event_id);
     assert.equal(response[0].user_id, joiningUser.id, "Expected user_id to be " + joiningUser.id + ", but got: " + response[0].user_id);
 
-    const { data: selectData, error: selectError } = await creatingClient.from('event_joins')
-        .select();
+    const { data: selectData, error: selectError } = await serviceClient.from('event_joins')
+        .select()
+        .eq('event_id', testEvent.id);
 
     assert.equal(selectError, null, "Expected event join selection to succeed, but it failed: " + selectError?.message + " for event_id: " + testEvent.id);
     assert.notEqual(selectData, null, "Expected data not to be null, but got null.");
+    
     const selectResponse = <unknown>selectData as any[];
     assert.equal(selectResponse.length, 2, "Expected two event joins to be selected, but got: " + selectResponse.length  + " for event_id: " + testEvent.id);
     
