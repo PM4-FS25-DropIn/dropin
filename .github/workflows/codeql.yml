@@ -57,7 +57,7 @@ jobs:
       shell: bash
       run: |
         xcodebuild clean build \
-          -scheme "dropin" \
+          -scheme "DropIn" \
           -destination "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro" \
           CODE_SIGNING_ALLOWED=NO | xcpretty
       # This directly prints the build stdout instead of buffering it.

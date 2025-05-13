@@ -22,7 +22,7 @@ create table public.events (
     latitude double precision not null check (latitude >= -90 and latitude <= 90),
     longitude double precision not null check (longitude >= -180 and longitude <= 180),
     slot_limit integer not null check (slot_limit >= 1),
-    slots_taken integer not null default 0 check (slots_taken <= slot_limit),
+    slots_taken integer not null default 1 check (slots_taken <= slot_limit),
     age_restricted boolean not null default false,
     chat_enabled boolean not null default true
 );

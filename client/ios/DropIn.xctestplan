@@ -1,0 +1,31 @@
+{
+  "configurations" : [
+    {
+      "id" : "865FB128-74C2-4659-8DC0-E3F8EF3800F5",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:DropIn.xcodeproj",
+        "identifier" : "B3B7161B2D872E1F0023465A",
+        "name" : "DropInTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:DropIn.xcodeproj",
+        "identifier" : "B3B716252D872E1F0023465A",
+        "name" : "DropInUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
