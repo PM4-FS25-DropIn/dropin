@@ -84,4 +84,3 @@ final class AuthService {
 enum AuthServiceError: Error {
     case profileNotFound
 }
-
