@@ -14,24 +14,16 @@ struct EventCardStatusBadge: View {
     
     var body: some View {
         HStack {
-            Circle()
-                .frame(width: 10, height: 10)
-                .foregroundStyle(getEventStatusColor(status))
-                .brightness(0.5)
-                .shadow(color: getEventStatusColor(status), radius: 10)
-            Spacer()
             Text(status.rawValue)
                 .font(.caption)
                 .foregroundStyle(getEventStatusColor(status))
-                .brightness(0.5)
+                .brightness(0.1)
                 .shadow(color: getEventStatusColor(status), radius: 10)
                 .bold()
-            Spacer()
         }
-        .padding()
-        .containerRelativeFrame(.horizontal, count: 10, span: 3, spacing: 0)
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 30))
+        .padding(.vertical, 5)
+        .containerRelativeFrame(.horizontal, count: 8, span: 2, spacing: 0)
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 30))
     }
 }
 
@@ -44,7 +36,7 @@ struct EventStatusBadge: View {
             .foregroundStyle(.white)
             .font(.footnote)
             .bold()
-            .background(getEventStatusColor(status), in: RoundedRectangle(cornerRadius: 6))
+            .background(getEventStatusColor(status), in: RoundedRectangle(cornerRadius: 30))
     }
 }
 
