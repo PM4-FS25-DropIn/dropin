@@ -25,18 +25,6 @@ struct SignUpView: View {
         .padding(30)
     }
     
-    private var footer: some View {
-        HStack {
-            Text("Already have an account?")
-                .foregroundStyle(.secondary)
-            Button("Sign In") {
-                selectedAuthMode = .signIn
-            }
-            .foregroundStyle(.accent)
-        }
-        .font(.footnote)
-    }
-    
     private var header: some View {
         VStack {
             Text("Sign Up")
@@ -48,7 +36,7 @@ struct SignUpView: View {
                 .foregroundStyle(.gray)
         }
     }
-    
+
     private var signUpForm: some View {
         VStack(spacing: 35) {
             AuthTextField("Username", value: $authData.username)
@@ -74,18 +62,47 @@ struct SignUpView: View {
         Task {
             signUpState = .running
             do {
+                let usernameAvailable = try await authService.isUsernameAvailable(authData.username)
+                guard usernameAvailable else {
+                    signUpState = .failure(CustomError("Username already taken"))
+                    showAlert = true
+                    return
+                }
+
                 try await authService.signUp(authData: authData)
                 isSignedUp = true
                 signUpState = .success
+                
             } catch {
                 signUpState = .failure(error)
                 showAlert = true
             }
         }
     }
+    
+    private var footer: some View {
+        HStack {
+            Text("Already have an account?")
+                .foregroundStyle(.secondary)
+            Button("Sign In") {
+                selectedAuthMode = .signIn
+            }
+            .foregroundStyle(.accent)
+        }
+        .font(.footnote)
+    }
 }
 
 #Preview {
     SignUpView(selectedAuthMode: .constant(.signUp))
         .environment(AuthService())
+}
+
+// CustomError type that conforms to Error and accepts a String message
+struct CustomError: Error, LocalizedError {
+    let message: String
+    init(_ message: String) {
+        self.message = message
+    }
+    var errorDescription: String? { message }
 }
