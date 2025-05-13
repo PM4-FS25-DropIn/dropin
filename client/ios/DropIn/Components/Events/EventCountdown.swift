@@ -12,7 +12,7 @@ struct EventCountdown: View {
         Text(formatted(timeRemaining))
             .font(.caption)
             .bold()
-            .foregroundColor(timeRemaining <= 1_800 ? .red : .primary)
+            .foregroundColor(timeRemaining <= 1_800 ? .red : .secondary)
             .onAppear {
                 timeRemaining = eventStartDate.timeIntervalSinceNow
             }
