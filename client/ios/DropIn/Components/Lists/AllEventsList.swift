@@ -9,7 +9,7 @@
 import SwiftUI
 
 
-/// Displays a list of joined events of user (excluding the ones created by user!)
+/// Displays a list of joined events of user
 struct AllEventsList: View {
     @Environment(EventStore.self) private var eventStore
     @Environment(AuthService.self) private var authService
@@ -20,7 +20,7 @@ struct AllEventsList: View {
     var body: some View {
         List {
             ForEach(eventStore.joinedEvents) { event in
-                EventRowItem(event: event, showHostBadge: event.userId == authService.userId)
+                EventRowItem(event: event, isHost: event.userId == authService.userId)
                     .listRowInsets(EdgeInsets())
                     .listRowSeparator(.hidden)
                     .swipeActions(edge: .trailing) {
