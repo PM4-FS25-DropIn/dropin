@@ -11,23 +11,20 @@ struct EventCard: View {
     @Environment(EventStore.self) private var eventStore
     
     let event: DropInEvent
-    var onJoinHandler: (DropInEvent) async throws -> DropInEvent
     
     @State private var username = "unknown"
     @State private var attendanceStatus: AttendanceStatus = .undetermined
     @State private var isShowingSheet = false
     @State private var isTimerFinished = false
-   
+    @State private var joinEventTaskStatus: AsyncStatus = .idle
+    @State private var showAlert = false
     
     var body: some View {
         VStack(alignment: .leading) {
             eventImageCarousel
             VStack(alignment: .leading, spacing: 40) {
                 eventCardBody
-                HStack {
-                    joinButton
-                    countdown
-                }
+                joinSection
             }
             .padding()
         }
@@ -44,6 +41,11 @@ struct EventCard: View {
             NavigationStack {
                 EventDetailView(event: event)
             }
+        }
+        .alert("Error", isPresented: $showAlert) {
+            Button("Ok", role: .cancel) { }
+        } message: {
+            Text(joinEventTaskStatus.error)
         }
     }
     
@@ -76,7 +78,6 @@ struct EventCard: View {
         Group {
             if event.start > .now {
                 EventCountdown(eventStartDate: event.start, isFinished: $isTimerFinished, formatter: formatter())
-                    .padding()
             }
         }
     }
@@ -116,26 +117,35 @@ struct EventCard: View {
         }
     }
     
-    private var joinButton: some View {
-        Button(attendanceStatus == .joined ? "Dropped In" : "Drop In") {
-            Task {
-                do {
-                    _ = try await onJoinHandler(event)
-                    attendanceStatus = .joined
-                    print("Joined event")
-                } catch {
-                    print("Couldn't join event")
-                }
+    private var joinSection: some View {
+        VStack {
+            HStack {
+                Text("Starts in")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                countdown
+            }
+            DropInButton(attendanceStatus: $attendanceStatus, action: joinEvent)
+        }
+    }
+    
+    func joinEvent() {
+        Task {
+            joinEventTaskStatus = .running
+            do {
+                _ = try await eventStore.joinEvent(event)
+                joinEventTaskStatus = .success
+                attendanceStatus = .joined
+            } catch {
+                joinEventTaskStatus = .failure(error)
+                showAlert = true
             }
         }
-        .buttonStyle(.borderedProminent)
-        .buttonBorderShape(.roundedRectangle(radius: 30))
-        .font(.subheadline)
-        .disabled(attendanceStatus == .joined)
     }
+
 }
 
 #Preview {
-    EventCard(event: sampleEvent, onJoinHandler: { _ in (sampleEvent) })
+    EventCard(event: sampleEvent)
         .environment(EventStore())
 }
