@@ -27,9 +27,10 @@ struct EventEditView: View {
                 time
                 participants
             }
+            .padding()
             deleteButton
+                .padding()
         }
-        .padding()
         .scrollIndicators(.hidden)
         .navigationTitle("Edit DropIn")
         .navigationBarTitleDisplayMode(.inline)
