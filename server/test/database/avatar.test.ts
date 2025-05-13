@@ -1,7 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { createClientHelper, createUser, generateRandomString } from './dbhelpers.js';
-import { SupabaseClient, User } from '@supabase/supabase-js';
+import { createClientHelper, generateRandomString, setupRandomClientAndLogin } from './dbhelpers.js';
 
 /**
  * Tests if an authenticated user can upload an avatar into their directory.
@@ -156,29 +155,6 @@ test('An unaithenticated user should not be able to get another users avatar', a
   assert.notEqual(downloadResult.error, null, "Expected download action to fail, but it succeeded: " + downloadResult.error?.message);
 });
 
-
-/**
- * Creates a new client and creates a new user using random credentials.
- * @return {client: SupabaseClient, user: User} The client and the user created.
- */
-async function setupRandomClientAndLogin(): Promise<{client: SupabaseClient<any, any, any>, user: User}> {
-  const client = createClientHelper();
-  
-  const { user, password } = await createUser(client);
-
-  if (user.email == null) {
-    throw new Error('No email returned from user creation');
-  }
-
-  const signInResult = await client.auth.signInWithPassword({
-    email: user.email!,
-    password: password,
-  });
-
-  assert.equal(signInResult.error, null, "Expected sign in to succeed, but it failed: " + signInResult.error?.message);
-
-  return {client, user};
-}
 
 /**
  * Creates a random blob of the given size and type.
