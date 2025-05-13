@@ -76,7 +76,7 @@ struct MapEventItemDetailSheet: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 10))
+        .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 30))
     }
     
     func sectionTitle(_ title: String) -> some View {
@@ -117,7 +117,7 @@ struct MapEventItemDetailSheet: View {
             }
         }
         .tabViewStyle(.page)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .clipShape(RoundedRectangle(cornerRadius: 30))
         .containerRelativeFrame(.vertical, count: 12, span: 5, spacing: 0)
     }
     
