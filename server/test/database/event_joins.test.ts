@@ -9,7 +9,6 @@ test('An authenticated user can join an event', async (t) => {
     const { client: joiningClient, user: joiningUser } = await setupRandomClientAndLogin();
 
     const testEvent = await createEvent(creatingClient);
-
     assert.notEqual(testEvent, null, "Expected testEvent to be not null, but got null.");
 
     const { data: joinData, error: joinError } = await joiningClient.from('event_joins')
@@ -43,6 +42,42 @@ test('An authenticated user can join an event', async (t) => {
         .reduce((acc, curr) => acc && curr, true);
     
     assert.equal(areCreaterAndJoinerContained, true, "Expected both creating and joining users to be contained in the event joins, but they are not.");
+});
+
+test('Joining an event increases the slot counter', async (t) => {
+    const { client: creatingClient } = await setupRandomClientAndLogin();
+    const { client: joiningClient, user: joiningUser } = await setupRandomClientAndLogin();
+
+    const testEvent = await createEvent(creatingClient);
+    assert.notEqual(testEvent, null, "Expected testEvent to be not null, but got null.");
+
+    // Fetch and check initial slots_taken value. Should be 1 as the creator is added to the event automatically.
+    const { data: slotsTakenDaten, error: slotsTakenError } = await creatingClient.from('events')
+        .select('slots_taken')
+        .eq('id', testEvent.id);
+    
+    const slotsTakenResponse = <unknown>slotsTakenDaten as any[];
+    assert.equal(slotsTakenError, null, "Expected event slots_taken selection to succeed, but it failed: " + slotsTakenError?.message);
+    assert.notEqual(slotsTakenResponse, null, "Expected data not to be null, but got null.");
+    assert.equal(slotsTakenResponse[0].slots_taken, 1, "Expected one event to be selected, but got: " + slotsTakenResponse.length);
+
+    // Join the event with another user
+    const { error: joinError } = await joiningClient.from('event_joins')
+        .insert({
+            event_id: testEvent.id,
+            user_id: joiningUser.id
+        });
+    assert.equal(joinError, null, "Expected event join to succeed, but it failed: " + joinError?.message);
+
+    // Fetch and check initial slots_taken value. Should be 2 this time, as we have two users in the event.
+    const { data: slotsTakenAfterJoinDaten, error: slotsTakenAfterJoinError } = await creatingClient.from('events')
+        .select('slots_taken')
+        .eq('id', testEvent.id);
+    
+    const slotsTakenAfterJoinResponse = <unknown>slotsTakenAfterJoinDaten as any[];
+    assert.equal(slotsTakenAfterJoinError, null, "Expected event slots_taken selection to succeed, but it failed: " + slotsTakenAfterJoinError?.message);
+    assert.notEqual(slotsTakenAfterJoinResponse, null, "Expected data not to be null, but got null.");
+    assert.equal(slotsTakenAfterJoinResponse[0].slots_taken, 2, "Expected one event to be selected, but got: " + slotsTakenResponse.length);
 });
 
 test('An authenticated user can leave an event', async (t) => {
@@ -82,7 +117,28 @@ test('An authenticated user can leave an event', async (t) => {
     assert.equal(leaveResponse[0].user_id, leavingUser.id, "Expected user_id to be " + leavingUser.id + ", but got: " + joinResponse[0].user_id);
 });
 
-test('An already banned user cannot join an event', async (t) => {
+test('Leaving an event decreases the slot counter', async (t) => {
+    const { client: creatingClient, user: creatingUser } = await setupRandomClientAndLogin();
+
+    const testEvent = await createEvent(creatingClient);
+    assert.notEqual(testEvent, null, "Expected testEvent to be not null, but got null.");
+    
+    const { error: leaveError } = await creatingClient.from('event_joins')
+        .delete()
+        .eq('event_id', testEvent.id)
+        .eq('user_id', creatingUser.id)
+    assert.equal(leaveError, null, "Expected event leave to succeed, but it failed: " + leaveError?.message);
+
+    // Fetch and check slots_taken value. Should be 0 as the creator is removed from the event.
+    const { data: slotsTakenDaten, error: slotsTakenError } = await creatingClient.from('events')
+        .select('slots_taken')
+        .eq('id', testEvent.id);
+        
+    assert.equal(slotsTakenError, null, "Expected event slots_taken selection to succeed, but it failed: " + slotsTakenError?.message);
+    assert.notEqual(slotsTakenDaten, null, "Expected data not to be null, but got null.");
+    
+    const slotsTakenResponse = <unknown>slotsTakenDaten as any[];
+    assert.equal(slotsTakenResponse.length, 1, "Expected one event to be selected, but got: " + slotsTakenResponse.length);
 });
 
 async function createEvent(client: SupabaseClient<any, any, any>): Promise<any> {
