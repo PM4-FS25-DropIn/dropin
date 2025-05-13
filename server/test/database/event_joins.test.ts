@@ -57,7 +57,7 @@ test('An authenticated user can leave an event', async (t) => {
         }).select();
 
     assert.equal(joinError, null, "Expected event join to succeed, but it failed: " + joinError?.message);
-    assert.notEqual(joinData, null, "Expected data not to be null, but got null.");
+    assert.notEqual(joinData, null, "Expected join data not to be null, but got null.");
     
     const joinResponse = <unknown>joinData as any[];
     assert.equal(joinResponse.length, 1, "Expected one event join to be created, but got: " + joinResponse.length);
@@ -67,10 +67,11 @@ test('An authenticated user can leave an event', async (t) => {
     const { data: leaveData, error: leaveError } = await leavingClient.from('event_joins')
         .delete()
         .eq('event_id', testEvent.id)
-        .eq('user_id', leavingUser.id);
+        .eq('user_id', leavingUser.id)
+        .select();
 
     assert.equal(leaveError, null, "Expected event leave to succeed, but it failed: " + leaveError?.message);
-    assert.notEqual(leaveData, null, "Expected data not to be null, but got null.");
+    assert.notEqual(leaveData, null, "Expected leave data not to be null, but got null.");
 
     const leaveResponse = <unknown>leaveData as any[];
     assert.equal(leaveResponse.length, 1, "Expected one event leave to be returned, but got: " + joinResponse.length);
