@@ -71,4 +71,15 @@ final class dropinUITests: XCTestCase {
             ongoing.swipeLeft()
         }
     }
+    func testHomeView() throws {
+        let app = XCUIApplication()
+        app.launch()
+        measure {
+            app/*@START_MENU_TOKEN@*/.buttons["paperplane.fill"]/*[[".otherElements",".buttons[\"Send\"]",".buttons[\"paperplane.fill\"]"],[[[-1,2],[-1,1],[-1,0,1]],[[-1,2],[-1,1]]],[0]]@END_MENU_TOKEN@*/.tap()
+            let backButton = app/*@START_MENU_TOKEN@*/.buttons["Back"]/*[[".navigationBars",".buttons.firstMatch",".buttons[\"Back\"]"],[[[-1,2],[-1,0,1]],[[-1,2],[-1,1]]],[0]]@END_MENU_TOKEN@*/
+            backButton.tap()
+            app/*@START_MENU_TOKEN@*/.buttons["bell.fill"]/*[[".otherElements",".buttons[\"Notifications\"]",".buttons[\"bell.fill\"]"],[[[-1,2],[-1,1],[-1,0,1]],[[-1,2],[-1,1]]],[0]]@END_MENU_TOKEN@*/.tap()
+            backButton.tap()
+        }
+    }
 }
