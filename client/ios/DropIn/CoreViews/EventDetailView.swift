@@ -3,19 +3,21 @@ import MapKit
 
 struct EventDetailView: View {
     @Environment(EventStore.self) private var eventStore
+    @Environment(\.dismiss) private var dismiss
     
-    @State private var joinEventTaskStatus: AsyncStatus = .idle
+    @State private var eventAsyncTaskStatus: AsyncStatus = .idle
     @State private var attendanceStatus: AttendanceStatus = .undetermined
+    @State private var showLeaveConfirmation = false
     
     var event: DropInEvent
-    var isHost: Bool = true
+    var isHost: Bool = false
     
     var body: some View {
         ScrollView {
             imageCarousel
             VStack(alignment: .center, spacing: 20) {
                 titleAndDescription
-                DropInButton(attendanceStatus: $attendanceStatus, action: joinEvent, extended: true)
+                buttonGroup
                 EventQuickInfo(event: event)
                 minimap
             }
@@ -25,6 +27,15 @@ struct EventDetailView: View {
         .scrollIndicators(.hidden)
         .onAppear {
             attendanceStatus = eventStore.checkIfEventIsJoinedByUser(event) ? .joined : .undetermined
+        }
+        .alert("Confirm Dropout", isPresented: $showLeaveConfirmation) {
+            Button("Cancel", role: .cancel) { }
+            Button("Drop Out", role: .destructive) {
+                leaveEvent()
+                dismiss()
+            }
+        } message: {
+            Text("Are you sure you want to leave this event?")
         }
        
     }
@@ -96,6 +107,18 @@ struct EventDetailView: View {
         }
     }
     
+    
+    private var buttonGroup: some View {
+        HStack {
+            DropInButton(attendanceStatus: $attendanceStatus, action: joinEvent, extended: true)
+            if !isHost {
+                DropOutButton(attendanceStatus: $attendanceStatus, action: onLeaveButtonTapped)
+            }
+        }
+    }
+    
+    // MARK: - Functions
+    
     private func image(imagePath: String) -> some View {
         AsyncImage(url: URL(string: imagePath)) { phase in
             if let image = phase.image {
@@ -111,21 +134,36 @@ struct EventDetailView: View {
         }
     }
     
-    // MARK: - Join Event Function
     
     private func joinEvent() {
         Task {
-            joinEventTaskStatus = .running
+            eventAsyncTaskStatus = .running
             do {
                 _ = try await eventStore.joinEvent(event)
-                joinEventTaskStatus = .success
+                eventAsyncTaskStatus = .success
                 attendanceStatus = .joined
             } catch {
-                joinEventTaskStatus = .failure(error)
+                eventAsyncTaskStatus = .failure(error)
             }
         }
     }
+    
+    private func onLeaveButtonTapped() {
+        showLeaveConfirmation = true
+    }
    
+    private func leaveEvent() {
+        Task {
+            eventAsyncTaskStatus = .running
+            do {
+                _ = try await eventStore.leaveEvent(event)
+                eventAsyncTaskStatus = .success
+                attendanceStatus = .undetermined
+            } catch {
+                eventAsyncTaskStatus = .failure(error)
+            }
+        }
+    }
 }
 
 #Preview {
