@@ -135,14 +135,15 @@ class EventStore {
             .execute()
             .value
         
-        mapEvents.append(contentsOf: filterNewEvents(events, from: mapEvents))
+        mapEvents = events
+        //mapEvents.append(contentsOf: filterNewEvents(events, from: mapEvents))
         print("Calling fetch Events in region")
         print("Now has: \(feedEvents.count)")
     }
     
     
     /// Join a specific event.
-    func joinEvent(_ event: DropInEvent) async throws {
+    func joinEvent(_ event: DropInEvent) async throws -> DropInEvent {
         
         guard let eventId = event.id else {
             throw EventStoreError.eventIdNotValid
@@ -164,6 +165,13 @@ class EventStore {
         var updatedEvent = event
         updatedEvent.slotsTaken! += 1
         joinedEvents.append(updatedEvent)
+        
+        // Update map event
+        if let index = mapEvents.firstIndex(where: { $0.id == updatedEvent.id }) {
+            mapEvents[index] = updatedEvent
+        }
+        
+        return updatedEvent
     }
     
     /// Leave a specific event.
