@@ -23,7 +23,7 @@ struct EventCardStatusBadge: View {
         }
         .padding(.vertical, 5)
         .containerRelativeFrame(.horizontal, count: 8, span: 2, spacing: 0)
-        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 30))
+        .background(.thickMaterial, in: RoundedRectangle(cornerRadius: 30))
     }
 }
 
