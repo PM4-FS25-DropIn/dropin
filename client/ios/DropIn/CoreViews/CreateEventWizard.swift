@@ -9,6 +9,9 @@ import SwiftUI
 import MapKit
 import PhotosUI
 
+enum error: Error {
+    case error
+}
 
 struct CreateEventWizard: View {
     @Environment(\.dismiss) private var dismiss
@@ -101,7 +104,7 @@ struct CreateEventWizard: View {
                         vm.event.longitude = loc.longitude
                     }
                 })
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .clipShape(RoundedRectangle(cornerRadius: 30))
             }
             Text(formatCoordinates(latitude: vm.pinLocation.latitude, longitude: vm.pinLocation.longitude))
         }
@@ -209,7 +212,7 @@ struct CreateEventWizard: View {
     
     private var readyToLaunch: some View {
         Group {
-            Image(systemName: "hand.thumbsup.fill")
+            Image(systemName: "airplane.departure")
                 .font(.title)
                 .foregroundStyle(.accent)
             VStack(spacing: 10) {
@@ -225,7 +228,7 @@ struct CreateEventWizard: View {
                 onLaunchButtonTapped()
             }
             .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.roundedRectangle(radius: 15))
+            .buttonBorderShape(.roundedRectangle(radius: 30))
             .bold()
             .controlSize(.large)
         }
