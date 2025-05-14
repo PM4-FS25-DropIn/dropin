@@ -33,6 +33,15 @@ final class AuthService {
         print("Signing up here...")
         try await supabase.auth.signUp(email: authData.email, password: authData.password, data: ["username": .string(authData.username)])
     }
+    func isUsernameAvailable(_ username: String) async throws -> Bool {
+        let result = try await supabase
+            .from("profiles")
+            .select("id", head: true, count: .exact)
+            .eq("username", value: username)
+            .execute()
+        
+        return (result.count ?? 0) == 0
+    }
     
     func signOut() async throws {
         try await supabase.auth.signOut()
