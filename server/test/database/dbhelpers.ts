@@ -1,10 +1,16 @@
 import { createClient, SupabaseClient, User } from "@supabase/supabase-js";
+import assert from "node:assert";
 
 const url: string = "http://127.0.0.1:54321";
-const key: string = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0";
+const anon_key: string = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0";
+const service_key: string = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU";
 
 export function createClientHelper(): SupabaseClient<any, any, any> {
-  return createClient(url, key);
+  return createClient(url, anon_key);
+}
+
+export function createSuperClient(): SupabaseClient<any, any, any> {
+    return createClient(url, service_key);
 }
 
 export interface UserOptions {
@@ -42,6 +48,30 @@ export async function createUser(client: SupabaseClient<any, any, any>, settings
 
     return { password, user: result.data.user };
 }
+
+/**
+ * Creates a new client and creates a new user using random credentials.
+ * @return {client: SupabaseClient, user: User} The client and the user created.
+ */
+export async function setupRandomClientAndLogin(): Promise<{client: SupabaseClient<any, any, any>, user: User}> {
+  const client = createClientHelper();
+  
+  const { user, password } = await createUser(client);
+
+  if (user.email == null) {
+    throw new Error('No email returned from user creation');
+  }
+
+  const signInResult = await client.auth.signInWithPassword({
+    email: user.email!,
+    password: password,
+  });
+
+  assert.equal(signInResult.error, null, "Expected sign in to succeed, but it failed: " + signInResult.error?.message);
+
+  return {client, user};
+}
+
 
 export function generateRandomString(addDate: boolean = false): string {
     const length = 10; // Length of the random string
