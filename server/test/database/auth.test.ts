@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { createClientHelper, createUser, setupRandomClientAndLogin} from './dbhelpers.js';
+import { createClientHelper, createSuperClient, createUser, setupRandomClientAndLogin} from './dbhelpers.js';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**
@@ -48,12 +48,13 @@ test('handle_new_user trigger populates profiles with id & username', async () =
 
 
 test('handle_new_user trigger does not duplicate profile on user update', async () => {
+  const admin = createSuperClient();
   const { client, user } = await setupRandomClientAndLogin();
   assert(user.id);
   const originalUsername = (user as any).user_metadata?.username as string | null;
 
   const newUsername = originalUsername ? originalUsername + '_x' : 'x';
-  const { error: updErr } = await client.auth.admin.updateUserById(user.id, {
+  const { error: updErr } = await admin.auth.admin.updateUserById(user.id, {
     user_metadata: { username: newUsername }
   });
   assert.equal(updErr, null, `Update error: ${updErr?.message}`);
