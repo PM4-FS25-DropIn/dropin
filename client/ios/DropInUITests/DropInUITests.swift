@@ -51,7 +51,7 @@ final class DropInUITests: XCTestCase {
              }
          }
     }*/
-    
+    @MainActor
     func testEventCategoryTab() throws {
         let app = XCUIApplication()
         app.launch()
@@ -71,6 +71,7 @@ final class DropInUITests: XCTestCase {
             ongoing.swipeLeft()
         }
     }
+    @MainActor
     func testHomeView() throws {
         let app = XCUIApplication()
         app.launch()
