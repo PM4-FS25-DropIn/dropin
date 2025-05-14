@@ -64,7 +64,7 @@ struct SignUpView: View {
             do {
                 let usernameAvailable = try await authService.isUsernameAvailable(authData.username)
                 guard usernameAvailable else {
-                    signUpState = .failure(CustomError("Username already taken"))
+                    signUpState = .failure(SignUpError.usernameTaken)
                     showAlert = true
                     return
                 }
@@ -98,11 +98,8 @@ struct SignUpView: View {
         .environment(AuthService())
 }
 
-// CustomError type that conforms to Error and accepts a String message
-struct CustomError: Error, LocalizedError {
-    let message: String
-    init(_ message: String) {
-        self.message = message
-    }
-    var errorDescription: String? { message }
+enum SignUpError: String, Error, LocalizedError {
+    case usernameTaken = "Username already taken"
+    
+    var errorDescription: String? { rawValue }
 }

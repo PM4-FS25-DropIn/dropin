@@ -34,23 +34,13 @@ final class AuthService {
         try await supabase.auth.signUp(email: authData.email, password: authData.password, data: ["username": .string(authData.username)])
     }
     func isUsernameAvailable(_ username: String) async throws -> Bool {
-        do {
-            // Check if any profile exists with this username
-            // Using .select("id").limit(1) is efficient as we only need to know if it exists
-            let count: Int = try await supabase
-                .from("profiles")
-                .select("id", head: true, count: .exact) // head: true means don't return data, just count
-                .eq("username", value: username) // Ensure your 'username' column in Supabase is queried correctly
-                .execute()
-                .count ?? 0 // If count is nil (error or unexpected response), assume not available or handle error
-
-            print(count)
-            return count == 0
-            
-        } catch {
-            print("Error checking username availability: \(error)")
-            throw error
-        }
+        let result = try await supabase
+            .from("profiles")
+            .select("id", head: true, count: .exact)
+            .eq("username", value: username)
+            .execute()
+        
+        return (result.count ?? 0) == 0
     }
     
     func signOut() async throws {
