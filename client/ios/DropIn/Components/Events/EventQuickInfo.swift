@@ -21,7 +21,7 @@ struct EventQuickInfo: View {
         }
         .padding()
         .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .clipShape(RoundedRectangle(cornerRadius: 30))
     }
 
     private var header: some View {
@@ -58,12 +58,12 @@ struct EventQuickInfo: View {
             }
             GridRow {
                 infoItem(
-                    event.start.formatted(date: .omitted, time: .shortened),
-                    "play.circle.fill"
+                    event.start.formatted(date: .numeric, time: .shortened),
+                    "clock.badge.checkmark.fill"
                 )
                 infoItem(
-                    event.end.formatted(date: .omitted, time: .shortened),
-                    "stop.circle.fill"
+                    event.end.formatted(date: .numeric, time: .shortened),
+                    "clock.badge.xmark.fill"
                 )
             }
             GridRow {

@@ -11,25 +11,26 @@ struct EventCard: View {
     @Environment(EventStore.self) private var eventStore
     
     let event: DropInEvent
-    var onJoinHandler: (DropInEvent) async throws -> Void
     
     @State private var username = "unknown"
     @State private var attendanceStatus: AttendanceStatus = .undetermined
     @State private var isShowingSheet = false
-   
+    @State private var isTimerFinished = false
+    @State private var joinEventTaskStatus: AsyncStatus = .idle
+    @State private var showAlert = false
     
     var body: some View {
         VStack(alignment: .leading) {
             eventImageCarousel
             VStack(alignment: .leading, spacing: 40) {
                 eventCardBody
-                buttonGroup
+                joinSection
             }
             .padding()
         }
         .background(Color(.secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        .shadow(radius: 5)
+        .clipShape(RoundedRectangle(cornerRadius: 30))
+        .shadow(radius: 2)
         .onAppear() {
             attendanceStatus = .undetermined
         }
@@ -37,7 +38,14 @@ struct EventCard: View {
             isShowingSheet = true
         }
         .sheet(isPresented: $isShowingSheet) {
-            EventDetailView(event: event)
+            NavigationStack {
+                EventDetailView(event: event)
+            }
+        }
+        .alert("Error", isPresented: $showAlert) {
+            Button("Ok", role: .cancel) { }
+        } message: {
+            Text(joinEventTaskStatus.error)
         }
     }
     
@@ -60,11 +68,25 @@ struct EventCard: View {
         }
         .tabViewStyle(.page)
         .containerRelativeFrame(.vertical, count: 12, span: 5, spacing: 0)
-        .overlay {
+        .overlay(alignment: .topTrailing) {
             EventCardStatusBadge(status: event.status)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
                 .padding()
         }
+    }
+    
+    private var countdown: some View {
+        Group {
+            if event.start > .now {
+                EventCountdown(eventStartDate: event.start, isFinished: $isTimerFinished, formatter: formatter())
+            }
+        }
+    }
+    
+    private func formatter() -> DateComponentsFormatter {
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.hour, .minute]
+        formatter.unitsStyle = .abbreviated
+        return formatter
     }
     
     private var eventCardBody: some View {
@@ -85,8 +107,8 @@ struct EventCard: View {
                             print("Couldn't get username")
                         }
                     }
-                Label(event.start.formatted(date: .omitted, time: .shortened), systemImage: "play.circle.fill")
-                Label(event.end.formatted(date: .omitted, time: .shortened), systemImage: "stop.circle.fill")
+                Label(event.start.formatted(date: .omitted, time: .shortened), systemImage: "clock.badge.checkmark.fill")
+                Label(event.end.formatted(date: .omitted, time: .shortened), systemImage: "clock.badge.xmark.fill")
                 Label("\(event.slotsTaken ?? 1)/\(event.slotLimit) Slots", systemImage: "person.3.fill")
             }
             .font(.caption2)
@@ -95,27 +117,35 @@ struct EventCard: View {
         }
     }
     
-    private var buttonGroup: some View {
-        HStack(spacing: 15) {
-            Button(attendanceStatus == .joined ? "Dropped In" : "Drop In") {
-                Task {
-                    do {
-                        try await onJoinHandler(event)
-                        attendanceStatus = .joined
-                        print("Joined event")
-                    } catch {
-                        print("Couldn't join event")
-                    }
-                }
+    private var joinSection: some View {
+        VStack {
+            HStack {
+                Text("Starts in")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                countdown
             }
-            .buttonStyle(.borderedProminent)
-            .font(.subheadline)
-            .disabled(attendanceStatus == .joined)
+            DropInButton(attendanceStatus: $attendanceStatus, action: joinEvent)
         }
     }
+    
+    func joinEvent() {
+        Task {
+            joinEventTaskStatus = .running
+            do {
+                _ = try await eventStore.joinEvent(event)
+                joinEventTaskStatus = .success
+                attendanceStatus = .joined
+            } catch {
+                joinEventTaskStatus = .failure(error)
+                showAlert = true
+            }
+        }
+    }
+
 }
 
 #Preview {
-    EventCard(event: sampleEvent, onJoinHandler: { event in })
+    EventCard(event: sampleEvent)
         .environment(EventStore())
 }

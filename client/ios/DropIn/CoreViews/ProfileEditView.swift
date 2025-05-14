@@ -84,9 +84,9 @@ struct BannerPickerSection: View {
                         .fill(Color.gray.opacity(0.2))
                         .frame(height: 150)
                         .overlay(Text("Tap to select banner"))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
             }
-            .cornerRadius(8)
             .onTapGesture { isPickerPresented = true }
             .photosPicker(
                 isPresented: $isPickerPresented,

@@ -13,7 +13,7 @@ struct EventRowItem: View {
     @State private var showDetailsView = false
     
     let event: DropInEvent
-    var showHostBadge: Bool = true
+    var isHost: Bool = false
     
     var body: some View {
         HStack {
@@ -26,7 +26,9 @@ struct EventRowItem: View {
             showDetailsView = true
         }
         .sheet(isPresented: $showDetailsView) {
-            EventDetailView(event: event)
+            NavigationStack {
+                EventDetailView(event: event, isHost: isHost)
+            }
         }
     }
     
@@ -62,7 +64,7 @@ struct EventRowItem: View {
                     .scaledToFit()
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)
-                if showHostBadge {
+                if isHost {
                     Image(systemName: "crown.fill")
                         .foregroundStyle(.orange)
                         .font(.caption)
@@ -76,8 +78,8 @@ struct EventRowItem: View {
                 .lineLimit(2)
             Spacer()
             VStack(alignment: .leading) {
-                Label(event.start.formatted(date: .omitted, time: .shortened), systemImage: "play.circle.fill")
-                Label(event.end.formatted(date: .omitted, time: .shortened), systemImage: "stop.circle.fill")
+                Label(event.start.formatted(date: .numeric, time: .shortened), systemImage: "clock.badge.checkmark.fill")
+                Label(event.end.formatted(date: .numeric, time: .shortened), systemImage: "clock.badge.xmark.fill")
                 Label(formatCoordinates(latitude: event.latitude, longitude: event.longitude), systemImage: "mappin.and.ellipse")
                     .lineLimit(1)
                 Label("\(event.slotsTaken ?? 1)/\(event.slotLimit) Slots", systemImage: "person.3.fill")
