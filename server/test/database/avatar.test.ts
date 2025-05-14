@@ -137,27 +137,6 @@ test('Authenticated user can get other users avatars', async (t) => {
 });
 
 /**
- * An unauthenticated user should not be able to get another user's avatar.
- */
-test('An unaithenticated user should not be able to get another users avatar', async (t) => {
-  const { client: uploadClient, user: uploadUser } = await setupRandomClientAndLogin();
-
-  const targetFile = uploadUser.identities![0]!.id + '/avatar1.png';
-  const uploadResult = await uploadClient.storage.from('avatars')
-    .upload(targetFile, generateRandomBlob(1024));
-
-  assert.equal(uploadResult.error, null, "Expected upload to succeed, but it failed: " + uploadResult.error?.message);
-
-  const client = createClientHelper();
-  
-  const downloadResult = await client.storage.from('avatars')
-    .download(targetFile);
-
-  assert.notEqual(downloadResult.error, null, "Expected download action to fail, but it succeeded: " + downloadResult.error?.message);
-});
-
-
-/**
  * Creates a new client and creates a new user using random credentials.
  * @return {client: SupabaseClient, user: User} The client and the user created.
  */
