@@ -118,14 +118,14 @@ struct EventCard: View {
     }
     
     private var joinSection: some View {
-        VStack {
-            HStack {
+        HStack {
+            DropInButton(attendanceStatus: $attendanceStatus, action: joinEvent)
+            if event.start > .now {
                 Text("Starts in")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                countdown
+                EventCountdown(eventStartDate: event.start, isFinished: $isTimerFinished, formatter: formatter())
             }
-            DropInButton(attendanceStatus: $attendanceStatus, action: joinEvent)
         }
     }
     
