@@ -1,32 +1,123 @@
 import SwiftUI
+import MapKit
 
 struct EventDetailView: View {
     @Environment(EventStore.self) private var eventStore
+    @Environment(\.dismiss) private var dismiss
     
-    @State private var joinEventTaskStatus: AsyncStatus = .idle
+    @State private var eventAsyncTaskStatus: AsyncStatus = .idle
+    @State private var attendanceStatus: AttendanceStatus = .undetermined
+    @State private var showLeaveConfirmation = false
     
     var event: DropInEvent
+    var isHost: Bool = false
     
     var body: some View {
         ScrollView {
-            TabView {
-                ForEach(event.imagePaths, id: \.self) { imagePath in
-                    image(imagePath: imagePath)
-                }
+            imageCarousel
+            VStack(alignment: .center, spacing: 20) {
+                titleAndDescription
+                buttonGroup
+                EventQuickInfo(event: event)
+                minimap
             }
-            .tabViewStyle(.page)
-            .containerRelativeFrame(.vertical, count: 12, span: 5, spacing: 0)
+            .padding()
+        }
+        .toolbar(.hidden)
+        .scrollIndicators(.hidden)
+        .onAppear {
+            attendanceStatus = eventStore.checkIfEventIsJoinedByUser(event) ? .joined : .undetermined
+        }
+        .alert("Confirm Dropout", isPresented: $showLeaveConfirmation) {
+            Button("Cancel", role: .cancel) { }
+            Button("Drop Out", role: .destructive) {
+                leaveEvent()
+                dismiss()
+            }
+        } message: {
+            Text("Are you sure you want to leave this event?")
+        }
+       
+    }
+    
+    // MARK: - Image Carousel
+    
+    private var imageCarousel: some View {
+        TabView {
+            ForEach(event.imagePaths, id: \.self) { imagePath in
+                image(imagePath: imagePath)
+            }
+        }
+        .tabViewStyle(.page)
+        .containerRelativeFrame(.vertical, count: 12, span: 5, spacing: 0)
+        .overlay(alignment: .topTrailing) {
+            if isHost {
+                NavigationLink("Edit") {
+                    EventEditView(event: event)
+                }
+                .font(.footnote)
+                .bold()
+                .foregroundStyle(.white)
+                .padding(10)
+                .background(.accent)
+                .clipShape(RoundedRectangle(cornerRadius: 30))
+                .padding()
+            }
+        }
+    }
+    
+    // MARK: - Title and Description
+    
+    private var titleAndDescription: some View {
+        VStack(alignment: .center) {
+            if isHost {
+                Image(systemName: "crown.fill")
+                    .foregroundStyle(.orange)
+                    .font(.caption)
+            }
             Text(event.title)
                 .font(.title)
                 .bold()
             Text(event.description)
-                .font(.subheadline)
-            buttonGroup
-            EventQuickInfo(event: event)
-                .padding()
-            Spacer()
+                .font(.caption)
+                .bold()
+                .foregroundStyle(.secondary)
         }
     }
+    
+    // MARK: - Minimap
+    
+    private var minimap: some View {
+        VStack {
+            Text("Location")
+                .font(.title2)
+                .bold()
+            Text(formatCoordinates(latitude: event.latitude, longitude: event.longitude))
+                .font(.caption)
+                .bold()
+                .foregroundStyle(.secondary)
+            Map(initialPosition: .region(MKCoordinateRegion(center: .init(latitude: event.latitude, longitude: event.longitude), span: .init(latitudeDelta: 0.001, longitudeDelta: 0.001)))) {
+                Marker("DropIn", systemImage: "drop", coordinate: CLLocationCoordinate2D(latitude: event.latitude, longitude: event.longitude))
+                    .tint(.indigo)
+            }
+            .disabled(true)
+            .containerRelativeFrame(.vertical, count: 12, span: 4, spacing: 0)
+            .mapControlVisibility(.hidden)
+            .clipShape(RoundedRectangle(cornerRadius: 30))
+        }
+    }
+    
+    
+    private var buttonGroup: some View {
+        HStack {
+            DropInButton(attendanceStatus: $attendanceStatus, action: joinEvent, extended: true)
+            if !isHost {
+                DropOutButton(attendanceStatus: $attendanceStatus, action: onLeaveButtonTapped)
+            }
+        }
+    }
+    
+    // MARK: - Functions
     
     private func image(imagePath: String) -> some View {
         AsyncImage(url: URL(string: imagePath)) { phase in
@@ -43,31 +134,36 @@ struct EventDetailView: View {
         }
     }
     
-    private var buttonGroup: some View {
-        Button {
-            joinEvent()
-        } label: {
-            Text("Drop In")
-                .frame(maxWidth: .infinity)
-                .bold()
-        }
-        .buttonStyle(.borderedProminent)
-        .padding()
-        .disabled(joinEventTaskStatus.isRunning)
-    }
     
     private func joinEvent() {
         Task {
-            joinEventTaskStatus = .running
+            eventAsyncTaskStatus = .running
             do {
-                try await eventStore.joinEvent(event)
-                joinEventTaskStatus = .success
+                _ = try await eventStore.joinEvent(event)
+                eventAsyncTaskStatus = .success
+                attendanceStatus = .joined
             } catch {
-                joinEventTaskStatus = .failure(error)
+                eventAsyncTaskStatus = .failure(error)
             }
         }
     }
+    
+    private func onLeaveButtonTapped() {
+        showLeaveConfirmation = true
+    }
    
+    private func leaveEvent() {
+        Task {
+            eventAsyncTaskStatus = .running
+            do {
+                _ = try await eventStore.leaveEvent(event)
+                eventAsyncTaskStatus = .success
+                attendanceStatus = .undetermined
+            } catch {
+                eventAsyncTaskStatus = .failure(error)
+            }
+        }
+    }
 }
 
 #Preview {

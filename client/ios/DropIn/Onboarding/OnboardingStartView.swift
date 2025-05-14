@@ -28,7 +28,8 @@ struct OnboardingStartView: View {
             Button("Get Started") {
                 currentPageIndex += 1
             }
-            .buttonStyle(.primary)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.roundedRectangle(radius: 15))
             .padding()
         }
         .multilineTextAlignment(.center)

@@ -19,7 +19,7 @@ struct MyEventsList: View {
     var body: some View {
         List {
             ForEach(eventStore.fetchEventsOfUser()) { event in
-                EventRowItem(event: event)
+                EventRowItem(event: event, isHost: true)
                     .listRowInsets(EdgeInsets())
                     .listRowSeparator(.hidden)
                     .swipeActions(edge: .trailing) {

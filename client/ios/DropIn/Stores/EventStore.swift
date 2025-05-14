@@ -82,6 +82,18 @@ class EventStore {
         return events
     }
     
+    func checkIfEventIsJoinedByUser(_ event: DropInEvent) -> Bool {
+        guard let eventId = event.id, let eventUserId = event.userId else { return false }
+        
+        for event in joinedEvents {
+            guard let joinedEventId = event.id, let joinedEventUserId = event.userId else { continue }
+            if eventId == joinedEventId && eventUserId == joinedEventUserId {
+                return true
+            }
+        }
+        return false
+    }
+    
     /// Fetch more events that haven't been fetched yet.
     //TODO: Might be broken with the excluded ids fetching. Logic should be already in here.
     func fetchMoreFeedEvents() async throws {
@@ -123,14 +135,15 @@ class EventStore {
             .execute()
             .value
         
-        mapEvents.append(contentsOf: filterNewEvents(events, from: mapEvents))
+        mapEvents = events
+        //mapEvents.append(contentsOf: filterNewEvents(events, from: mapEvents))
         print("Calling fetch Events in region")
         print("Now has: \(feedEvents.count)")
     }
     
     
     /// Join a specific event.
-    func joinEvent(_ event: DropInEvent) async throws {
+    func joinEvent(_ event: DropInEvent) async throws -> DropInEvent {
         
         guard let eventId = event.id else {
             throw EventStoreError.eventIdNotValid
@@ -148,7 +161,17 @@ class EventStore {
         withAnimation {
             feedEvents.removeAll { $0.id == eventId }
         }
-        joinedEvents.append(event)
+        
+        var updatedEvent = event
+        updatedEvent.slotsTaken! += 1
+        joinedEvents.append(updatedEvent)
+        
+        // Update map event
+        if let index = mapEvents.firstIndex(where: { $0.id == updatedEvent.id }) {
+            mapEvents[index] = updatedEvent
+        }
+        
+        return updatedEvent
     }
     
     /// Leave a specific event.
