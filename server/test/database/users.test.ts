@@ -27,6 +27,15 @@ test('Delete all user data on user deletion', async (t) => {
         });
     assert.equal(eventToKeepJoinError, null, "Expected event join to succeed, but it failed: " + eventToKeepJoinError?.message);
 
+    const { error: messageAddError } = await clientToDelete.from('messages')
+        .insert({
+            chat_room_id: eventToDelete.id,
+            sender_id: userToDelete.id,
+            content: "Message to delete",
+            created_at: new Date().toISOString()
+        });
+    assert.equal(messageAddError, null, "Expected message add to succeed, but it failed: " + messageAddError?.message);
+    
     // delete and assert successful deletion
 
     const { data: deleteUserData, error: deleteUserError } = await superClient.auth.admin.deleteUser(userToDelete.id);
@@ -48,4 +57,11 @@ test('Delete all user data on user deletion', async (t) => {
         .eq('event_id', eventToDelete.id);
     assert.equal(deleteJoinsError, null, "Expected deleteJoinsError to be null, but got: " + deleteJoinsError);
     assert.equal(deleteJoinsData?.length, 0, "Expected deleteJoinsData length to be 0, but got: " + deleteJoinsData); 
+
+    // assert that the messages are deleted
+    const { data: deleteMessagesData, error: deleteMessagesError } = await superClient.from('messages')
+        .select()
+        .eq('chat_room_id', eventToDelete.id);
+    assert.equal(deleteMessagesError, null, "Expected deleteMessagesError to be null, but got: " + deleteMessagesError);
+    assert.equal(deleteMessagesData?.length, 0, "Expected deleteMessagesData length to be 0, but got: " + deleteMessagesData);
 });

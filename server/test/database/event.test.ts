@@ -1,7 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { generateRandomString, setupRandomClientAndLogin } from './dbhelpers.js';
-import { SupabaseClient } from '@supabase/supabase-js';
+import { createEvent, setupRandomClientAndLogin } from './dbhelpers.js';
 
 test('An authenticated user can create events', async (t) => {
     const { client } = await setupRandomClientAndLogin();
@@ -108,28 +107,3 @@ test('An authenticated user can see all events', async (t) => {
         "Expected same ids but some are missing or diffrent." + response.map((event: any) => event.id)
     );
 });
-
-async function createEvent(client: SupabaseClient<any, any, any>): Promise<any> {
-    const event_to_create = {
-        title: generateRandomString(),
-        description: generateRandomString(),
-        start: new Date().toISOString(),
-        end: new Date(Date.now() + 3600000).toISOString(),
-        latitude: 50,
-        longitude: 50,
-        slot_limit: 10,
-        slots_taken: 0,
-        age_restricted: false,
-        chat_enabled: true
-    };
-
-    const { data, error } = await client.from('events')
-        .insert(event_to_create)
-        .select();
-
-    if (error) {
-        assert.ifError(error);
-    }
-
-    return (<any>data)[0];
-}
