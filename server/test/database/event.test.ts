@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { generateRandomString, setupRandomClientAndLogin } from './dbhelpers.js';
+import { createSuperClient, generateRandomString, setupRandomClientAndLogin } from './dbhelpers.js';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 test('An authenticated user can create events', async (t) => {
@@ -109,6 +109,167 @@ test('An authenticated user can see all events', async (t) => {
     );
 });
 
+test('fetch_events_feed returns a maximum of 5 events when more than 5 exist', async () => {
+  const admin      = createSuperClient();
+  const { client: userClient, user } = await setupRandomClientAndLogin();
+
+  await seedEvents(admin, 7, user.id);
+
+  const { data: feed, error } = await userClient
+    .rpc('fetch_events_feed', { excluded_ids: [] });
+
+  assert.equal(error, null, `RPC error: ${error?.message}`);
+  assert(Array.isArray(feed), 'Expected feed to be an array');
+  assert(
+    (feed as any[]).length <= 5,
+    `Expected at most 5 events, got ${(feed as any[]).length}`
+  );
+});
+
+test('fetch_events_feed returns no more than 5 events when more than 5 exist', async () => {
+  const admin = createSuperClient();
+  const { client: userClient, user } = await setupRandomClientAndLogin();
+
+  await seedEvents(admin, 7, user.id);
+
+  const { data: feed, error } = await userClient
+    .rpc('fetch_events_feed', { excluded_ids: [] });
+
+  assert.equal(error, null, `RPC error: ${error?.message}`);
+  assert(Array.isArray(feed), 'Expected an array');
+  assert(
+    feed.length <= 5,
+    `Expected at most 5 events, got ${feed.length}`
+  );
+});
+
+test('fetch_events_feed excludes the IDs passed in excluded_ids', async () => {
+  const admin      = createSuperClient();
+  const { client: userClient, user } = await setupRandomClientAndLogin();
+
+  const seeded = await seedEvents(admin, 5, user.id);
+
+  const excluded = [seeded[1].id, seeded[3].id];
+
+  const { data: feed, error } = await userClient
+    .rpc('fetch_events_feed', { excluded_ids: excluded });
+
+  assert.equal(error, null, `RPC error: ${error?.message}`);
+  const feedIds = (feed as any[]).map(e => e.id);
+
+  excluded.forEach(id => {
+    assert(!feedIds.includes(id), `Did not expect excluded event ${id}`);
+  });
+
+  assert(feedIds.length <= 5, `Expected ≤5 items, got ${feedIds.length}`);
+});
+
+test('decrement_slots_taken when a row is removed from event_joins', async () => {
+  const admin = createSuperClient();
+
+  const { user: owner }  = await setupRandomClientAndLogin();
+  const { user: joiner } = await setupRandomClientAndLogin();
+  const [event] = await seedEvents(admin, 1, owner.id);
+
+  await admin.from('event_joins').insert({ event_id: event.id, user_id: joiner.id });
+  const mid = await getSlotsTaken(admin, event.id);
+  const { error: leaveErr } = await admin
+    .from('event_joins')
+    .delete()
+    .match({ event_id: event.id, user_id: joiner.id });
+  assert.equal(leaveErr, null, `Error deleting join: ${leaveErr?.message}`);
+
+  const after = await getSlotsTaken(admin, event.id);
+  assert.strictEqual(
+    after,
+    mid - 1,
+    `Expected slots_taken to go from ${mid} → ${mid - 1}, but got ${after}`
+  );
+});
+
+test('increment_slots_taken when a new row is added to event_joins', async () => {
+  const admin = createSuperClient();
+
+  const { user: owner }  = await setupRandomClientAndLogin();
+  const { user: joiner } = await setupRandomClientAndLogin();
+
+  const [event] = await seedEvents(admin, 1, owner.id);
+  const before = await getSlotsTaken(admin, event.id);
+
+  const { error: joinErr } = await admin
+    .from('event_joins')
+    .insert({ event_id: event.id, user_id: joiner.id });
+  assert.equal(joinErr, null, `Error inserting join: ${joinErr?.message}`);
+
+  const after = await getSlotsTaken(admin, event.id);
+  assert.strictEqual(
+    after,
+    before + 1,
+    `Expected slots_taken to go from ${before} → ${before + 1}, but got ${after}`
+  );
+});
+
+test('decrement_slots_taken when a row is removed from event_joins', async () => {
+  const admin = createSuperClient();
+
+  const { user: owner }  = await setupRandomClientAndLogin();
+  const { user: joiner } = await setupRandomClientAndLogin();
+  const [event] = await seedEvents(admin, 1, owner.id);
+
+  await admin.from('event_joins').insert({ event_id: event.id, user_id: joiner.id });
+  const mid = await getSlotsTaken(admin, event.id);
+  const { error: leaveErr } = await admin
+    .from('event_joins')
+    .delete()
+    .match({ event_id: event.id, user_id: joiner.id });
+  assert.equal(leaveErr, null, `Error deleting join: ${leaveErr?.message}`);
+
+  const after = await getSlotsTaken(admin, event.id);
+  assert.strictEqual(
+    after,
+    mid - 1,
+    `Expected slots_taken to go from ${mid} → ${mid - 1}, but got ${after}`
+  );
+});
+
+/**
+ * Insert `count` events under `userId` using the service‐role client.
+ */
+async function seedEvents(
+    admin: SupabaseClient<any, any, any>,
+    count: number,
+    userId: string
+  ) {
+    const nowMs = Date.now();
+    const inserted: any[] = [];
+  
+    for (let i = 0; i < count; i++) {
+      // schedule each event i minutes from now
+      const startDate = new Date(nowMs + (i + 1) * 60_000);      // +1, +2, … minutes
+      const endDate   = new Date(startDate.getTime() + 30_000);  // 30 seconds long
+  
+      const { data, error } = await admin
+        .from('events')
+        .insert({
+          title:       `Test Event ${i + 1}`,
+          description: `Description ${i + 1}`,
+          start:       startDate.toISOString(),
+          end:         endDate.toISOString(),
+          latitude:    0,
+          longitude:   0,
+          slot_limit:  10,
+          user_id:     userId,
+        })
+        .select('*')
+        .single();
+  
+      if (error) throw new Error(`Error seeding events: ${error.message}`);
+      inserted.push(data);
+    }
+  
+    return inserted;
+  }
+
 async function createEvent(client: SupabaseClient<any, any, any>): Promise<any> {
     const event_to_create = {
         title: generateRandomString(),
@@ -133,3 +294,19 @@ async function createEvent(client: SupabaseClient<any, any, any>): Promise<any> 
 
     return (<any>data)[0];
 }
+
+/**
+ * Helper: read the slots_taken for a given event.
+ */
+async function getSlotsTaken(
+    admin: SupabaseClient,
+    eventId: number
+  ): Promise<number> {
+    const { data, error } = await admin
+      .from('events')
+      .select('slots_taken')
+      .eq('id', eventId)
+      .single();
+    if (error) throw new Error(`Error fetching slots_taken: ${error.message}`);
+    return (data as any).slots_taken as number;
+  }
