@@ -12,19 +12,24 @@ struct EventCategoryTabView: View {
     @Binding var selectedCategory: EventCategory
  
     var body: some View {
-        ScrollView(.horizontal) {
-            HStack {
-                ForEach(EventCategory.allCases, id: \.self) { category in
-                    Text(category.rawValue)
-                        .font(.headline)
-                        .foregroundStyle(selectedCategory == category ? .primary : .secondary)
-                        .onTapGesture {
-                            selectedCategory = category
-                        }
+        HStack {
+            ForEach(EventCategory.allCases.indices, id: \.self) { index in
+                let category = EventCategory.allCases[index]
+
+                if index != 0 {
+                    Spacer()
                 }
+
+                Text(category.rawValue)
+                    .font(.headline)
+                    .foregroundStyle(selectedCategory == category ? .primary : .secondary)
+                    .onTapGesture {
+                        selectedCategory = category
+                    }
             }
         }
-        .scrollIndicators(.hidden)
+        .padding(.horizontal)
+        .frame(maxWidth: .infinity)
     }
 }
 

@@ -10,78 +10,122 @@ import SwiftUI
 
 struct DiscoveryEventList: View {
     @Environment(EventStore.self) private var eventStore
-    @State private var selectedEventCategory: EventCategory = .forYou
+    @State private var vm: DiscoveryEventListViewModel = DiscoveryEventListViewModel()
+    @State private var fetchEventsStatus: AsyncStatus = .idle
     
     var body: some View {
-        EventCategoryTabView(selectedCategory: $selectedEventCategory)
-            .padding(.horizontal)
-            .padding(.vertical, 5)
-        
-        switch(selectedEventCategory) {
-        case .forYou:
-            eventList
-        case .nearby:
-            placeholder(text: "Nearby")
-        case .ongoing:
-            placeholder(text: "Ongoing")
-        case .sponsored:
-            placeholder(text: "Sponsored")
-        case .startingSoon:
-            placeholder(text: "Starting Soon")
-        case .trending:
-            placeholder(text: "Trending")
+        Group {
+            EventCategoryTabView(selectedCategory: $vm.selectedEventCategory)
+                .padding(.horizontal)
+                .padding(.vertical, 5)
+            
+            if fetchEventsStatus.isRunning {
+                searchingEventsProgressView
+            } else {
+                eventList
+            }
         }
-    }
-    
-    private func placeholder(text: String) -> some View {
-        VStack {
-            Text(text)
-        }
-        .frame(maxHeight: .infinity)
     }
     
     private var eventList: some View {
-        ScrollView {
-            LazyVStack(alignment: .center, spacing: 25) {
-                ForEach(eventStore.feedEvents, id: \.self) { event in
-                    EventCard(event: event)
-                        .onAppear {
-                            if event == eventStore.feedEvents.last {
-                                Task {
-                                    fetchNewEvents()
+        Group {
+            if vm.events.isEmpty {
+                noEventsFoundView
+            } else {
+                ScrollView {
+                    LazyVStack(alignment: .center, spacing: 25) {
+                        var _ = print("Discovery Events are \(vm.events.count)")
+                        ForEach(vm.getCategoryBasedEvents()) { event in
+                            EventCard(event: event, joinEventAction: vm.joinEvent)
+                                .onAppear {
+                                    if event == vm.events.last {
+                                        fetchAdditionalEvents()
+                                    }
                                 }
-                            }
+                                .transition(
+                                    .asymmetric(
+                                        insertion: .opacity,
+                                        removal: .scale(scale: 0.9).combined(with: .opacity)
+                                    )
+                                )
                         }
-                        .transition(
-                            .asymmetric(
-                                insertion: .opacity,
-                                removal: .scale(scale: 0.9).combined(with: .opacity)
-                            )
-                        )
+                        .animation(.easeInOut, value: vm.events)
+                    }
+                    .padding()
                 }
-                .animation(.easeInOut, value: eventStore.feedEvents)
+                .scrollIndicators(.hidden)
+                .refreshable {
+                    refreshFeed()
+                }
+                .onChange(of: vm.selectedEventCategory) {
+                    vm.updateEvents()
+                }
             }
-            .padding()
         }
-        .scrollIndicators(.hidden)
-        .refreshable {
-            refreshFeed()
+        .onAppear {
+            vm.eventStore = eventStore
+            if eventStore.isInitialized {
+                vm.updateEvents()
+            } else {
+                Task {
+                    while !eventStore.isInitialized {
+                        try? await Task.sleep(nanoseconds: 100_000_000)
+                    }
+                    vm.updateEvents()
+                }
+            }
+        }
+    }
+    
+    private var noEventsFoundView: some View {
+        VStack(alignment: .center, spacing: 15) {
+            Spacer()
+            Text("Womp womp...")
+                .font(.headline)
+                .bold()
+            Text("We couldn't find any events near you.")
+                .font(.subheadline)
+                .bold()
+                .foregroundStyle(.secondary)
+            Button(fetchEventsStatus.isRunning ? "Searching" : "Search again") {
+                refreshFeed()
+            }
+            .disabled(fetchEventsStatus.isRunning)
+            Spacer()
+        }
+    }
+    
+    private var searchingEventsProgressView: some View {
+        VStack(alignment: .center, spacing: 15) {
+            Spacer()
+            ProgressView()
+            Text("Searching for events...")
+                .font(.headline)
+                .bold()
+            Spacer()
         }
     }
     
     private func refreshFeed() {
         Task {
-            try await eventStore.refreshFeedEvents()
+            do {
+                fetchEventsStatus = .running
+                try await Task.sleep(for: .seconds(2))
+                try await vm.refreshFeed()
+                fetchEventsStatus = .success
+            } catch {
+                fetchEventsStatus = .failure(error)
+            }
         }
     }
     
     
-    // TODO: Maybe no async needed?
-    private func fetchNewEvents() {
+    private func fetchAdditionalEvents() {
         Task {
-            try await eventStore.fetchMoreFeedEvents()
+            try await vm.fetchAdditionalEvents()
         }
     }
+    
 }
 
 #Preview {

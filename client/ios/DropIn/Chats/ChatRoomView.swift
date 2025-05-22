@@ -125,12 +125,11 @@ struct ChatRoomPreviewWrapper: View {
         userId: UUID(),
         start: Calendar.current.date(byAdding: .hour, value: 1, to: Date())!,
         end: Calendar.current.date(byAdding: .hour, value: 3, to: Date())!,
-        latitude: 47.3769,
-        longitude: 8.5417,
         slotLimit: 10,
         slotsTaken: 3,
         ageRestricted: false,
-        chatEnabled: true
+        chatEnabled: true,
+        location: .init(type: "Point", coordinates: [0,0])
     )
     
     var body: some View {

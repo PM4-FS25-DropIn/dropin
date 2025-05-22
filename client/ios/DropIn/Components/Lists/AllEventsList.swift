@@ -42,6 +42,11 @@ struct AllEventsList: View {
         } message: {
             Text(onSwipeActionStatus.error)
         }
+        .task {
+            Task {
+                try await eventStore.updateJoinedEvents()
+            }
+        }
     }
     
     
