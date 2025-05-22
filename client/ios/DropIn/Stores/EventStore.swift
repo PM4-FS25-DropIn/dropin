@@ -10,10 +10,12 @@ class EventStore {
     /// All fetched events for feed and map display.
     var events: [DropInEvent] = []
     
+    var isInitialized = false
+    
     /// Events the user joined (including his own).
     var joinedEvents: [DropInEvent] = []
     
-    var searchDelta: Double = 0
+    var searchDelta: Double = 0.25
     
     private var userId: UUID?
     private var userLocation: CLLocationCoordinate2D?
@@ -21,10 +23,10 @@ class EventStore {
     init() {
         Task {
             joinedEvents = try await fetchEventsJoinedByUser()
-            //feedEvents = try await refreshEventsFeed()
             userId = try await getUserId()
             userLocation = LocationService.shared.lastLocation.coordinate
             print("Initialized EventStore with userId: \(userId?.debugDescription ?? "nil")")
+            isInitialized = true
         }
     }
     
