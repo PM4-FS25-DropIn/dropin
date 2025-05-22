@@ -69,11 +69,8 @@ struct ChatRoom: Identifiable {
 
 enum EventCategory: String, CaseIterable {
     case forYou = "For You"
-    case trending = "Trending"
-    case nearby = "Nearby"
-    case startingSoon = "Starting Soon"
     case ongoing = "Ongoing"
-    case sponsored = "Sponsored"
+    case startingSoon = "Starting Soon"
 }
 
 struct EventJoins: Codable, Identifiable {
