@@ -149,6 +149,7 @@ struct EventMap: View {
             eventFetchState = .running
             do {
                 try await eventStore.fetchEventsInCameraRegion(latitude: viewModel.visibleRegion?.center.latitude ?? 0, longitude: viewModel.visibleRegion?.center.longitude ?? 0, latitudeDelta: viewModel.visibleRegion?.span.latitudeDelta ?? 0.25, longitudeDelta: viewModel.visibleRegion?.span.longitudeDelta ?? 0.25)
+                try await Task.sleep(for: .seconds(0.5))
                 print("Fetching new events")
                 eventFetchState = .success
             } catch {

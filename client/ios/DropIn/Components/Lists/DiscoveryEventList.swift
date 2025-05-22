@@ -35,10 +35,10 @@ struct DiscoveryEventList: View {
                 ScrollView {
                     LazyVStack(alignment: .center, spacing: 25) {
                         var _ = print("Discovery Events are \(vm.events.count)")
-                        ForEach(vm.events) { event in
+                        ForEach(vm.getCategoryBasedEvents()) { event in
                             EventCard(event: event, joinEventAction: vm.joinEvent)
                                 .onAppear {
-                                    if event == vm.events.last && vm.events.count != 1 {
+                                    if event == vm.events.last {
                                         fetchAdditionalEvents()
                                     }
                                 }
@@ -56,6 +56,9 @@ struct DiscoveryEventList: View {
                 .scrollIndicators(.hidden)
                 .refreshable {
                     refreshFeed()
+                }
+                .onChange(of: vm.selectedEventCategory) {
+                    vm.updateEvents()
                 }
             }
         }
@@ -119,13 +122,7 @@ struct DiscoveryEventList: View {
     
     private func fetchAdditionalEvents() {
         Task {
-            do {
-                fetchEventsStatus = .running
-                try await vm.fetchAdditionalEvents()
-                fetchEventsStatus = .success
-            } catch {
-                fetchEventsStatus = .failure(error)
-            }
+            try await vm.fetchAdditionalEvents()
         }
     }
     

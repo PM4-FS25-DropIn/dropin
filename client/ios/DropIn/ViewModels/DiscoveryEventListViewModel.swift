@@ -32,11 +32,10 @@ final class DiscoveryEventListViewModel {
         events = eventStore.getNotJoinedEvents()
     }
     
-    
     func fetchAdditionalEvents() async throws {
         guard let eventStore else { return }
-        try await eventStore.loadMoreNearbyEvents()
-        events = eventStore.getNotJoinedEvents()
+        let additionalEvents = try await eventStore.loadMoreNearbyEvents()
+        events.append(contentsOf: additionalEvents)
     }
     
     func joinEvent(_ event: DropInEvent) async throws {
@@ -45,6 +44,33 @@ final class DiscoveryEventListViewModel {
         
         withAnimation {
             events.removeAll { $0.id == event.id }
+        }
+    }
+    
+    private func getLiveEvents(from events: [DropInEvent]) -> [DropInEvent] {
+        let now = Date()
+        return events.filter { event in
+            event.start <= now && event.end >= now
+        }
+    }
+    
+    private func getStartingSoonEvents(from events: [DropInEvent]) -> [DropInEvent] {
+        let now = Date()
+        let in30Minutes = now.addingTimeInterval(30 * 60)
+        
+        return events.filter { event in
+            event.start > now && event.start <= in30Minutes
+        }
+    }
+    
+    func getCategoryBasedEvents() -> [DropInEvent] {
+        switch (selectedEventCategory) {
+        case .forYou:
+            return events
+        case .ongoing:
+            return getLiveEvents(from: events)
+        case .startingSoon:
+            return getStartingSoonEvents(from: events)
         }
     }
     

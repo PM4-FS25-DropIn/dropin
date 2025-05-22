@@ -22,7 +22,7 @@ class EventStore {
     
     init() {
         Task {
-            joinedEvents = try await fetchEventsJoinedByUser()
+            try await updateJoinedEvents()
             userId = try await getUserId()
             userLocation = LocationService.shared.lastLocation.coordinate
             print("Initialized EventStore with userId: \(userId?.debugDescription ?? "nil")")
@@ -35,14 +35,19 @@ class EventStore {
     }
     
     
-    private func fetchEventsJoinedByUser() async throws -> [DropInEvent] {
-        try await supabase.rpc("get_joined_events_of_user")
+    func updateJoinedEvents() async throws {
+        /*try await supabase.rpc("get_joined_events_of_user")
+            .execute()
+            .value"*/
+        joinedEvents = try await supabase
+            .from("events_joined_by_user")
+            .select()
             .execute()
             .value
     }
     
     
-    /// Refresh events feed.
+    /// Clear events and search nearby events again. Fallback events if location unavailable or disabled.
     func refreshEventsFeed() async throws {
         var events: [DropInEvent] = try await searchEventsInRegion(latitude: userLocation?.latitude ?? 0, longitude: userLocation?.longitude ?? 0, latitudeDelta: searchDelta, longitudeDelta: searchDelta)
 
@@ -110,7 +115,7 @@ class EventStore {
     }
     
     /// Search and fetch events with an increasing searchDelta. A fallback is provided in case user location is disabled or unavailable.
-    func loadMoreNearbyEvents() async throws {
+    func loadMoreNearbyEvents() async throws -> [DropInEvent] {
         searchDelta += 0.25
         print("Search Delta is: \(searchDelta)")
         
@@ -133,6 +138,7 @@ class EventStore {
         
         events.append(contentsOf: filteredEvents)
         print("Now has \(events.count)")
+        return filteredEvents
     }
     
     /// Fetch events in current camera region.
