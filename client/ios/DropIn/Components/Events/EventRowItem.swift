@@ -27,7 +27,7 @@ struct EventRowItem: View {
         }
         .sheet(isPresented: $showDetailsView) {
             NavigationStack {
-                EventDetailView(event: event, isHost: isHost)
+                EventDetailView(event: event, isHost: isHost, joinEventAction: { _ in })
             }
         }
     }

@@ -38,7 +38,7 @@ struct DiscoveryEventList: View {
                         ForEach(vm.events) { event in
                             EventCard(event: event, joinEventAction: vm.joinEvent)
                                 .onAppear {
-                                    if event == vm.events.last {
+                                    if event == vm.events.last && vm.events.count != 1 {
                                         fetchAdditionalEvents()
                                     }
                                 }
@@ -71,7 +71,6 @@ struct DiscoveryEventList: View {
                     vm.updateEvents()
                 }
             }
-            vm.updateEvents()
         }
     }
     

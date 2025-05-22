@@ -11,6 +11,7 @@ struct EventDetailView: View {
     
     var event: DropInEvent
     var isHost: Bool = false
+    let joinEventAction: (DropInEvent) async throws -> Void
     
     var body: some View {
         ScrollView {
@@ -139,7 +140,7 @@ struct EventDetailView: View {
         Task {
             eventAsyncTaskStatus = .running
             do {
-                _ = try await eventStore.joinEvent(event)
+                try await joinEventAction(event)
                 eventAsyncTaskStatus = .success
                 attendanceStatus = .joined
             } catch {
@@ -167,7 +168,7 @@ struct EventDetailView: View {
 }
 
 #Preview {
-    EventDetailView(event: sampleEvent)
+    EventDetailView(event: sampleEvent, joinEventAction: { _ in })
         .environment(EventStore())
 }
 

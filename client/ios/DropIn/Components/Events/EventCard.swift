@@ -41,7 +41,7 @@ struct EventCard: View {
         }
         .sheet(isPresented: $isShowingSheet) {
             NavigationStack {
-                EventDetailView(event: event)
+                EventDetailView(event: event, joinEventAction: joinEventAction)
             }
         }
         .alert("Error", isPresented: $showAlert) {
