@@ -1,12 +1,10 @@
 -- ===========================================
--- Migration:     create_event_feed_fetch_function
--- Description:   Returns events the user hasn't joined (minus any excluded IDs),
+-- Migration:     create_get_joined_events_function
+-- Description:   Returns all events the current user has joined,
 --                emitting `location` as JSON for your GeoJSONPoint.
 -- ===========================================
 
-create or replace function public.fetch_events_feed(
-    excluded_ids integer[]
-)
+create or replace function public.get_joined_events_of_user()
 returns table (
     id             bigint,
     created_at     timestamp with time zone,
@@ -39,9 +37,9 @@ as $$
       e.slots_taken,
       e.age_restricted,
       e.chat_enabled,
-      -- emit GeoJSON so PostgREST/Swift sees an object
       ST_AsGeoJSON(e.location)::jsonb as location
-    from public.events_not_joined e
-    where excluded_ids is null
-       or e.id != all(excluded_ids);
+    from public.events e
+    join public.event_joins ej
+      on ej.event_id = e.id
+    where ej.user_id = auth.uid();
 $$;
