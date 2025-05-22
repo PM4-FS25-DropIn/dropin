@@ -33,7 +33,7 @@ final class DiscoveryEventListViewModel {
     }
     
     
-    func fetchNewEvents() async throws {
+    func fetchAdditionalEvents() async throws {
         guard let eventStore else { return }
         try await eventStore.loadMoreNearbyEvents()
         events = eventStore.getNotJoinedEvents()
