@@ -7,16 +7,13 @@ import Storage
 @Observable
 class EventStore {
     
-    /// Events to display on home view.
-    var feedEvents: [DropInEvent] = []
-    
-    /// Events to display on the map.
-    var mapEvents: [DropInEvent] = []
+    /// All fetched events for feed and map display.
+    var events: [DropInEvent] = []
     
     /// Events the user joined (including his own).
     var joinedEvents: [DropInEvent] = []
     
-    var searchDelta: Double = 0.25
+    var searchDelta: Double = 0
     
     private var userId: UUID?
     private var userLocation: CLLocationCoordinate2D?
@@ -24,7 +21,7 @@ class EventStore {
     init() {
         Task {
             joinedEvents = try await fetchEventsJoinedByUser()
-            feedEvents = try await refreshEventsFeed()
+            //feedEvents = try await refreshEventsFeed()
             userId = try await getUserId()
             userLocation = LocationService.shared.lastLocation.coordinate
             print("Initialized EventStore with userId: \(userId?.debugDescription ?? "nil")")
@@ -43,9 +40,44 @@ class EventStore {
     }
     
     
-    /// Initial fetch of nearby events around user position.
-    func refreshEventsFeed() async throws -> [DropInEvent] {
-        return try await fetchEventsInRegion(latitude: userLocation?.latitude ?? 0, longitude: userLocation?.longitude ?? 0, latitudeDelta: searchDelta, longitudeDelta: searchDelta)
+    /// Refresh events feed.
+    func refreshEventsFeed() async throws {
+        var events: [DropInEvent] = try await searchEventsInRegion(latitude: userLocation?.latitude ?? 0, longitude: userLocation?.longitude ?? 0, latitudeDelta: searchDelta, longitudeDelta: searchDelta)
+
+        
+        // Fallback if user is located in devils ass crack.
+        if events.isEmpty {
+            print("Nothing found during refresh")
+            events = try await supabase
+                .from("events_not_joined")
+                .select()
+                .limit(10)
+                .execute()
+                .value
+        }
+        
+        self.events = events
+        searchDelta = 0
+    }
+    
+    func getNotJoinedEvents() -> [DropInEvent] {
+        /*let eventsJoined: [DropInEvent] = try await supabase
+            .from("events_joined_by_user")
+            .select()
+            .execute()
+            .value
+         */
+        
+        //let joinedIds = Set(eventsJoined.compactMap((\.id)))
+        let joinedIds = Set(joinedEvents.compactMap((\.id)))
+
+        print("Joined ids are \(joinedIds)")
+        
+        // Return all events that have not the same id as in the eventsJoined array
+        return events.filter { event in
+            guard let id = event.id else { return false }
+            return !joinedIds.contains(id)
+        }
     }
     
     
@@ -75,46 +107,54 @@ class EventStore {
         return false
     }
     
-    /// Fetch additional events by increasing searchDelta and find events further away from the user.
-    func fetchEventsFeed() async throws {
+    /// Search and fetch events with an increasing searchDelta. A fallback is provided in case user location is disabled or unavailable.
+    func loadMoreNearbyEvents() async throws {
         searchDelta += 0.25
+        print("Search Delta is: \(searchDelta)")
         
-        var events: [DropInEvent] = try await fetchEventsInRegion(latitude: userLocation?.latitude ?? 0, longitude: userLocation?.longitude ?? 0, latitudeDelta: searchDelta, longitudeDelta: searchDelta)
+        var events: [DropInEvent] = try await searchEventsInRegion(latitude: userLocation?.latitude ?? 0, longitude: userLocation?.longitude ?? 0, latitudeDelta: searchDelta, longitudeDelta: searchDelta)
         
-        var filteredEvents = filterNewEvents(events, from: feedEvents)
+        var filteredEvents = filterNewEvents(events, from: events)
         
         // Fallback if user is located in devils ass crack.
         if filteredEvents.isEmpty {
+            print("Empty. Using fallback")
             events = try await supabase
-                .from("events")
+                .from("events_not_joined")
                 .select()
                 .limit(10)
                 .execute()
                 .value
-            filteredEvents = filterNewEvents(events, from: feedEvents)
+            filteredEvents = filterNewEvents(events, from: self.events)
+            print("Filtered Events count is \(filteredEvents.count)")
         }
         
-        feedEvents.append(contentsOf: filteredEvents)
+        events.append(contentsOf: filteredEvents)
+        print("Now has \(events.count)")
+    }
+    
+    /// Fetch events in current camera region.
+    func fetchEventsInCameraRegion(latitude: Double, longitude: Double, latitudeDelta: Double, longitudeDelta: Double) async throws {
+        let events: [DropInEvent] = try await searchEventsInRegion(latitude: latitude, longitude: longitude, latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta)
         
-        print("Calling fetch more feed events")
-        print("Now has \(feedEvents.count)")
+        let filteredEvents = filterNewEvents(events, from: self.events)
+        
+        print("Filtered Events count \(filteredEvents.count)")
+        self.events.append(contentsOf: filteredEvents)
+        
+        searchDelta = max(latitudeDelta, longitudeDelta)
     }
     
-    func fetchMapEvents(latitude: Double, longitude: Double, latitudeDelta: Double, longitudeDelta: Double) async throws {
-        let events: [DropInEvent] = try await fetchEventsInRegion(latitude: latitude, longitude: longitude, latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta)
-        mapEvents = events
-    }
     
-    
-    /// Fetch events in a certain region (triggered by mapcamera movements).
-    func fetchEventsInRegion(latitude: Double, longitude: Double, latitudeDelta: Double, longitudeDelta: Double) async throws -> [DropInEvent] {
+    /// Search and return events in a certain region (triggered by mapcamera movements).
+    private func searchEventsInRegion(latitude: Double, longitude: Double, latitudeDelta: Double, longitudeDelta: Double) async throws -> [DropInEvent] {
         let events: [DropInEvent] = try await supabase
             .rpc("get_events_in_region", params: ["center_lat": latitude, "center_lon": longitude, "lat_delta": latitudeDelta, "lon_delta": longitudeDelta])
             .execute()
             .value
         
         print("Calling fetch Events in region")
-        print("Now has: \(mapEvents.count)")
+        print("Now has: \(events.count)")
         return events
     }
     
@@ -135,17 +175,12 @@ class EventStore {
             .upsert(EventJoins(eventId: eventId, userId: userId))
             .execute()
         
-        withAnimation {
-            feedEvents.removeAll { $0.id == eventId }
-        }
-        
         var updatedEvent = event
         updatedEvent.slotsTaken! += 1
         joinedEvents.append(updatedEvent)
         
-        // Update map event
-        if let index = mapEvents.firstIndex(where: { $0.id == updatedEvent.id }) {
-            mapEvents[index] = updatedEvent
+        if let index = events.firstIndex(where: { $0.id == updatedEvent.id }) {
+            events[index] = updatedEvent
         }
         
         return updatedEvent
@@ -162,6 +197,13 @@ class EventStore {
             .execute()
         
         joinedEvents.removeAll { $0.id == event.id }
+        
+        var updatedEvent = event
+        updatedEvent.slotsTaken! -= 1
+        
+        if let index = events.firstIndex(where: { $0.id == updatedEvent.id }) {
+            events[index] = updatedEvent
+        }
     }
     
     /// Create a new event.
@@ -184,7 +226,7 @@ class EventStore {
                     
                     try await updateEvent(event)
                     joinedEvents.append(event)
-                    mapEvents.append(event)
+                    events.append(event)
                 }
             } catch {
                 try await deleteEvent(event)
@@ -195,7 +237,7 @@ class EventStore {
         } else {
             print("Add inserted event")
             joinedEvents.append(insertedEvent[0])
-            mapEvents.append(insertedEvent[0])
+            events.append(insertedEvent[0])
         }
     }
     
@@ -209,8 +251,9 @@ class EventStore {
             .execute()
         
         joinedEvents.removeAll { $0.id == event.id }
-        feedEvents.removeAll { $0.id == event.id }
-        mapEvents.removeAll { $0.id == event.id }
+        events.removeAll { $0.id == event.id }
+        //feedEvents.removeAll { $0.id == event.id }
+        //mapEvents.removeAll { $0.id == event.id }
     }
     
     /// Update an event.
@@ -270,6 +313,7 @@ class EventStore {
         return joinedEvents.contains(where: { $0.id == eventId }) ? .joined : .undetermined
     }
     
+    // Filter events already stored.
     private func filterNewEvents(_ incoming: [DropInEvent], from existing: [DropInEvent]) -> [DropInEvent] {
         let existingIds = Set(existing.compactMap(\.id))
         return incoming.filter { event in

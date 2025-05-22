@@ -24,8 +24,8 @@ struct CreateEventWizard: View {
     init(pinLocation: CLLocationCoordinate2D? = nil) {
         if let pinLocation {
             vm.pinLocation = pinLocation
-            vm.event.location.coordinates[0] = pinLocation.latitude
-            vm.event.location.coordinates[1] = pinLocation.longitude
+            vm.event.location.coordinates[0] = pinLocation.longitude
+            vm.event.location.coordinates[1] = pinLocation.latitude
         }
     }
     

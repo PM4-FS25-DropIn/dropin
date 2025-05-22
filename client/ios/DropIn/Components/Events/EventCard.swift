@@ -12,6 +12,8 @@ struct EventCard: View {
     
     let event: DropInEvent
     
+    let joinEventAction: (DropInEvent) async throws -> Void
+    
     @State private var username = "unknown"
     @State private var attendanceStatus: AttendanceStatus = .undetermined
     @State private var isShowingSheet = false
@@ -133,7 +135,7 @@ struct EventCard: View {
         Task {
             joinEventTaskStatus = .running
             do {
-                _ = try await eventStore.joinEvent(event)
+                try await joinEventAction(event)
                 joinEventTaskStatus = .success
                 attendanceStatus = .joined
             } catch {
@@ -146,6 +148,6 @@ struct EventCard: View {
 }
 
 #Preview {
-    EventCard(event: sampleEvent)
+    EventCard(event: sampleEvent, joinEventAction: { _ in })
         .environment(EventStore())
 }

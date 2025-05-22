@@ -39,8 +39,8 @@ struct EventMap: View {
                     Marker("DropIn", systemImage: "drop", coordinate: pinLocation)
                         .tint(.indigo)
                 }
-                ForEach(eventStore.mapEvents.indices, id: \.self) { index in
-                    let event = eventStore.mapEvents[index]
+                ForEach(eventStore.events.indices, id: \.self) { index in
+                    let event = eventStore.events[index]
                     var _ = print("Event in for each is \(event.latitude)")
                     Marker(event.title, systemImage: getDropIcon(event: event), coordinate: CLLocationCoordinate2D(latitude: event.latitude, longitude: event.longitude))
                         .tag(MapSelection(index))
@@ -104,8 +104,8 @@ struct EventMap: View {
     var dropInDetailSheet: some View {
         Group {
             if let value = selectedItem?.value {
-                if value < eventStore.mapEvents.count {
-                    MapEventItemDetailSheet(viewModel: viewModel, event: eventStore.mapEvents[value], travelTime: viewModel.travelTime)
+                if value < eventStore.events.count {
+                    MapEventItemDetailSheet(viewModel: viewModel, event: eventStore.events[value], travelTime: viewModel.travelTime)
                 }
             } else {
                 ContentUnavailableView {
@@ -148,7 +148,7 @@ struct EventMap: View {
         Task {
             eventFetchState = .running
             do {
-                try await eventStore.fetchMapEvents(latitude: viewModel.visibleRegion?.center.latitude ?? 0, longitude: viewModel.visibleRegion?.center.longitude ?? 0, latitudeDelta: viewModel.visibleRegion?.span.latitudeDelta ?? 0.25, longitudeDelta: viewModel.visibleRegion?.span.longitudeDelta ?? 0.25)
+                try await eventStore.fetchEventsInCameraRegion(latitude: viewModel.visibleRegion?.center.latitude ?? 0, longitude: viewModel.visibleRegion?.center.longitude ?? 0, latitudeDelta: viewModel.visibleRegion?.span.latitudeDelta ?? 0.25, longitudeDelta: viewModel.visibleRegion?.span.longitudeDelta ?? 0.25)
                 print("Fetching new events")
                 eventFetchState = .success
             } catch {

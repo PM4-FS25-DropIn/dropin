@@ -1,12 +1,9 @@
 -- ===========================================
--- Migration:     create_event_feed_fetch_function
--- Description:   Returns events the user hasn't joined (minus any excluded IDs),
---                emitting `location` as JSON for your GeoJSONPoint.
+-- Migration:     create_get_fallback_events
+-- Description:   Returns 10 random events with location as GeoJSON.
 -- ===========================================
-/*
-create or replace function public.fetch_events_feed(
-    excluded_ids integer[]
-)
+
+create or replace function public.get_fallback_events()
 returns table (
     id             bigint,
     created_at     timestamp with time zone,
@@ -40,8 +37,7 @@ as $$
       e.age_restricted,
       e.chat_enabled,
       ST_AsGeoJSON(e.location)::jsonb as location
-    from public.events_not_joined e
-    where excluded_ids is null
-       or e.id != all(excluded_ids);
+    from public.events e
+    order by random()
+    limit 10;
 $$;
-*/
