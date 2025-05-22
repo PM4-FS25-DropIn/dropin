@@ -129,12 +129,11 @@ struct DropInEvent: Codable, Identifiable, Equatable {
     var userId: UUID?
     var start: Date
     var end: Date
-    var latitude: CLLocationDegrees
-    var longitude: CLLocationDegrees
     var slotLimit: Int
     var slotsTaken: Int?
     var ageRestricted: Bool
     var chatEnabled: Bool
+    var location: GeoJSONPoint
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -146,16 +145,23 @@ struct DropInEvent: Codable, Identifiable, Equatable {
         case userId = "user_id"
         case start
         case end
-        case latitude
-        case longitude
         case slotLimit = "slot_limit"
         case slotsTaken = "slots_taken"
         case ageRestricted = "age_restricted"
         case chatEnabled = "chat_enabled"
+        case location
     }
 }
 
-extension DropInEvent: Hashable { }
+extension DropInEvent: Hashable {
+    var latitude: CLLocationDegrees { location.coordinates[1] }
+    var longitude: CLLocationDegrees { location.coordinates[0] }
+}
+
+struct GeoJSONPoint: Codable, Equatable, Hashable {
+    var type: String = "Point"
+    var coordinates: [Double]
+}
 
 struct OperationState {
     var isRunning = false

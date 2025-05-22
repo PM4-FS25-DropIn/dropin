@@ -43,7 +43,7 @@ struct DiscoveryEventList: View {
     private var eventList: some View {
         ScrollView {
             LazyVStack(alignment: .center, spacing: 25) {
-                ForEach(eventStore.feedEvents, id: \.self) { event in
+                ForEach(eventStore.feedEvents) { event in
                     EventCard(event: event)
                         .onAppear {
                             if event == eventStore.feedEvents.last {
@@ -71,7 +71,7 @@ struct DiscoveryEventList: View {
     
     private func refreshFeed() {
         Task {
-            try await eventStore.refreshFeedEvents()
+            try await eventStore.refreshEventsFeed()
         }
     }
     
@@ -79,7 +79,7 @@ struct DiscoveryEventList: View {
     // TODO: Maybe no async needed?
     private func fetchNewEvents() {
         Task {
-            try await eventStore.fetchMoreFeedEvents()
+            try await eventStore.fetchEventsFeed()
         }
     }
 }

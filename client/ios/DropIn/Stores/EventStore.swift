@@ -16,14 +16,17 @@ class EventStore {
     /// Events the user joined (including his own).
     var joinedEvents: [DropInEvent] = []
     
+    var searchDelta: Double = 0.25
+    
     private var userId: UUID?
+    private var userLocation: CLLocationCoordinate2D?
     
     init() {
         Task {
-            feedEvents = try await fetchInitialEventsFeed()
-            joinedEvents = try await fetchInitialAttendingEventsOfUser()
-            mapEvents = try await fetchInitialMapEvents()
+            joinedEvents = try await fetchEventsJoinedByUser()
+            feedEvents = try await refreshEventsFeed()
             userId = try await getUserId()
+            userLocation = LocationService.shared.lastLocation.coordinate
             print("Initialized EventStore with userId: \(userId?.debugDescription ?? "nil")")
         }
     }
@@ -32,40 +35,17 @@ class EventStore {
         return try await supabase.auth.session.user.id
     }
     
-    /// Initial fetch of attending events of the user (including the user created events).
-    private func fetchInitialAttendingEventsOfUser() async throws -> [DropInEvent] {
-        let events: [DropInEvent] = try await supabase
-            .from("events_joined_by_user")
-            .select()
+    
+    private func fetchEventsJoinedByUser() async throws -> [DropInEvent] {
+        try await supabase.rpc("get_joined_events_of_user")
             .execute()
             .value
-        
-        return events
     }
     
-    /// Initial fetch of 5 events the user has not joined yet.
-    // TODO: Initial fetch should fetch events nearby.
-    private func fetchInitialEventsFeed() async throws -> [DropInEvent] {
-        let events: [DropInEvent] = try await supabase
-            .from("events_not_joined")
-            .select()
-            .limit(5)
-            .execute()
-            .value
-        
-        return events
-    }
     
-    // TODO: Fetch events nearby.
-    private func fetchInitialMapEvents() async throws -> [DropInEvent] {
-        let events: [DropInEvent] = try await supabase
-            .from("events")
-            .select()
-            .limit(10)
-            .execute()
-            .value
-        
-        return events
+    /// Initial fetch of nearby events around user position.
+    func refreshEventsFeed() async throws -> [DropInEvent] {
+        return try await fetchEventsInRegion(latitude: userLocation?.latitude ?? 0, longitude: userLocation?.longitude ?? 0, latitudeDelta: searchDelta, longitudeDelta: searchDelta)
     }
     
     
@@ -82,6 +62,7 @@ class EventStore {
         return events
     }
     
+    /// Check if an event has been joined by the current user.
     func checkIfEventIsJoinedByUser(_ event: DropInEvent) -> Bool {
         guard let eventId = event.id, let eventUserId = event.userId else { return false }
         
@@ -94,17 +75,24 @@ class EventStore {
         return false
     }
     
-    /// Fetch more events that haven't been fetched yet.
-    //TODO: Might be broken with the excluded ids fetching. Logic should be already in here.
-    func fetchMoreFeedEvents() async throws {
-        let alreadyFetchedEventsIds = Set(feedEvents.compactMap(\.id))
+    /// Fetch additional events by increasing searchDelta and find events further away from the user.
+    func fetchEventsFeed() async throws {
+        searchDelta += 0.25
         
-        let events: [DropInEvent] = try await supabase
-            .rpc("fetch_events_feed", params: ["excluded_ids": [alreadyFetchedEventsIds]])
-            .execute()
-            .value
+        var events: [DropInEvent] = try await fetchEventsInRegion(latitude: userLocation?.latitude ?? 0, longitude: userLocation?.longitude ?? 0, latitudeDelta: searchDelta, longitudeDelta: searchDelta)
         
-        let filteredEvents = filterNewEvents(events, from: feedEvents)
+        var filteredEvents = filterNewEvents(events, from: feedEvents)
+        
+        // Fallback if user is located in devils ass crack.
+        if filteredEvents.isEmpty {
+            events = try await supabase
+                .from("events")
+                .select()
+                .limit(10)
+                .execute()
+                .value
+            filteredEvents = filterNewEvents(events, from: feedEvents)
+        }
         
         feedEvents.append(contentsOf: filteredEvents)
         
@@ -112,33 +100,22 @@ class EventStore {
         print("Now has \(feedEvents.count)")
     }
     
-    // Fresh new fetch of events for the homeview.
-    func refreshFeedEvents() async throws {
-        let events: [DropInEvent] = try await supabase
-            .from("events_not_joined")
-            .select()
-            .limit(10)
-            .execute()
-            .value
-        
-        feedEvents = events
+    func fetchMapEvents(latitude: Double, longitude: Double, latitudeDelta: Double, longitudeDelta: Double) async throws {
+        let events: [DropInEvent] = try await fetchEventsInRegion(latitude: latitude, longitude: longitude, latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta)
+        mapEvents = events
     }
     
-    /// Fetch events in a certain region (triggered by map movements).
-    // TODO: Implement fetching events in region.
-    func fetchEventsInRegion(latitude: Double, longitude: Double, latitudeDelta: Double, longitudeDelta: Double) async throws {
-        
+    
+    /// Fetch events in a certain region (triggered by mapcamera movements).
+    func fetchEventsInRegion(latitude: Double, longitude: Double, latitudeDelta: Double, longitudeDelta: Double) async throws -> [DropInEvent] {
         let events: [DropInEvent] = try await supabase
-            .from("events")
-            .select()
-            .limit(5)
+            .rpc("get_events_in_region", params: ["center_lat": latitude, "center_lon": longitude, "lat_delta": latitudeDelta, "lon_delta": longitudeDelta])
             .execute()
             .value
         
-        mapEvents = events
-        //mapEvents.append(contentsOf: filterNewEvents(events, from: mapEvents))
         print("Calling fetch Events in region")
-        print("Now has: \(feedEvents.count)")
+        print("Now has: \(mapEvents.count)")
+        return events
     }
     
     
@@ -190,16 +167,13 @@ class EventStore {
     /// Create a new event.
     func createEvent(_ event: DropInEvent, photos: [PhotosPickerItem]) async throws {
         
-        let insertedEvents: [DropInEvent] = try await supabase
-            .from("events")
-            .insert(event)
-            .select()
+        let insertedEvent: [DropInEvent] = try await supabase
+            .rpc("insert_event", params: ["event": event])
             .execute()
             .value
         
-        
         if !photos.isEmpty {
-            var event = insertedEvents[0]
+            var event = insertedEvent[0]
             var imagePaths: [String] = []
             
             do {
@@ -207,7 +181,6 @@ class EventStore {
                     let eventThumbnails = try await convertPhotoSelectionToEventThumbnail(photos)
                     imagePaths = try await uploadEventThumbnailPhotos(eventId: eventId, photos: eventThumbnails)
                     event.imagePaths = imagePaths
-                    print("Path is: \(imagePaths[0])")
                     
                     try await updateEvent(event)
                     joinedEvents.append(event)
@@ -216,11 +189,13 @@ class EventStore {
             } catch {
                 try await deleteEvent(event)
                 print("Couldn't convert or upload images.")
+                throw EventStoreError.imageUploadFailed
             }
             
         } else {
-            joinedEvents.append(contentsOf: insertedEvents)
-            mapEvents.append(contentsOf: insertedEvents)
+            print("Add inserted event")
+            joinedEvents.append(insertedEvent[0])
+            mapEvents.append(insertedEvent[0])
         }
     }
     
@@ -241,9 +216,7 @@ class EventStore {
     /// Update an event.
     func updateEvent(_ event: DropInEvent) async throws {
         try await supabase
-            .from("events")
-            .update(event)
-            .eq("id", value: event.id)
+            .rpc("update_event", params: ["event": event])
             .execute()
         
         if let index = joinedEvents.firstIndex(where: { $0.id == event.id }) {
@@ -310,5 +283,6 @@ enum EventStoreError: Error {
     case eventNotFound
     case eventIdNotValid
     case userIdNotFound
+    case imageUploadFailed
 }
 
