@@ -15,7 +15,7 @@ private var getSupabaseURL: String {
     #elseif TEST
     return ProcessInfo.processInfo.environment["TEST_SUPABASE_URL"] ?? ""
     #else
-    return ProcessInfo.processInfo.environment["PROD_SUPABASE_URL"] ?? ""
+    return "http://160.85.252.162:8080"
     #endif
 }
 
@@ -25,7 +25,7 @@ private var getSupabaseKey: String {
     #elseif TEST
     return ProcessInfo.processInfo.environment["TEST_SUPABASE_KEY"] ?? ""
     #else
-    return ProcessInfo.processInfo.environment["PROD_SUPABASE_KEY"] ?? ""
+    return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICJyb2xlIjogImFub24iLAogICJpc3MiOiAic3VwYWJhc2UiLAogICJpYXQiOiAxNzQ0MTQ5NjAwLAogICJleHAiOiAxOTAxOTE2MDAwCn0.8vzFDrqMsw3ebkPVpk4CbwOGccnj5mQ7eXGZ4hVkXkU"
     #endif
 }
 
