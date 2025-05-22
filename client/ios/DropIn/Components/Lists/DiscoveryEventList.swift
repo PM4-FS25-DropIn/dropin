@@ -11,6 +11,7 @@ import SwiftUI
 struct DiscoveryEventList: View {
     @Environment(EventStore.self) private var eventStore
     @State private var vm: DiscoveryEventListViewModel = DiscoveryEventListViewModel()
+    @State private var fetchEventsStatus: AsyncStatus = .idle
     
     var body: some View {
         Group {
@@ -18,31 +19,12 @@ struct DiscoveryEventList: View {
                 .padding(.horizontal)
                 .padding(.vertical, 5)
             
-            switch(vm.selectedEventCategory) {
-            case .forYou:
+            if fetchEventsStatus.isRunning {
+                searchingEventsProgressView
+            } else {
                 eventList
-            case .nearby:
-                placeholder(text: "Nearby")
-            case .ongoing:
-                placeholder(text: "Ongoing")
-            case .sponsored:
-                placeholder(text: "Sponsored")
-            case .startingSoon:
-                placeholder(text: "Starting Soon")
-            case .trending:
-                placeholder(text: "Trending")
             }
         }
-        .onAppear {
-            vm.eventStore = eventStore
-        }
-    }
-    
-    private func placeholder(text: String) -> some View {
-        VStack {
-            Text(text)
-        }
-        .frame(maxHeight: .infinity)
     }
     
     private var eventList: some View {
@@ -57,10 +39,7 @@ struct DiscoveryEventList: View {
                             EventCard(event: event, joinEventAction: vm.joinEvent)
                                 .onAppear {
                                     if event == vm.events.last {
-                                        Task {
-                                            print("Last. fetching new ones")
-                                            try await vm.fetchNewEvents()
-                                        }
+                                        fetchAdditionalEvents()
                                     }
                                 }
                                 .transition(
@@ -76,19 +55,28 @@ struct DiscoveryEventList: View {
                 }
                 .scrollIndicators(.hidden)
                 .refreshable {
-                    Task {
-                        try await vm.refreshFeed()
-                    }
+                    refreshFeed()
                 }
             }
         }
         .onAppear {
+            vm.eventStore = eventStore
+            if eventStore.isInitialized {
+                vm.updateEvents()
+            } else {
+                Task {
+                    while !eventStore.isInitialized {
+                        try? await Task.sleep(nanoseconds: 100_000_000)
+                    }
+                    vm.updateEvents()
+                }
+            }
             vm.updateEvents()
         }
     }
     
     private var noEventsFoundView: some View {
-        VStack {
+        VStack(alignment: .center, spacing: 15) {
             Spacer()
             Text("Womp womp...")
                 .font(.headline)
@@ -97,12 +85,48 @@ struct DiscoveryEventList: View {
                 .font(.subheadline)
                 .bold()
                 .foregroundStyle(.secondary)
-            Button("Try again") {
-                Task {
-                    try await vm.refreshFeed()
-                }
+            Button(fetchEventsStatus.isRunning ? "Searching" : "Search again") {
+                refreshFeed()
             }
+            .disabled(fetchEventsStatus.isRunning)
             Spacer()
+        }
+    }
+    
+    private var searchingEventsProgressView: some View {
+        VStack(alignment: .center, spacing: 15) {
+            Spacer()
+            ProgressView()
+            Text("Searching for events...")
+                .font(.headline)
+                .bold()
+            Spacer()
+        }
+    }
+    
+    private func refreshFeed() {
+        Task {
+            do {
+                fetchEventsStatus = .running
+                try await Task.sleep(for: .seconds(2))
+                try await vm.refreshFeed()
+                fetchEventsStatus = .success
+            } catch {
+                fetchEventsStatus = .failure(error)
+            }
+        }
+    }
+    
+    
+    private func fetchAdditionalEvents() {
+        Task {
+            do {
+                fetchEventsStatus = .running
+                try await vm.fetchAdditionalEvents()
+                fetchEventsStatus = .success
+            } catch {
+                fetchEventsStatus = .failure(error)
+            }
         }
     }
     
