@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "DropInTransparent.png",
+      "filename" : "DropIn 1.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -25,7 +25,7 @@
           "value" : "tinted"
         }
       ],
-      "filename" : "DropInGrayscale 1.png",
+      "filename" : "DropInGrayscale.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
