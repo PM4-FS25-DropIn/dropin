@@ -195,11 +195,15 @@ struct ChatRoomView: View {
             .clipShape(RoundedRectangle(cornerRadius: 30))
         
             Button {
-                let destination = CLLocationCoordinate2D(latitude: event.latitude, longitude: event.longitude)
-                let url = URL(string: "http://maps.apple.com/?daddr=\(destination.latitude),\(destination.longitude)")!
-                    if UIApplication.shared.canOpenURL(url) {
-                        UIApplication.shared.open(url)
-                    }
+                let destination = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(
+                    latitude: event.latitude, longitude: event.longitude)))
+
+                destination.name = event.title
+
+                MKMapItem.openMaps(
+                    with: [destination],
+                    launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeWalking]
+                )
             } label: {
                 Label("Open in Maps", systemImage: "map")
                     .font(.subheadline)
