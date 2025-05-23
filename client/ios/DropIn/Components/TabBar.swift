@@ -42,6 +42,7 @@ struct TabBar: View {
                 Spacer()
             }
         }
+        .ignoresSafeArea(.keyboard)
     }
 
     var coreViews: some View {
