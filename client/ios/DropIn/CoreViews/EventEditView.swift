@@ -224,6 +224,7 @@ struct EventEditView: View {
             do {
                 try await eventStore.updateEvent(event)
                 asyncTaskStatus = .success
+                dismiss()
             } catch {
                 asyncTaskStatus = .failure(error)
                 if showUpdateConfirmation || showDeleteConfirmation {

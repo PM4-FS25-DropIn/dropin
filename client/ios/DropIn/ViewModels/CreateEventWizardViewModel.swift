@@ -20,7 +20,7 @@ final class CreateEventWizardViewModel {
     init(selectedPhotos: [PhotosPickerItem]) {
         self.selectedPhotos = selectedPhotos
         let currentUserLocation = LocationService.shared.lastLocation.coordinate
-        self.event = DropInEvent(title: "", description: "", imagePaths: ["default.event.thumbnail"], start: Date(), end: Date(), latitude: currentUserLocation.latitude, longitude: currentUserLocation.longitude, slotLimit: 2, ageRestricted: false, chatEnabled: true)
+        self.event = DropInEvent(title: "", description: "", imagePaths: ["default.event.thumbnail"], start: Date(), end: Date(), slotLimit: 2, ageRestricted: false, chatEnabled: true, location: .init(type: "Point", coordinates: [currentUserLocation.longitude, currentUserLocation.latitude]))
     }
     
 }

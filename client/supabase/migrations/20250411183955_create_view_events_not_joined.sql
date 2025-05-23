@@ -1,13 +1,20 @@
--- ===========================================
--- Migration:     create_view_events_not_responded_to
---
--- Description:
---   - Creates a view listing all events the authenticated user
---     has not yet responded to (neither joined nor declined)
---   - Excludes events created by the user themselves
--- ===========================================
-create view public.events_not_joined as
-select e.* from public.events e 
+create or replace view public.events_not_joined as
+select 
+  e.id,
+  e.created_at,
+  e.updated_at,
+  e.title,
+  e.description,
+  e.image_paths,
+  e.user_id,
+  e.start,
+  e."end",
+  e.slot_limit,
+  e.slots_taken,
+  e.age_restricted,
+  e.chat_enabled,
+  ST_AsGeoJSON(e.location)::jsonb as location
+from public.events e 
 where e.user_id != auth.uid()
 and not exists (
     select 1 
