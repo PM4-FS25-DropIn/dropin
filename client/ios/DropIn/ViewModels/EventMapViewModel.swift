@@ -30,11 +30,11 @@ final class EventMapViewModel {
         route = nil
         guard let eventStore else { return }
         if let value = selectedItem.value {
-            if value < eventStore.mapEvents.count {
+            if value < eventStore.events.count {
                 let request = MKDirections.Request()
                 request.transportType = .walking
                 request.source = MKMapItem(placemark: MKPlacemark(coordinate: locationService.lastLocation.coordinate))
-                request.destination = eventStore.mapEvents[value].mapItem
+                request.destination = eventStore.events[value].mapItem
                 
                 Task {
                     let directions = MKDirections(request: request)

@@ -9,17 +9,30 @@ import Foundation
 import OSLog
 import Supabase
 
-// Details for production supabase
-//let supabaseURL = ProcessInfo.processInfo.environment["SUPABASE_URL"] ?? ""
-//let supabaseKey = ProcessInfo.processInfo.environment["SUPABASE_KEY"] ?? ""
+private var getSupabaseURL: String {
+    #if DEBUG
+    return ProcessInfo.processInfo.environment["LOCAL_SUPABASE_URL"] ?? ""
+    #elseif TEST
+    return ProcessInfo.processInfo.environment["TEST_SUPABASE_URL"] ?? ""
+    #else
+    return ProcessInfo.processInfo.environment["PROD_SUPABASE_URL"] ?? ""
+    #endif
+}
 
-// Details for local supabase
-let supabaseURL = "http://127.0.0.1:54321"
-let supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0"
+private var getSupabaseKey: String {
+    #if DEBUG
+    return ProcessInfo.processInfo.environment["LOCAL_SUPABASE_KEY"] ?? ""
+    #elseif TEST
+    return ProcessInfo.processInfo.environment["TEST_SUPABASE_KEY"] ?? ""
+    #else
+    return ProcessInfo.processInfo.environment["PROD_SUPABASE_KEY"] ?? ""
+    #endif
+}
+
 
 let supabase = SupabaseClient(
-    supabaseURL: URL(string: supabaseURL)!,
-    supabaseKey: supabaseKey,
+    supabaseURL: URL(string: getSupabaseURL)!,
+    supabaseKey: getSupabaseKey,
     options: .init(
         global: .init(logger: AppLogger())
     )

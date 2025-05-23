@@ -229,4 +229,3 @@ struct ChatRoomView: View {
     }
     
 }
-
