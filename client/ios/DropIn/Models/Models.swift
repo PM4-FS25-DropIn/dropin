@@ -2,7 +2,7 @@ import Foundation
 import CoreLocation
 import SwiftUI
 
-struct Profile: Codable {
+struct Profile: Codable, Identifiable {
     let id: UUID
     let username: String
     let avatarUrl: String?
