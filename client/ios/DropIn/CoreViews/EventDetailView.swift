@@ -104,6 +104,21 @@ struct EventDetailView: View {
             .containerRelativeFrame(.vertical, count: 12, span: 4, spacing: 0)
             .mapControlVisibility(.hidden)
             .clipShape(RoundedRectangle(cornerRadius: 30))
+            
+            Button {
+                let destination = CLLocationCoordinate2D(latitude: event.latitude, longitude: event.longitude)
+                let url = URL(string: "http://maps.apple.com/?daddr=\(destination.latitude),\(destination.longitude)")!
+                    if UIApplication.shared.canOpenURL(url) {
+                        UIApplication.shared.open(url)
+                    }
+            } label: {
+                Label("Open in Maps", systemImage: "map")
+                    .font(.subheadline)
+                    .padding(10)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.accentColor.opacity(0.1))
+                    .cornerRadius(12)
+            }
         }
     }
     

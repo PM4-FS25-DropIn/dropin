@@ -5,14 +5,18 @@
 //  Created by Shpetim Veseli on 24.04.2025.
 //
 import SwiftUI
+import MapKit
 
 struct ChatRoomView: View {
     @Environment(AuthService.self) private var authService
+    @Environment(EventStore.self) private var eventStore
     
     @State private var session: Profile?
     @State private var event: DropInEvent
     @StateObject private var viewModel: ChatService
     @State private var newMessage: String = ""
+    @State var showingDetailsSheet: Bool = false
+    @State private var participants: [Profile] = []
             
     
     init(event: DropInEvent, authService: AuthService) {
@@ -23,13 +27,20 @@ struct ChatRoomView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Navigation Bar
             HStack {
-                Text("\(event.title)")
+                Text(event.title)
                     .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .multilineTextAlignment(.center)
+                    .multilineTextAlignment(.leading)
+
                 Spacer()
+
+                Button(action: {
+                    showingDetailsSheet.toggle()
+                }) {
+                    Text("Details")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
             }
             .padding()
             .background(Color(.systemBackground).ignoresSafeArea())
@@ -92,6 +103,112 @@ struct ChatRoomView: View {
                 await viewModel.unsubscribeMessages()
             }
         }
+        .sheet(isPresented: $showingDetailsSheet) {
+            VStack {
+                ChatRoomDetailsView
+            }
+        }
+    }
+
+    private var ChatRoomDetailsView: some View {
+        ScrollView {
+            VStack(alignment: .center, spacing: 20) {
+                Text("Details")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
+                    .padding(.top)
+                Text(event.description)
+                    .font(.body)
+                    .foregroundColor(.secondary)
+                    .padding()
+
+                EventQuickInfo(event: event)
+                    .frame(maxWidth: .infinity)
+                    .background(Color(.secondarySystemBackground))
+                    .cornerRadius(16)
+                    .padding(.horizontal)
+                
+                minimap
+                    .padding(.horizontal)
+                participantsView
+            }
+            .padding(.bottom)
+        }
+        .onAppear {
+            Task {
+                do {
+                    if let eventId = event.id {
+                        participants = try await eventStore.getAllParticipants(of: eventId)
+                    }
+                } catch {
+                    print("Failed to load participants: \(error)")
+                }
+            }
+        }
+    }
+    
+    private var participantsView: some View {
+        VStack(alignment: .center, spacing: 12) {
+            Text("Participants")
+                .font(.title2)
+                .bold()
+
+            VStack(spacing: 8) {
+                ForEach(participants) { participant in
+                    HStack {
+                        Image(systemName: "person.circle.fill")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(.blue)
+                        Text(participant.username)
+                            .font(.subheadline)
+                        Spacer()
+                    }
+                    .padding(.horizontal)
+                }
+            }
+            .padding(.vertical, 10)
+            .background(Color(.secondarySystemBackground))
+            .cornerRadius(16)
+            .padding(.horizontal)
+        }
+    }
+    
+    private var minimap: some View {
+        VStack {
+            Text("Location")
+                .font(.title2)
+                .bold()
+            Text(formatCoordinates(latitude: event.latitude, longitude: event.longitude))
+                .font(.caption)
+                .bold()
+                .foregroundStyle(.secondary)
+            Map(initialPosition: .region(MKCoordinateRegion(center: .init(latitude: event.latitude, longitude: event.longitude), span: .init(latitudeDelta: 0.001, longitudeDelta: 0.001)))) {
+                Marker("DropIn", systemImage: "drop", coordinate: CLLocationCoordinate2D(latitude: event.latitude, longitude: event.longitude))
+                    .tint(.indigo)
+            }
+            .disabled(true)
+            .containerRelativeFrame(.vertical, count: 12, span: 4, spacing: 0)
+            .mapControlVisibility(.hidden)
+            .clipShape(RoundedRectangle(cornerRadius: 30))
+        
+            Button {
+                let destination = CLLocationCoordinate2D(latitude: event.latitude, longitude: event.longitude)
+                let url = URL(string: "http://maps.apple.com/?daddr=\(destination.latitude),\(destination.longitude)")!
+                    if UIApplication.shared.canOpenURL(url) {
+                        UIApplication.shared.open(url)
+                    }
+            } label: {
+                Label("Open in Maps", systemImage: "map")
+                    .font(.subheadline)
+                    .padding(10)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.accentColor.opacity(0.1))
+                    .cornerRadius(12)
+            }
+        }
     }
 
     
@@ -111,31 +228,5 @@ struct ChatRoomView: View {
         return sorted
     }
     
-}
-
-
-struct ChatRoomPreviewWrapper: View {
-    @State private var profile = Profile(id: UUID(), username: "PreviewUser", avatarUrl: nil, emojicode: "", city: "")
-    @State private var event: DropInEvent = DropInEvent(
-        id: 1,
-        createdAt: Date(),
-        title: "Pizza Night",
-        description: "Join us for free pizza and chill vibes.",
-        imagePaths: ["pizza.jpg"],
-        userId: UUID(),
-        start: Calendar.current.date(byAdding: .hour, value: 1, to: Date())!,
-        end: Calendar.current.date(byAdding: .hour, value: 3, to: Date())!,
-        latitude: 47.3769,
-        longitude: 8.5417,
-        slotLimit: 10,
-        slotsTaken: 3,
-        ageRestricted: false,
-        chatEnabled: true
-    )
-    
-    var body: some View {
-        ChatRoomView(event: event, authService: AuthService())
-            .environment(AuthService()) // Provide default service for preview
-    }
 }
 

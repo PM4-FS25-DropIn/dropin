@@ -304,6 +304,30 @@ class EventStore {
             return !existingIds.contains(id)
         }
     }
+    
+    func getAllParticipants(of eventId: Int) async throws -> [Profile] {
+        let eventJoins: [EventJoins] = try await supabase
+            .from("event_joins")
+            .select()
+            .eq("event_id", value: eventId)
+            .execute()
+            .value
+        
+        print("Current EventJoins:",eventJoins)
+        
+        let userIds = eventJoins.map { $0.userId }
+        
+        print("Current userIds:",userIds)
+        
+        let profiles: [Profile] = try await supabase
+            .from("profiles")
+            .select()
+            .in("id", values: userIds)
+            .execute()
+            .value
+        
+        return profiles
+    }
 }
 
 enum EventStoreError: Error {
