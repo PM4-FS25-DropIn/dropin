@@ -240,15 +240,20 @@ class EventStore {
     
     /// Delete an event.
     func deleteEvent(_ event: DropInEvent) async throws {
-        print("Deleting event with id: \(event.id ?? 0)")
+        guard let eventId = event.id else { return }
+        print("Deleting event with id: \(eventId)")
         try await supabase
             .from("events")
             .delete()
-            .eq("id", value: event.id)
+            .eq("id", value: eventId)
             .execute()
         
-        joinedEvents.removeAll { $0.id == event.id }
-        events.removeAll { $0.id == event.id }
+        joinedEvents.removeAll { $0.id == eventId }
+        events.removeAll { $0.id == eventId }
+        
+        try await supabase.storage
+          .from("event-thumbnails")
+          .remove(paths: ["\(eventId)"])
     }
     
     /// Update an event.
