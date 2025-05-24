@@ -48,8 +48,10 @@ struct EventMap: View {
                 }
                 
                 if let route = viewModel.route {
-                    MapPolyline(route)
-                        .stroke(.accent, lineWidth: 5)
+                    if route.distance < 1500 {
+                        MapPolyline(route)
+                            .stroke(.accent, lineWidth: 5)
+                    }
                 }
             }
             .sheet(isPresented: $showEventDetailSheet) {

@@ -20,7 +20,8 @@ struct EventDetailView: View {
                 titleAndDescription
                 buttonGroup
                 EventQuickInfo(event: event)
-                minimap
+                MiniMap(event: event)
+                OpenInMapsButton(event: event)
             }
             .padding()
         }
@@ -83,47 +84,6 @@ struct EventDetailView: View {
                 .font(.caption)
                 .bold()
                 .foregroundStyle(.secondary)
-        }
-    }
-    
-    // MARK: - Minimap
-    
-    private var minimap: some View {
-        VStack {
-            Text("Location")
-                .font(.title2)
-                .bold()
-            Text(formatCoordinates(latitude: event.latitude, longitude: event.longitude))
-                .font(.caption)
-                .bold()
-                .foregroundStyle(.secondary)
-            Map(initialPosition: .region(MKCoordinateRegion(center: .init(latitude: event.latitude, longitude: event.longitude), span: .init(latitudeDelta: 0.001, longitudeDelta: 0.001)))) {
-                Marker("DropIn", systemImage: "drop", coordinate: CLLocationCoordinate2D(latitude: event.latitude, longitude: event.longitude))
-                    .tint(.indigo)
-            }
-            .disabled(true)
-            .containerRelativeFrame(.vertical, count: 12, span: 4, spacing: 0)
-            .mapControlVisibility(.hidden)
-            .clipShape(RoundedRectangle(cornerRadius: 30))
-            
-            Button {
-                let destination = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(
-                    latitude: event.latitude, longitude: event.longitude)))
-
-                destination.name = event.title
-
-                MKMapItem.openMaps(
-                    with: [destination],
-                    launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeWalking]
-                )
-            } label: {
-                Label("Open in Maps", systemImage: "map")
-                    .font(.subheadline)
-                    .padding(10)
-                    .frame(maxWidth: .infinity)
-                    .background(Color.accentColor.opacity(0.1))
-                    .cornerRadius(12)
-            }
         }
     }
     
