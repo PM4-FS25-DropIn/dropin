@@ -30,6 +30,7 @@ struct EventRowItem: View {
                 EventDetailView(event: event, isHost: isHost, joinEventAction: { _ in })
             }
         }
+        .frame(height: 150)
     }
     
     private var rowImage: some View {
@@ -48,7 +49,6 @@ struct EventRowItem: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .scaledToFill()
-                .containerRelativeFrame([.horizontal], count: 10, span: 4, spacing: 0)
                 .clipped()
             } else {
                 ProgressView()
