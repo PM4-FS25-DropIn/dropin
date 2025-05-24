@@ -62,6 +62,7 @@ struct MapEventItemDetailSheet: View {
                 EventQuickInfo(event: event)
                 sectionTitle("Gallery")
                 eventImagesCarousel
+                OpenInMapsButton(event: event)
             }
         }
         .scrollIndicators(.hidden)
