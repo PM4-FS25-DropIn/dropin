@@ -36,9 +36,6 @@ class EventStore {
     
     
     func updateJoinedEvents() async throws {
-        /*try await supabase.rpc("get_joined_events_of_user")
-            .execute()
-            .value"*/
         joinedEvents = try await supabase
             .from("events_joined_by_user")
             .select()
@@ -68,14 +65,6 @@ class EventStore {
     }
     
     func getNotJoinedEvents() -> [DropInEvent] {
-        /*let eventsJoined: [DropInEvent] = try await supabase
-            .from("events_joined_by_user")
-            .select()
-            .execute()
-            .value
-         */
-        
-        //let joinedIds = Set(eventsJoined.compactMap((\.id)))
         let joinedIds = Set(joinedEvents.compactMap((\.id)))
 
         print("Joined ids are \(joinedIds)")
@@ -260,8 +249,6 @@ class EventStore {
         
         joinedEvents.removeAll { $0.id == event.id }
         events.removeAll { $0.id == event.id }
-        //feedEvents.removeAll { $0.id == event.id }
-        //mapEvents.removeAll { $0.id == event.id }
     }
     
     /// Update an event.
