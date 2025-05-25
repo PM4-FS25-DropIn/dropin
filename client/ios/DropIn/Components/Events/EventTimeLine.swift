@@ -24,6 +24,7 @@ struct EventTimeLine: View {
                 placeholder
             } else {
                 banner
+                Spacer()
                 eventBubbleStack
             }
         }
