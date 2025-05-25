@@ -4,8 +4,10 @@ import SwiftUI
 struct ProfileView: View {
     
     @Environment(AuthService.self) private var authService
+    @Environment(EventStore.self) private var eventStore
     
     @State private var username: String = "Loading..."
+    @State private var profile: Profile? = nil
 
     var body: some View {
         ScrollView {
@@ -36,7 +38,8 @@ struct ProfileView: View {
         .onAppear {
             Task {
                 print("Getting username")
-                username = try await authService.getUsername()
+                profile = try await authService.getProfile()
+                username = profile?.username ?? "Unnamed"
                 print("Username is: \(username)")
             }
         }
@@ -144,11 +147,9 @@ struct ProfileView: View {
     // Evenly spaced stats row
     private var statsRow: some View {
         HStack {
-            statItem(number: "4", label: "Friends")
+            statItem(number: "\(profile?.dropinsCreated ?? 0)", label: "DropIns Created",sf_icon: "sparkles")
                 .frame(maxWidth: .infinity)
-            statItem(number: "9", label: "DropIn invites")
-                .frame(maxWidth: .infinity)
-            statItem(number: "2", label: "DropIn attended")
+            statItem(number: "\(profile?.dropinsJoined ?? 0)", label: "DropIns attended",sf_icon: "figure.wave")
                 .frame(maxWidth: .infinity)
         }
         .padding(.top, 4)
@@ -170,10 +171,15 @@ struct ProfileView: View {
     }
 
     // Helper function for stat items
-    private func statItem(number: String, label: String) -> some View {
-        VStack {
-            Text(number)
-                .font(.headline)
+    private func statItem(number: String, label: String, sf_icon: String) -> some View {
+        VStack(spacing: 4) {
+            HStack(spacing: 6) {
+                Image(systemName: sf_icon)
+                    .font(.headline)
+                    .foregroundColor(.accentColor)
+                Text(number)
+                    .font(.headline)
+            }
             Text(label)
                 .font(.caption)
                 .foregroundColor(.gray)
@@ -186,6 +192,7 @@ struct ProfileView: View {
 // TODO: dynamic data for DropInFeedView
 struct DropInFeedView: View {
     @Environment(AuthService.self) private var authService
+    @Environment(EventStore.self) private var eventStore
 
     // Example placeholder data
     let events = [
@@ -213,26 +220,55 @@ struct DropInFeedView: View {
             Text("My DropIns")
                 .font(.headline)
 
-            ForEach(events, id: \.self) { event in
-                eventRow(for: event)
+            if eventStore.fetchEventsOfUser().isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "party.popper.fill")
+                        .font(.largeTitle)
+                        .foregroundColor(.secondary)
+                    Text("No DropIns yet...")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 40)
+            } else {
+                ForEach(eventStore.fetchEventsOfUser()) { event in
+                    eventRow(for: event)
+                }
             }
         }
 
     }
     
 
-    private func eventRow(for event: String) -> some View {
+    private func eventRow(for event: DropInEvent) -> some View {
         HStack {
-            Rectangle()
-                .fill(Color("AccentColor"))  // Custom accent color from Assets
+            AsyncImage(url: URL(string: event.imagePaths[0])) { phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    } else if phase.error != nil {
+                        VStack(spacing: 5) {
+                            Image(systemName: "exclamationmark.circle.fill")
+                        }
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .scaledToFill()
+                        .containerRelativeFrame([.horizontal], count: 10, span: 4, spacing: 0)
+                        .clipped()
+                    } else {
+                        ProgressView()
+                    }
+                }
                 .frame(width: 60, height: 60)
+                .clipped()
                 .cornerRadius(8)
-
             VStack(alignment: .leading, spacing: 4) {
-                Text(event)
+                Text(event.title)
                     .font(.subheadline)
                     .fontWeight(.semibold)
-                Text("Short description about this event.")
+                Text(event.description)
                     .font(.caption)
                     .foregroundColor(.gray)
             }
@@ -247,4 +283,5 @@ struct DropInFeedView: View {
 #Preview {
     ProfileView()
         .environment(AuthService())
+        .environment(EventStore())
 }

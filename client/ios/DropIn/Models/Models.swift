@@ -8,6 +8,8 @@ struct Profile: Codable, Identifiable {
     let avatarUrl: String?
     let emojicode: String?
     let city: String?
+    let dropinsCreated: Int
+    let dropinsJoined: Int
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -15,6 +17,8 @@ struct Profile: Codable, Identifiable {
         case avatarUrl = "avatar_url"
         case emojicode
         case city
+        case dropinsCreated = "dropins_created"
+        case dropinsJoined = "dropins_joined"
     }
 }
 

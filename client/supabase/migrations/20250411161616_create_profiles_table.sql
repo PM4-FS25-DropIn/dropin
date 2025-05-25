@@ -13,6 +13,8 @@ create table public.profiles (
     avatar_url text,
     emojicode text,
     city text,
+    dropins_created integer default 0,
+    dropins_joined integer default 0,
     constraint username check (char_length(username) >= 3)
 );
 
