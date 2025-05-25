@@ -54,9 +54,4 @@ final class SettingsViewModel {
         print("Password updated successfully")
         try await Task.sleep(nanoseconds: 500_000_000)
     }
-
-    func deleteAccount() async {
-        print("Deleting account…")
-        try? await Task.sleep(nanoseconds: 500_000_000)
-    }
 }

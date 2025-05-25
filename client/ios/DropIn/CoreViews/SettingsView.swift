@@ -18,7 +18,6 @@ struct SettingsView: View {
                 NotificationsSection(vm: vm)
                 AppearanceSection(vm: vm)
                 SupportSection()
-                DangerZoneSection(vm: vm)
             }
             .listStyle(.insetGrouped)
             .listSectionSpacing(5)
@@ -46,7 +45,8 @@ struct ChangePasswordView: View {
                 SecureField("New Password", text: $newPassword)
                 SecureField("Confirm New Password", text: $confirmPassword)
             }
-
+            
+            
             Section {
                 Button("Change Password") {
                     guard validatePasswords() else { return }
@@ -58,6 +58,7 @@ struct ChangePasswordView: View {
                             )
                             dismiss()
                         } catch {
+                    
                             errorMessage = error.localizedDescription
                             showError = true
                         }
@@ -200,19 +201,6 @@ private struct SupportSection: View {
     }
 }
 
-private struct DangerZoneSection: View {
-    let vm: SettingsViewModel
-
-    var body: some View {
-        Section(header: Text("Danger Zone")) {
-            Button(role: .destructive) {
-                Task { await vm.deleteAccount() }
-            } label: {
-                Text("Delete Account")
-            }
-        }
-    }
-}
 
 #Preview {
     SettingsView()
