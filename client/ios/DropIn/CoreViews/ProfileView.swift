@@ -13,13 +13,12 @@ struct ProfileView: View {
             GeometryReader { geometry in
                 VStack(spacing: 0) {
                     profileHeader
-                    bioSection
                     Divider()
                         .padding(.vertical, 16)
                 }
                 .offset(y: -geometry.frame(in: .global).minY / 1.5)  // Header will move slower than the scroll -> offset correction
             }
-            .frame(height: 400)
+            .frame(height: 370)
 
             feedSection
                 .background(Color(.systemBackground))
@@ -152,12 +151,6 @@ struct ProfileView: View {
                 .frame(maxWidth: .infinity)
         }
         .padding(.top, 4)
-    }
-
-    // MARK: - Bio Section
-    private var bioSection: some View {
-        Text("🍆✊💦💥😏")
-            .padding(.top, 32)
     }
 
     // MARK: - Feed Section
