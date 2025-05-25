@@ -1,7 +1,7 @@
-<div style="text-align: center;"><img src="./docs/images/icon.webp" width="150px"></div>
+<div align="center"><img src="./docs/images/icon.webp" width="150px"></div>
 
-# <div style="text-align: center;">DropIn</div>
-<div style="text-align: center;">
+# <div align="center">DropIn</div>
+<div align="center">
 
 [![Database CI](https://github.com/PM4-FS25-DropIn/dropin/actions/workflows/ci-database.yml/badge.svg)](https://github.com/PM4-FS25-DropIn/dropin/actions/workflows/ci-database.yml)
 [![Swift iOS Client CI](https://github.com/PM4-FS25-DropIn/dropin/actions/workflows/ci-client-swift.yml/badge.svg)](https://github.com/PM4-FS25-DropIn/dropin/actions/workflows/ci-client-swift.yml) [![SonarQube Build](https://github.com/PM4-FS25-DropIn/dropin/actions/workflows/sonarqube.yml/badge.svg)](https://github.com/PM4-FS25-DropIn/dropin/actions/workflows/sonarqube.yml)
