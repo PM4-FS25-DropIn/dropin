@@ -66,6 +66,7 @@ struct TabBar: View {
                 Tab("DropIns", systemImage: "drop.fill") {
                     NavigationStack {
                         DropInsView()
+                            .navigationTitle("Up Next")
                     }
                 }
                 Tab("Profile", systemImage: "person.circle") {

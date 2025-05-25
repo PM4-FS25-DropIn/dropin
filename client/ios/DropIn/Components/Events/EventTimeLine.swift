@@ -16,7 +16,7 @@ struct EventTimeLine: View {
     @State private var highlightedEventStatus: EventStatus = .upcoming
     
     
-    private let timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     var body: some View {
         HStack {
@@ -24,7 +24,6 @@ struct EventTimeLine: View {
                 placeholder
             } else {
                 banner
-                Spacer()
                 eventBubbleStack
             }
         }
@@ -61,7 +60,7 @@ struct EventTimeLine: View {
                 let event = sortedEvents[index]
                 let offsetIndex = index - 1
 
-                EventBubble(event: event)
+                EventBubble(event: event, ringColor: getEventStatusColorGradient(event.status))
                     .frame(width: bubbleSize, height: bubbleSize)
                     .scaleEffect(1.0 - CGFloat(offsetIndex) * 0.05)
                     .offset(x: CGFloat(offsetIndex) * bubbleOffset)
@@ -84,7 +83,7 @@ struct EventTimeLine: View {
     private var banner: some View {
         HStack {
             if let highlightedEvent {
-                EventBubble(event: highlightedEvent)
+                EventBubble(event: highlightedEvent, ringColor: getEventStatusColorGradient(highlightedEventStatus))
                 VStack(alignment: .leading) {
                     Text(highlightedEvent.title)
                         .font(.caption)
@@ -93,7 +92,7 @@ struct EventTimeLine: View {
                         .lineLimit(1)
                     HStack {
                         statusMessage
-                        EventCountdown(eventStartDate: highlightedEvent.start, isFinished: $countdownIsFinished)
+                        EventCountdown(eventStartDate: highlightedEvent.start, isFinished: $countdownIsFinished, timer: self.timer)
                             .opacity(countdownIsFinished ? 0 : 1)
                             .id(highlightedEvent.id)
                     }

@@ -18,7 +18,7 @@ struct MyEventsList: View {
     
     var body: some View {
         List {
-            ForEach(eventStore.fetchEventsOfUser()) { event in
+            ForEach(eventStore.fetchEventsOfUser().sorted(by: { $0.start < $1.start })) { event in
                 EventRowItem(event: event, isHost: true)
                     .listRowInsets(EdgeInsets())
                     .listRowSeparator(.hidden)

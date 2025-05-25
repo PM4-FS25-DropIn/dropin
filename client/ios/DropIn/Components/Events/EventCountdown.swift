@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 struct EventCountdown: View {
     @State private var timeRemaining: TimeInterval = 0
@@ -6,7 +7,20 @@ struct EventCountdown: View {
     @Binding var isFinished: Bool
     var formatter: DateComponentsFormatter?
     
-    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    var timer: Publishers.Autoconnect<Timer.TimerPublisher>
+    
+    init(eventStartDate: Date, isFinished: Binding<Bool>, timer: Publishers.Autoconnect<Timer.TimerPublisher>? = nil, formatter: DateComponentsFormatter? = nil) {
+        self.eventStartDate = eventStartDate
+        _isFinished = isFinished
+        if let timer {
+            self.timer = timer
+        } else {
+            self.timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+        }
+        if let formatter {
+            self.formatter = formatter
+        }
+    }
     
     var body: some View {
         Text(timeRemaining > 0 ? formatted(timeRemaining) : "")

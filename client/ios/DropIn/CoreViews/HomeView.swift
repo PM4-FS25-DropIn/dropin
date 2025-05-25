@@ -6,7 +6,7 @@ struct HomeView: View {
         VStack {
             header
             EventTimeLine()
-                .padding()
+                .padding(.vertical)
             Divider()
             DiscoveryEventList()
         }

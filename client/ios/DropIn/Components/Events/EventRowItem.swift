@@ -30,6 +30,11 @@ struct EventRowItem: View {
                 EventDetailView(event: event, isHost: isHost, joinEventAction: { _ in })
             }
         }
+        .overlay(alignment: .topTrailing) {
+            Circle().fill(getEventStatusColorGradient(event.status))
+                .frame(width: 5, height: 5)
+                .padding()
+        }
         .frame(height: 150)
     }
     

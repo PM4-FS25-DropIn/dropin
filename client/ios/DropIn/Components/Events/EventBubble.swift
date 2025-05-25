@@ -11,25 +11,12 @@ import SwiftUI
 
 struct EventBubble: View {
     
-    @State private var currentDate = Date()
-    @State private var ringColor: LinearGradient
-    
     let event: DropInEvent
-    
-    init(event: DropInEvent) {
-        self.event = event
-        _ringColor = State(wrappedValue: getEventStatusColorGradient(event.status))
-    }
-    
-    private let timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+    let ringColor: LinearGradient
     
     var body: some View {
         image
             .frame(width: 60, height: 60)
-            .onReceive(timer) { time in
-                currentDate = time
-                ringColor = getEventStatusColorGradient(event.status)
-            }
     }
     
     private var image: some View {
@@ -41,7 +28,7 @@ struct EventBubble: View {
                             .resizable()
                             .scaledToFill()
                             .clipShape(Circle())
-                            .overlay(Circle().stroke(getEventStatusColorGradient(event.status), lineWidth: 3))
+                            .overlay(Circle().stroke(ringColor, lineWidth: 3))
                     } else if phase.error != nil {
                         Image(systemName: "xmark.circle.fill")
                             .resizable()
@@ -60,7 +47,7 @@ struct EventBubble: View {
                         Circle()
                             .fill(Color(.systemBackground))
                     )
-                    .overlay(Circle().stroke(getEventStatusColorGradient(event.status), lineWidth: 3))
+                    .overlay(Circle().stroke(ringColor, lineWidth: 3))
             }
         }
     }
@@ -69,5 +56,5 @@ struct EventBubble: View {
 }
 
 #Preview {
-    EventBubble(event: sampleEvent)
+    EventBubble(event: sampleEvent, ringColor: getEventStatusColorGradient(.upcoming))
 }

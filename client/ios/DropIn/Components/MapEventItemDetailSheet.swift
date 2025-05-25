@@ -139,16 +139,6 @@ struct MapEventItemDetailSheet: View {
         .foregroundStyle(.secondary)
     }
     
-    
-    func getLookAroundScene() {
-        lookAroundScene = nil
-        Task {
-            let request = MKLookAroundSceneRequest(mapItem: event.mapItem)
-            lookAroundScene = try? await request.scene
-            print("Scene is: \(lookAroundScene.debugDescription)")
-        }
-    }
-    
     func joinEvent() {
         Task {
             joinEventTaskStatus = .running
