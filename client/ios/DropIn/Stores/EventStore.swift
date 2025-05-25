@@ -15,7 +15,7 @@ class EventStore {
     /// Events the user joined (including his own).
     var joinedEvents: [DropInEvent] = []
     
-    var searchDelta: Double = 0.25
+    var searchDelta: Double = 0
     
     private var userId: UUID?
     private var userLocation: CLLocationCoordinate2D?
@@ -25,7 +25,6 @@ class EventStore {
             try await updateJoinedEvents()
             userId = try await getUserId()
             userLocation = LocationService.shared.lastLocation.coordinate
-            print("Initialized EventStore with userId: \(userId?.debugDescription ?? "nil")")
             isInitialized = true
         }
     }
@@ -41,34 +40,26 @@ class EventStore {
             .select()
             .execute()
             .value
+        
+        pruneExpiredJoinedEvents()
     }
     
-    
-    /// Clear events and search nearby events again. Fallback events if location unavailable or disabled.
-    func refreshEventsFeed() async throws {
-        var events: [DropInEvent] = try await searchEventsInRegion(latitude: userLocation?.latitude ?? 0, longitude: userLocation?.longitude ?? 0, latitudeDelta: searchDelta, longitudeDelta: searchDelta)
-
-        
-        // Fallback if user is located in devils ass crack.
-        if events.isEmpty {
-            print("Nothing found during refresh")
-            events = try await supabase
-                .from("events_not_joined")
-                .select()
-                .limit(10)
-                .execute()
-                .value
+    private func pruneExpiredJoinedEvents() {
+        let now = Date()
+        joinedEvents.removeAll { event in
+            return event.end < now
         }
-        
-        self.events = events
+    }
+    
+    /// Clear events.
+    func clearEvents() async throws {
+        self.events = []
         searchDelta = 0
     }
     
     func getNotJoinedEvents() -> [DropInEvent] {
         let joinedIds = Set(joinedEvents.compactMap((\.id)))
 
-        print("Joined ids are \(joinedIds)")
-        
         // Return all events that have not the same id as in the eventsJoined array
         return events.filter { event in
             guard let id = event.id else { return false }
@@ -79,15 +70,12 @@ class EventStore {
     
     /// Fetch events created by the user.
     func fetchEventsOfUser() -> [DropInEvent] {
-        var events: [DropInEvent] = []
-        
-        for event in joinedEvents {
-            guard let eventUserId = event.userId else { continue }
-            if eventUserId == userId {
-                events.append(event)
-            }
+        guard let userId else {
+            print("user id is nil")
+            return []
         }
-        return events
+
+        return joinedEvents.filter { $0.userId == userId }
     }
     
     /// Check if an event has been joined by the current user.
@@ -108,25 +96,11 @@ class EventStore {
         searchDelta += 0.25
         print("Search Delta is: \(searchDelta)")
         
-        var events: [DropInEvent] = try await searchEventsInRegion(latitude: userLocation?.latitude ?? 0, longitude: userLocation?.longitude ?? 0, latitudeDelta: searchDelta, longitudeDelta: searchDelta)
+        let events: [DropInEvent] = try await searchEventsInRegion(latitude: userLocation?.latitude ?? 0, longitude: userLocation?.longitude ?? 0, latitudeDelta: searchDelta, longitudeDelta: searchDelta)
         
-        var filteredEvents = filterNewEvents(events, from: events)
+        let filteredEvents = filterNewEvents(events, from: self.events)
         
-        // Fallback if user is located in devils ass crack.
-        if filteredEvents.isEmpty {
-            print("Empty. Using fallback")
-            events = try await supabase
-                .from("events_not_joined")
-                .select()
-                .limit(10)
-                .execute()
-                .value
-            filteredEvents = filterNewEvents(events, from: self.events)
-            print("Filtered Events count is \(filteredEvents.count)")
-        }
-        
-        events.append(contentsOf: filteredEvents)
-        print("Now has \(events.count)")
+        self.events.append(contentsOf: filteredEvents)
         return filteredEvents
     }
     

@@ -11,14 +11,17 @@ extension DropInEvent {
     
     var status: EventStatus {
         let now = Date()
-        if now < start.addingTimeInterval(-2 * 60 * 60) {
+        let totalDuration = end.timeIntervalSince(start)
+        let closingThreshold = end.addingTimeInterval(-totalDuration * 0.1)
+
+        if now < start {
             return .upcoming
-        } else if now >= start && now < end.addingTimeInterval(-10 * 60) {
+        } else if now >= start && now < closingThreshold {
             return .live
-        } else if now >= end.addingTimeInterval(-10 * 60) && now < end {
+        } else if now >= closingThreshold && now < end {
             return .closing
         } else {
-            return .upcoming
+            return .closed
         }
     }
 }

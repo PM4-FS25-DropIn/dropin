@@ -26,7 +26,7 @@ struct EventMap: View {
         map
             .onAppear {
                 viewModel.eventStore = eventStore
-                updateMapEvents()
+                initialEventSetup()
                 cameraPosition = .userLocation(fallback: .region(.bellevueRegion))
             }
     }
@@ -148,6 +148,22 @@ struct EventMap: View {
     /// Fetch new events.
     private func updateMapEvents() {
         Task {
+            eventFetchState = .running
+            do {
+                try await eventStore.fetchEventsInCameraRegion(latitude: viewModel.visibleRegion?.center.latitude ?? 0, longitude: viewModel.visibleRegion?.center.longitude ?? 0, latitudeDelta: viewModel.visibleRegion?.span.latitudeDelta ?? 0.25, longitudeDelta: viewModel.visibleRegion?.span.longitudeDelta ?? 0.25)
+                try await Task.sleep(for: .seconds(0.5))
+                print("Fetching new events")
+                eventFetchState = .success
+            } catch {
+                print("Couldn't fetch events")
+                eventFetchState = .failure(error)
+            }
+        }
+    }
+    
+    private func initialEventSetup() {
+        Task {
+            try await eventStore.clearEvents()
             eventFetchState = .running
             do {
                 try await eventStore.fetchEventsInCameraRegion(latitude: viewModel.visibleRegion?.center.latitude ?? 0, longitude: viewModel.visibleRegion?.center.longitude ?? 0, latitudeDelta: viewModel.visibleRegion?.span.latitudeDelta ?? 0.25, longitudeDelta: viewModel.visibleRegion?.span.longitudeDelta ?? 0.25)

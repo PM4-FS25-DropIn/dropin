@@ -17,10 +17,6 @@ final class DiscoveryEventListViewModel {
     
     var eventStore: EventStore?
     
-    init() {
-        print("New DiscoveryEventListViewModel")
-    }
-    
     func updateEvents() {
         guard let eventStore else { return }
         events = eventStore.getNotJoinedEvents()
@@ -28,8 +24,8 @@ final class DiscoveryEventListViewModel {
     
     func refreshFeed() async throws {
         guard let eventStore else { return }
-        try await eventStore.refreshEventsFeed()
-        events = eventStore.getNotJoinedEvents()
+        try await eventStore.clearEvents()
+        events = try await eventStore.loadMoreNearbyEvents()
     }
     
     func fetchAdditionalEvents() async throws {

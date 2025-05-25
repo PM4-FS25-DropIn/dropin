@@ -46,8 +46,26 @@ struct EventDetailView: View {
     
     private var imageCarousel: some View {
         TabView {
-            ForEach(event.imagePaths, id: \.self) { imagePath in
-                image(imagePath: imagePath)
+            if let eventImagePaths = event.imagePaths {
+                ForEach(eventImagePaths, id: \.self) { imagePath in
+                    AsyncImage(url: URL(string: imagePath)) { phase in
+                        if let image = phase.image {
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .clipped()
+                        } else if phase.error != nil {
+                            ContentUnavailableView("Image Unavailable", systemImage: "exclamationmark.circle.fill")
+                        } else {
+                            ProgressView()
+                        }
+                    }
+                }
+            } else {
+                Image("default.event.thumbnail")
+                    .resizable()
+                    .scaledToFill()
+                    .clipped()
             }
         }
         .tabViewStyle(.page)
@@ -98,21 +116,6 @@ struct EventDetailView: View {
     }
     
     // MARK: - Functions
-    
-    private func image(imagePath: String) -> some View {
-        AsyncImage(url: URL(string: imagePath)) { phase in
-            if let image = phase.image {
-                image
-                    .resizable()
-                    .scaledToFill()
-                    .clipped()
-            } else if phase.error != nil {
-                ContentUnavailableView("Image Unavailable", systemImage: "exclamationmark.circle.fill")
-            } else {
-                ProgressView()
-            }
-        }
-    }
     
     
     private func joinEvent() {

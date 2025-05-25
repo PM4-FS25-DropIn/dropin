@@ -9,12 +9,14 @@ struct EventCountdown: View {
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     var body: some View {
-        Text(formatted(timeRemaining))
+        Text(timeRemaining > 0 ? formatted(timeRemaining) : "")
             .font(.caption)
             .bold()
             .foregroundColor(timeRemaining <= 15 ? .red : .secondary)
             .onAppear {
-                timeRemaining = eventStartDate.timeIntervalSinceNow
+                if eventStartDate.timeIntervalSinceNow > 0 {
+                    timeRemaining = eventStartDate.timeIntervalSinceNow
+                }
             }
             .onReceive(timer) { time in
                 if timeRemaining > 0 {

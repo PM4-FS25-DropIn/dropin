@@ -9,9 +9,6 @@ import SwiftUI
 import MapKit
 import PhotosUI
 
-enum error: Error {
-    case error
-}
 
 struct CreateEventWizard: View {
     @Environment(\.dismiss) private var dismiss
@@ -20,6 +17,7 @@ struct CreateEventWizard: View {
     @State private var vm = CreateEventWizardViewModel(selectedPhotos: [])
     
     @State private var launchState: AsyncStatus = .idle
+    @FocusState private var isInputActive: Bool
     
     init(pinLocation: CLLocationCoordinate2D? = nil) {
         if let pinLocation {
@@ -36,6 +34,9 @@ struct CreateEventWizard: View {
                     .font(.title)
                     .foregroundStyle(.accent)
                 titleAndSubtitleTab
+                    .simultaneousGesture(TapGesture().onEnded {
+                        isInputActive = false
+                    })
             }
             Tab {
                 Image(systemName: "location.fill")
@@ -76,9 +77,11 @@ struct CreateEventWizard: View {
             header(title: "What's going on?", description: "Give your DropIn a title and short description so others know what to expect.")
             TextField("Title", text: $vm.event.title)
                 .roundedTextFieldStyle(strokeColor: .secondary)
+                .focused($isInputActive)
             TextEditor(text: $vm.event.description)
                 .roundedTextFieldStyle(strokeColor: .secondary)
                 .containerRelativeFrame(.vertical, count: 10, span: 2, spacing: 0)
+                .focused($isInputActive)
         }
         .autocorrectionDisabled()
         .textInputAutocapitalization(.sentences)
