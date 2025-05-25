@@ -16,7 +16,7 @@ create table public.events (
     updated_at timestamp with time zone default now(),
     title text not null,
     description text not null,
-    image_paths text[] not null default array['default.event.thumbnail'],
+    image_paths text[],
     user_id uuid references auth.users on delete cascade not null default auth.uid(),
     start timestamp with time zone not null,
     "end" timestamp with time zone not null,
