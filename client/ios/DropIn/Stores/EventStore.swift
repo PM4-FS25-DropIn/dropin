@@ -45,9 +45,8 @@ class EventStore {
     }
     
     func pruneExpiredJoinedEvents() {
-        let now = Date()
         joinedEvents.removeAll { event in
-            return event.end < now
+            return event.end < .now
         }
     }
     
@@ -74,7 +73,7 @@ class EventStore {
         guard let userId else { return [] }
         
         pruneExpiredJoinedEvents()
-
+        
         return joinedEvents.filter { $0.userId == userId }
     }
     
@@ -222,10 +221,6 @@ class EventStore {
         
         joinedEvents.removeAll { $0.id == eventId }
         events.removeAll { $0.id == eventId }
-        
-        try await supabase.storage
-          .from("event-thumbnails")
-          .remove(paths: ["\(eventId)"])
     }
     
     /// Update an event.

@@ -28,10 +28,10 @@ struct ProfileView: View {
                 .cornerRadius(16)
             
             Button("Sign out") {
-                            Task {
-                                try await authService.signOut()
-                            }
-                        }
+                Task {
+                    try await authService.signOut()
+                }
+            }
         }
         .edgesIgnoringSafeArea(.top)
         .onAppear {
@@ -180,39 +180,6 @@ struct ProfileView: View {
     }
 }
 
-// MARK: - DropInFeedView
-
-// TODO: dynamic data for DropInFeedView
-struct DropInFeedView: View {
-    @Environment(AuthService.self) private var authService
-    @Environment(EventStore.self) private var eventStore
-    
-    var body: some View {
-        
-        VStack(alignment: .leading, spacing: 8) {
-            Text("My DropIns")
-                .font(.headline)
-            
-            if eventStore.joinedEvents.isEmpty {
-                VStack(spacing: 12) {
-                    Image(systemName: "party.popper.fill")
-                        .font(.largeTitle)
-                        .foregroundColor(.secondary)
-                    Text("No DropIns yet...")
-                        .font(.headline)
-                        .foregroundColor(.secondary)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 40)
-            } else {
-                ForEach(eventStore.joinedEvents.filter {$0.userId == authService.userId }) { event in
-                    EventRowItem(event: event)
-                }
-            }
-        }
-    }
-    
-}
 
 #Preview {
     ProfileView()
