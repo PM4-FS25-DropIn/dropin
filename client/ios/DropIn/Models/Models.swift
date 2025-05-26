@@ -126,7 +126,7 @@ struct DropInEvent: Codable, Identifiable, Equatable {
     var updatedAt: Date?
     var title: String
     var description: String
-    var imagePaths: [String]
+    var imagePaths: [String]?
     var userId: UUID?
     var start: Date
     var end: Date
@@ -180,4 +180,3 @@ enum AuthMode {
 enum TransferError: Error {
     case importFailed
 }
-

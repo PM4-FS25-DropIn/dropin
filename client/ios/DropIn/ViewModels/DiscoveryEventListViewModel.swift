@@ -17,25 +17,23 @@ final class DiscoveryEventListViewModel {
     
     var eventStore: EventStore?
     
-    init() {
-        print("New DiscoveryEventListViewModel")
-    }
-    
     func updateEvents() {
         guard let eventStore else { return }
-        events = eventStore.getNotJoinedEvents()
+        events = removePastEvents(eventStore.getNotJoinedEvents())
     }
     
     func refreshFeed() async throws {
         guard let eventStore else { return }
-        try await eventStore.refreshEventsFeed()
-        events = eventStore.getNotJoinedEvents()
+        try await eventStore.clearEvents()
+        _ = try await eventStore.loadMoreNearbyEvents()
+        events = removePastEvents(eventStore.getNotJoinedEvents())
     }
     
     func fetchAdditionalEvents() async throws {
         guard let eventStore else { return }
-        let additionalEvents = try await eventStore.loadMoreNearbyEvents()
-        events.append(contentsOf: additionalEvents)
+        
+        _ = try await eventStore.loadMoreNearbyEvents()
+        events = removePastEvents(eventStore.getNotJoinedEvents())
     }
     
     func joinEvent(_ event: DropInEvent) async throws {
@@ -60,6 +58,12 @@ final class DiscoveryEventListViewModel {
         
         return events.filter { event in
             event.start > now && event.start <= in30Minutes
+        }
+    }
+    
+    private func removePastEvents(_ events: [DropInEvent]) -> [DropInEvent] {
+        return events.filter { event in
+            return event.end > Date()
         }
     }
     

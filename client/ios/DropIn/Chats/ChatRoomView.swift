@@ -13,7 +13,7 @@ struct ChatRoomView: View {
     
     @State private var session: Profile?
     @State private var event: DropInEvent
-    @StateObject private var viewModel: ChatService
+    @State private var viewModel: ChatService
     @State private var newMessage: String = ""
     @State var showingDetailsSheet: Bool = false
     @State private var participants: [Profile] = []
@@ -22,7 +22,7 @@ struct ChatRoomView: View {
     init(event: DropInEvent, authService: AuthService) {
         _event = State(initialValue: event)
         let chatService = ChatService(authService: authService, event: event)
-        _viewModel = StateObject(wrappedValue: chatService)
+        _viewModel = State(wrappedValue: chatService)
     }
     
     var body: some View {
@@ -130,8 +130,12 @@ struct ChatRoomView: View {
                     .cornerRadius(16)
                     .padding(.horizontal)
                 
-                minimap
-                    .padding(.horizontal)
+                Group {
+                    MiniMap(event: event)
+                    OpenInMapsButton(event: event)
+                }
+                .padding(.horizontal)
+                
                 participantsView
             }
             .padding(.bottom)
@@ -176,45 +180,6 @@ struct ChatRoomView: View {
         }
     }
     
-    private var minimap: some View {
-        VStack {
-            Text("Location")
-                .font(.title2)
-                .bold()
-            Text(formatCoordinates(latitude: event.latitude, longitude: event.longitude))
-                .font(.caption)
-                .bold()
-                .foregroundStyle(.secondary)
-            Map(initialPosition: .region(MKCoordinateRegion(center: .init(latitude: event.latitude, longitude: event.longitude), span: .init(latitudeDelta: 0.001, longitudeDelta: 0.001)))) {
-                Marker("DropIn", systemImage: "drop", coordinate: CLLocationCoordinate2D(latitude: event.latitude, longitude: event.longitude))
-                    .tint(.indigo)
-            }
-            .disabled(true)
-            .containerRelativeFrame(.vertical, count: 12, span: 4, spacing: 0)
-            .mapControlVisibility(.hidden)
-            .clipShape(RoundedRectangle(cornerRadius: 30))
-        
-            Button {
-                let destination = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(
-                    latitude: event.latitude, longitude: event.longitude)))
-
-                destination.name = event.title
-
-                MKMapItem.openMaps(
-                    with: [destination],
-                    launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeWalking]
-                )
-            } label: {
-                Label("Open in Maps", systemImage: "map")
-                    .font(.subheadline)
-                    .padding(10)
-                    .frame(maxWidth: .infinity)
-                    .background(Color.accentColor.opacity(0.1))
-                    .cornerRadius(12)
-            }
-        }
-    }
-
     
     private func groupedMessages() -> [(key: String, value: [Message])] {
         let grouped: [String: [Message]] = Dictionary(grouping: viewModel.messages) { $0.formattedDate() }
