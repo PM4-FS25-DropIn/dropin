@@ -1,8 +1,8 @@
 import SwiftUI
 
 enum EventTabSelection: String, CaseIterable {
-    case allEvents = "All Events"
-    case myEvents = "My Events"
+    case allEvents = "All DropIns"
+    case myEvents = "My DropIns"
 }
 
 struct DropInsView: View {

@@ -28,10 +28,10 @@ struct ProfileView: View {
                 .cornerRadius(16)
             
             Button("Sign out") {
-                            Task {
-                                try await authService.signOut()
-                            }
-                        }
+                Task {
+                    try await authService.signOut()
+                }
+            }
         }
         .edgesIgnoringSafeArea(.top)
         .onAppear {
@@ -180,98 +180,6 @@ struct ProfileView: View {
     }
 }
 
-// MARK: - DropInFeedView
-
-// TODO: dynamic data for DropInFeedView
-struct DropInFeedView: View {
-    @Environment(AuthService.self) private var authService
-    @Environment(EventStore.self) private var eventStore
-
-    // Example placeholder data
-    let events = [
-        "My Beach Party",
-        "Coding Hangout",
-        "Birthday Bash",
-        "Movie Night",
-        "Brunch Meet",
-        "My Beach Party",
-        "Coding Hangout",
-        "Birthday Bash",
-        "Movie Night",
-        "Brunch Meet",
-        "My Beach Party",
-        "Coding Hangout",
-        "Birthday Bash",
-        "Movie Night",
-        "Brunch Meet",
-    ]
-
-    var body: some View {
-        
-        
-        VStack(alignment: .leading, spacing: 8) {
-            Text("My DropIns")
-                .font(.headline)
-
-            if eventStore.fetchEventsOfUser().isEmpty {
-                VStack(spacing: 12) {
-                    Image(systemName: "party.popper.fill")
-                        .font(.largeTitle)
-                        .foregroundColor(.secondary)
-                    Text("No DropIns yet...")
-                        .font(.headline)
-                        .foregroundColor(.secondary)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 40)
-            } else {
-                ForEach(eventStore.fetchEventsOfUser()) { event in
-                    eventRow(for: event)
-                }
-            }
-        }
-
-    }
-    
-
-    private func eventRow(for event: DropInEvent) -> some View {
-        HStack {
-            AsyncImage(url: URL(string: event.imagePaths[0])) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    } else if phase.error != nil {
-                        VStack(spacing: 5) {
-                            Image(systemName: "exclamationmark.circle.fill")
-                        }
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .scaledToFill()
-                        .containerRelativeFrame([.horizontal], count: 10, span: 4, spacing: 0)
-                        .clipped()
-                    } else {
-                        ProgressView()
-                    }
-                }
-                .frame(width: 60, height: 60)
-                .clipped()
-                .cornerRadius(8)
-            VStack(alignment: .leading, spacing: 4) {
-                Text(event.title)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                Text(event.description)
-                    .font(.caption)
-                    .foregroundColor(.gray)
-            }
-
-            Spacer()
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 4)
-    }
-}
 
 #Preview {
     ProfileView()

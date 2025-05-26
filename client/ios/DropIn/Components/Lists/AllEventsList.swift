@@ -34,7 +34,6 @@ struct AllEventsList: View {
                             Label("Drop Out", systemImage: "figure.walk.departure")
                         }
                     }
-                   
             }
         }
         .scrollContentBackground(.hidden)
