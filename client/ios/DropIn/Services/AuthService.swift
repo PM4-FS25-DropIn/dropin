@@ -52,7 +52,6 @@ final class AuthService {
     }
     
     func getUsername() async throws -> String {
-        print("Inside the username get function...")
         let profile: Profile = try await supabase
             .from("profiles")
             .select()
@@ -67,6 +66,17 @@ final class AuthService {
     
     func signUpOTP(authData: AuthCredentials, code: String) async throws {
         try await supabase.auth.verifyOTP(email: authData.email, token: code, type: .signup)
+    }
+    
+    func getProfile() async throws -> Profile {
+        let profile: Profile = try await supabase
+            .from("profiles")
+            .select()
+            .eq("id", value: userId)
+            .single()
+            .execute()
+            .value
+        return profile
     }
     
 }
