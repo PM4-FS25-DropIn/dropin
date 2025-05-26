@@ -44,6 +44,7 @@ struct EventTimeLine: View {
         }
         .onReceive(timer) { time in
             if let highlightedEvent {
+                eventStore.pruneExpiredJoinedEvents()
                 highlightedEventStatus = highlightedEvent.status
             }
         }

@@ -44,7 +44,7 @@ class EventStore {
         pruneExpiredJoinedEvents()
     }
     
-    private func pruneExpiredJoinedEvents() {
+    func pruneExpiredJoinedEvents() {
         let now = Date()
         joinedEvents.removeAll { event in
             return event.end < now
@@ -60,6 +60,7 @@ class EventStore {
     func getNotJoinedEvents() -> [DropInEvent] {
         let joinedIds = Set(joinedEvents.compactMap((\.id)))
 
+        pruneExpiredJoinedEvents()
         // Return all events that have not the same id as in the eventsJoined array
         return events.filter { event in
             guard let id = event.id else { return false }
@@ -70,10 +71,9 @@ class EventStore {
     
     /// Fetch events created by the user.
     func fetchEventsOfUser() -> [DropInEvent] {
-        guard let userId else {
-            print("user id is nil")
-            return []
-        }
+        guard let userId else { return [] }
+        
+        pruneExpiredJoinedEvents()
 
         return joinedEvents.filter { $0.userId == userId }
     }
@@ -82,6 +82,7 @@ class EventStore {
     func checkIfEventIsJoinedByUser(_ event: DropInEvent) -> Bool {
         guard let eventId = event.id, let eventUserId = event.userId else { return false }
         
+        pruneExpiredJoinedEvents()
         for event in joinedEvents {
             guard let joinedEventId = event.id, let joinedEventUserId = event.userId else { continue }
             if eventId == joinedEventId && eventUserId == joinedEventUserId {
@@ -110,7 +111,6 @@ class EventStore {
         
         let filteredEvents = filterNewEvents(events, from: self.events)
         
-        print("Filtered Events count \(filteredEvents.count)")
         self.events.append(contentsOf: filteredEvents)
         
         searchDelta = max(latitudeDelta, longitudeDelta)
@@ -124,8 +124,6 @@ class EventStore {
             .execute()
             .value
         
-        print("Calling fetch Events in region")
-        print("Now has: \(events.count)")
         return events
     }
     
