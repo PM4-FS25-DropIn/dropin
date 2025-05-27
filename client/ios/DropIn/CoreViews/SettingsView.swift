@@ -16,7 +16,6 @@ struct SettingsView: View {
             List {
                 AccountSection(vm: vm)
                 NotificationsSection(vm: vm)
-                AppearanceSection(vm: vm)
                 SupportSection()
             }
             .listStyle(.insetGrouped)
@@ -161,21 +160,6 @@ private struct NotificationsSection: View {
         Section(header: Text("Notifications")) {
             Toggle("Event Notifications", isOn: $vm.eventNotificationsEnabled)
             Toggle("Chat Notifications", isOn: $vm.chatNotificationsEnabled)
-        }
-    }
-}
-
-private struct AppearanceSection: View {
-    @Bindable var vm: SettingsViewModel
-
-    var body: some View {
-        Section(header: Text("Appearance")) {
-            Picker("Theme", selection: $vm.selectedTheme) {
-                ForEach(SettingsViewModel.AppTheme.allCases) { theme in
-                    Text(theme.rawValue.capitalized).tag(theme)
-                }
-            }
-            .pickerStyle(.segmented)
         }
     }
 }
