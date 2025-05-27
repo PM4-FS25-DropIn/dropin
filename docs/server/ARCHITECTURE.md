@@ -1,11 +1,5 @@
 # Architectural Proposal for DropIn
 
-**Owned by Leo Boedi**
-**Apr 02, 2025**
-*2 min read*
-
-*See how many people viewed this*
-
 ## Overview
 DropIn utilizes a clear client-backend architecture, designed to be robust, maintainable, and scalable. The system consists of a dedicated client-side iOS application that interacts directly with Supabase for its backend functionalities. Data persistence, real-time features, and authentication are managed through self hosted Supabase instance using Docker.
 
