@@ -78,9 +78,9 @@ struct ProfileView: View {
     private var headerButtonsRow: some View {
         HStack {
             NavigationLink {
-                SettingsView()
+                AboutView()
             } label: {
-                Image(systemName: "gearshape.fill")
+                Image(systemName: "info.circle.fill")
                     .font(.title2)
                     .foregroundColor(.primary)
                     .padding()
