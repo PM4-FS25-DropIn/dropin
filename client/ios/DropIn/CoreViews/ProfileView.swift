@@ -112,30 +112,6 @@ struct ProfileView: View {
         .padding(.horizontal)
     }
 
-    private var settingsButton: some View {
-        Button(action: {
-            // TODO: Navigate to settings
-        }) {
-            Image(systemName: "gearshape.fill")
-                .font(.title2)
-                .foregroundColor(.primary)
-                .padding()
-        }
-        .padding(.top, 160)
-    }
-
-    private var editButton: some View {
-        Button(action: {
-            // TODO: Edit profile action
-        }) {
-            Image(systemName: "pencil.line")
-                .font(.title2)
-                .foregroundColor(.primary)
-                .padding()
-        }
-        .padding(.top, 160)
-    }
-
     // The profile image (avatar)
     private var profileImageView: some View {
         Image("profile_avatar_placeholder")
