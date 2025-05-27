@@ -14,10 +14,6 @@ final class SettingsViewModel {
     // Account
     var email: String = ""
 
-    // Notifications
-    var eventNotificationsEnabled: Bool = true
-    var chatNotificationsEnabled: Bool = true
-
     // MARK: – Account Actions
     func updateEmail() async {
         print("Updating email address")

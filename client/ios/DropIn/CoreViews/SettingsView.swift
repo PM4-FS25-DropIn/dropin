@@ -15,7 +15,6 @@ struct SettingsView: View {
         NavigationStack {
             List {
                 AccountSection(vm: vm)
-                NotificationsSection(vm: vm)
                 SupportSection()
             }
             .listStyle(.insetGrouped)
@@ -149,17 +148,6 @@ private struct AccountSection: View {
             } message: {
                 Text("Are you sure you want to sign out from this device?")
             }
-        }
-    }
-}
-
-private struct NotificationsSection: View {
-    @Bindable var vm: SettingsViewModel
-
-    var body: some View {
-        Section(header: Text("Notifications")) {
-            Toggle("Event Notifications", isOn: $vm.eventNotificationsEnabled)
-            Toggle("Chat Notifications", isOn: $vm.chatNotificationsEnabled)
         }
     }
 }
