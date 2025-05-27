@@ -83,11 +83,31 @@ struct ProfileView: View {
     // Row with the settings button, profile image, and edit button.
     private var headerButtonsRow: some View {
         HStack {
-            settingsButton
+            NavigationLink {
+                SettingsView()
+            } label: {
+                Image(systemName: "gearshape.fill")
+                    .font(.title2)
+                    .foregroundColor(.primary)
+                    .padding()
+            }
+            .padding(.top, 160)
+            
             Spacer()
+            
             profileImageView
+                
             Spacer()
-            editButton
+            
+            NavigationLink {
+                ProfileEditView()
+            } label: {
+                Image(systemName: "pencil.line")
+                    .font(.title2)
+                    .foregroundColor(.primary)
+                    .padding()
+            }
+            .padding(.top, 160)
         }
         .padding(.horizontal)
     }
