@@ -44,6 +44,6 @@ Here you can find more detailed documentation about the project:
 - [Team](./docs/Team.md)
 - [Feature Specifications](./docs/FeatureSpecifications.md)
 - [Client Visual Concept](./docs/client/VisualConcept.md)
-- [Server Architecture](./docs/server/architecture.md)
+- [Server Architecture](./docs/server/Architecture.md)
 - [Supabase Deployment and Configuration](./docs/server/SupabaseDeploymentAnConfiguration.md)
 - [Definition of Done](./docs/DefinitionOfDone.md)
