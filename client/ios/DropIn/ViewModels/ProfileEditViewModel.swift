@@ -6,29 +6,37 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 /// ViewModel to manage profile editing state and actions
 @MainActor
 @Observable
 final class ProfileEditViewModel {
+    var bannerImage: BannerImage?
+    var avatarImage: AvatarImage?
     var name: String = ""
     var username: String = ""
     var isUsernameAvailable: Bool?
 
     /// Placeholder for async username availability check
     func checkUsernameAvailability() {
-        // TODO: Replace with real API call
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            // Mock logic: usernames containing "taken" are considered unavailable
-            print("Checking availability for username")
-        }
-    }
-
-    /// Placeholder for save action
-    func saveChanges() {
         
     }
     
+    func loadBannerImage(selectedBannerItem: PhotosPickerItem) async throws {
+        
+        bannerImage = try await selectedBannerItem.loadTransferable(type: BannerImage.self)
+    }
+    
+    func loadAvatarImage(selectedAvatarItem: PhotosPickerItem) async throws {
+        
+        avatarImage = try await selectedAvatarItem.loadTransferable(type: AvatarImage.self)
+    }
+
+    /// Placeholder for save action
+    func saveChanges() async throws {
+        
+    }
     
     
 }

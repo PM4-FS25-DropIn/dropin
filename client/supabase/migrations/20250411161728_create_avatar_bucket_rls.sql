@@ -7,7 +7,17 @@
 --   - Allows authenticated users to upload avatars to their own folder
 -- ============================================
 
-create policy "Users can upload avatars." on storage.objects
+create policy "Users can upload an avatar." on storage.objects
 for insert to authenticated with check (
+    bucket_id = 'avatars'
+);
+
+create policy "Users can update the avatar." on storage.objects
+for update to authenticated using (
+    bucket_id = 'avatars'
+);
+
+create policy "Users can select the avatar." on storage.objects
+for select to authenticated using (
     bucket_id = 'avatars'
 );

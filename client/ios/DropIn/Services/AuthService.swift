@@ -1,4 +1,5 @@
 import Foundation
+import Storage
 import Auth
 
 @MainActor
@@ -77,6 +78,75 @@ final class AuthService {
             .execute()
             .value
         return profile
+    }
+    
+    func updateUsername(_ username: String) async throws {
+        try await supabase
+            .from("profiles")
+            .update(["username": username])
+            .eq("id", value: userId)
+            .execute()
+    }
+    
+    func updateAvatar(avatar: AvatarImage) async throws {
+        try await uploadAvatarImage(avatar.data)
+        
+        if let userId {
+            let publicFileUrl = try supabase.storage
+                .from("avatars")
+                .getPublicURL(path: "\(userId)/avatar")
+            
+            try await supabase
+                .from("profiles")
+                .update(["avatar_url": publicFileUrl])
+                .eq("id", value: userId)
+                .execute()
+            print("Updated avatar")
+        }
+        print("Done avatar.")
+    }
+    
+    private func uploadAvatarImage(_ imageData: Data) async throws {
+        guard let userId else { return }
+        let filePath = "\(userId)/avatar"
+        
+        try await supabase.storage
+            .from("avatars")
+            .upload(
+                filePath,
+                data: imageData,
+                options: FileOptions(contentType: "image/jpeg", upsert: true)
+            )
+    }
+    
+    func updateBanner(banner: BannerImage) async throws {
+        try await uploadBannerImage(banner.data)
+        
+        if let userId {
+            let publicFileUrl = try supabase.storage
+                .from("banners")
+                .getPublicURL(path: "\(userId)/banner")
+            
+            try await supabase
+                .from("profiles")
+                .update(["banner_url": publicFileUrl])
+                .eq("id", value: userId)
+                .execute()
+        }
+        
+    }
+    
+    private func uploadBannerImage(_ imageData: Data) async throws {
+        guard let userId else { return }
+        let filePath = "\(userId)/banner"
+        
+        try await supabase.storage
+            .from("banners")
+            .upload(
+                filePath,
+                data: imageData,
+                options: FileOptions(contentType: "image/jpeg", upsert: true)
+            )
     }
     
 }
