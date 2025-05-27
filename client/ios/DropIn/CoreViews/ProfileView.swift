@@ -26,12 +26,6 @@ struct ProfileView: View {
                 .background(Color(.systemBackground))
                 .zIndex(1)  // Ensure the profile header is above the feed section
                 .cornerRadius(16)
-            
-            Button("Sign out") {
-                Task {
-                    try await authService.signOut()
-                }
-            }
         }
         .edgesIgnoringSafeArea(.top)
         .onAppear {
