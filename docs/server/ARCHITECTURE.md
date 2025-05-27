@@ -20,8 +20,5 @@ Supabase serves as the comprehensive backend solution, directly handling data st
 *   **Real-time Functionality**: Supabase's real-time capabilities are leveraged by `EventService` and `ChatService` for live updates on event changes, new messages, and other dynamic data.
 *   **Authentication**: Supabase's built-in authentication system manages user sign-up, login, session validation, and provides secure user identity management.
 
-### Notifications
-To optimize performance and reduce complexity, the DropIn app leverages client-side generated notifications. Most notifications, including proximity-based notifications triggered when a user is near an event, are managed directly by the iOS client application. The app regularly polls event data from Supabase at fixed intervals, checking locally if conditions for notifications are met. This approach minimizes latency and simplifies the backend.
-
 ## Conclusion
 This architectural setup, centered around the iOS client and Supabase, is designed to offer a reliable, efficient, and scalable platform. It ensures an excellent user experience and simplifies future development and maintenance efforts by leveraging Supabase's integrated backend-as-a-service features.
