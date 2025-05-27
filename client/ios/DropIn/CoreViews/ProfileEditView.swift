@@ -9,68 +9,33 @@
 import SwiftUI
 import PhotosUI
 
-/// ViewModel to manage profile editing state and actions
-final class ProfileEditViewModel: ObservableObject {
-    @Published var bannerImage: UIImage?
-    @Published var avatarImage: UIImage?
-    @Published var name: String = ""
-    @Published var username: String = ""
-    @Published var isUsernameAvailable: Bool?
-
-    /// Placeholder for async username availability check
-    func checkUsernameAvailability() {
-        // TODO: Replace with real API call
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            // Mock logic: usernames containing "taken" are considered unavailable
-            print("Checking availability for username")
-        }
-    }
-
-    /// Placeholder for save action
-    func saveChanges() {
-        // TODO: Implement save logic (API call, persistence, etc.)
-        print("Saving profile: name=\(name), username=\(username)")
-    }
-}
-
 /// Root view for editing a user profile
 struct ProfileEditView: View {
-    @StateObject private var viewModel = ProfileEditViewModel()
+    @State private var viewModel = ProfileEditViewModel()
+    @State private var isPickerPresented = false
+    @State private var selectedBannerImage: PhotosPickerItem?
+    @State private var selectedProfileImage: PhotosPickerItem?
 
     var body: some View {
         NavigationView {
             Form {
-                BannerPickerSection(viewModel: viewModel)
-                AvatarPickerSection(viewModel: viewModel)
-                BasicInfoSection(viewModel: viewModel)
+                bannerPickerSection
+                avatarPickerSetion
+                basicInfoSection
             }
             .navigationTitle("Edit Your Profile")
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        viewModel.saveChanges()
+                        // viewModel.saveChanges()
                     }
                     .disabled(!canSave)
                 }
             }
         }
     }
-
-    /// Determines if "Save" should be enabled
-    private var canSave: Bool {
-        !viewModel.name.isEmpty && viewModel.isUsernameAvailable == true
-    }
-}
-
-// MARK: - Modular Sections
-
-/// Section for picking a header/banner image
-struct BannerPickerSection: View {
-    @ObservedObject var viewModel: ProfileEditViewModel
-    @State private var pickerItem: PhotosPickerItem?
-    @State private var isPickerPresented = false
-
-    var body: some View {
+    
+    private var bannerPickerSection: some View {
         Section(header: Text("Header Banner")) {
             ZStack {
                 if let uiImage = viewModel.bannerImage {
@@ -90,38 +55,19 @@ struct BannerPickerSection: View {
             .onTapGesture { isPickerPresented = true }
             .photosPicker(
                 isPresented: $isPickerPresented,
-                selection: $pickerItem,
+                selection: $selectedBannerImage,
                 matching: .images,
                 photoLibrary: .shared()
             )
-            .onChange(of: pickerItem) { oldItem, newItem in
+            .onChange(of: selectedBannerImage) { oldItem, newItem in
                 loadImage(from: newItem) { image in
                     viewModel.bannerImage = image
                 }
             }
         }
     }
-
-    private func loadImage(from item: PhotosPickerItem?, completion: @escaping (UIImage?) -> Void) {
-        guard let item = item else { return completion(nil) }
-        Task {
-            if let data = try? await item.loadTransferable(type: Data.self),
-               let image = UIImage(data: data) {
-                completion(image)
-            } else {
-                completion(nil)
-            }
-        }
-    }
-}
-
-/// Section for picking a profile/avatar image
-struct AvatarPickerSection: View {
-    @ObservedObject var viewModel: ProfileEditViewModel
-    @State private var pickerItem: PhotosPickerItem?
-    @State private var isPickerPresented = false
-
-    var body: some View {
+    
+    private var avatarPickerSetion: some View {
         Section(header: Text("Profile Picture")) {
             HStack {
                 Spacer()
@@ -142,36 +88,19 @@ struct AvatarPickerSection: View {
             .onTapGesture { isPickerPresented = true }
             .photosPicker(
                 isPresented: $isPickerPresented,
-                selection: $pickerItem,
+                selection: $selectedProfileImage,
                 matching: .images,
                 photoLibrary: .shared()
             )
-            .onChange(of: pickerItem) { oldItem, newItem in
+            .onChange(of: selectedProfileImage) { oldItem, newItem in
                 loadImage(from: newItem) { image in
                     viewModel.avatarImage = image
                 }
             }
         }
     }
-
-    private func loadImage(from item: PhotosPickerItem?, completion: @escaping (UIImage?) -> Void) {
-        guard let item = item else { return completion(nil) }
-        Task {
-            if let data = try? await item.loadTransferable(type: Data.self),
-               let image = UIImage(data: data) {
-                completion(image)
-            } else {
-                completion(nil)
-            }
-        }
-    }
-}
-
-/// Section for editing basic textual profile info
-struct BasicInfoSection: View {
-    @ObservedObject var viewModel: ProfileEditViewModel
-
-    var body: some View {
+    
+    private var basicInfoSection: some View {
         Section(header: Text("Basic Info")) {
             TextField("Name", text: $viewModel.name)
                 .autocapitalization(.words)
@@ -190,7 +119,26 @@ struct BasicInfoSection: View {
             }
         }
     }
+    
+    private func loadImage(from item: PhotosPickerItem?, completion: @escaping (UIImage?) -> Void) {
+        guard let item = item else { return completion(nil) }
+        Task {
+            if let data = try? await item.loadTransferable(type: Data.self),
+               let image = UIImage(data: data) {
+                completion(image)
+            } else {
+                completion(nil)
+            }
+        }
+    }
+
+    /// Determines if "Save" should be enabled
+    private var canSave: Bool {
+        !viewModel.name.isEmpty && viewModel.isUsernameAvailable == true
+        
+    }
 }
+
 
 #Preview {
     ProfileEditView()
