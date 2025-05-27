@@ -36,3 +36,13 @@ Run `supabase start` inside the `./client` directory to start and initialize the
 To run the database tests, navigate to the `./server` directory and run `npm run test:db` or `npm run test-win:db`.
 
 ## License
+
+## Documentation
+
+Here you can find more detailed documentation about the project:
+
+- [Team](./docs/Team.md)
+- [Feature Specifications](./docs/FeatureSpecifications.md)
+- [Definition of Done](./docs/DefinitionOfDone.md)
+- [Server Architecture](./docs/server/ARCHITECTURE.md)
+- [Supabase Deployment and Configuration](./docs/server/SupabaseDeploymentAnConfiguration.md)
