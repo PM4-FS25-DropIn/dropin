@@ -68,15 +68,6 @@ class EventStore {
     }
     
     
-    /// Fetch events created by the user.
-    func fetchEventsOfUser() -> [DropInEvent] {
-        guard let userId else { return [] }
-        
-        pruneExpiredJoinedEvents()
-        
-        return joinedEvents.filter { $0.userId == userId }
-    }
-    
     /// Check if an event has been joined by the current user.
     func checkIfEventIsJoinedByUser(_ event: DropInEvent) -> Bool {
         guard let eventId = event.id, let eventUserId = event.userId else { return false }

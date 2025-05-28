@@ -54,5 +54,7 @@ select
   ST_AsGeoJSON(e.location)::jsonb as location
 from public.events e
 cross join box
-where ST_Within(e.location::geometry, box.geom);
+where ST_Within(e.location::geometry, box.geom)
+  and e."end" > now()
+  and e.slots_taken < e.slot_limit;
 $$;
