@@ -41,6 +41,7 @@ struct ProfileView: View {
     private var profileHeader: some View {
         ZStack(alignment: .top) {
             backgroundGradient
+            
             bannerImage
 
             VStack(spacing: 8) {
@@ -50,13 +51,14 @@ struct ProfileView: View {
             }
             .frame(maxWidth: .infinity)
         }
+
     }
 
     // The background gradient that fades from AccentColor to the system background
     private var backgroundGradient: some View {
         LinearGradient(
             gradient: Gradient(colors: [
-                Color("AccentColor"), Color(.systemBackground),
+                .accent.opacity(0.6), Color(.systemBackground),
             ]),
             startPoint: .top,
             endPoint: .bottom
@@ -80,9 +82,9 @@ struct ProfileView: View {
                         ProgressView()
                     }
                 }
-                .id(UUID())
+                .id(bannerUrl)
             } else {
-                Image("default.banner.placeholder")
+                Image("default.event.thumbnail")
                     .resizable()
                     .scaledToFill()
                     .frame(height: 160)
@@ -121,6 +123,7 @@ struct ProfileView: View {
             .padding(.top, 160)
         }
         .padding(.horizontal)
+
     }
 
     // The profile image (avatar)
@@ -132,11 +135,8 @@ struct ProfileView: View {
                         image
                             .resizable()
                             .scaledToFill()
-                            .frame(width: 120, height: 120)
+                            .frame(width: 100, height: 100)
                             .clipShape(Circle())
-                            .overlay(
-                                Circle().stroke(.accent, lineWidth: 6)
-                            )
                             .shadow(radius: 1)
                             .padding(.top, 110)
                     } else if phase.error != nil {
@@ -145,16 +145,13 @@ struct ProfileView: View {
                         ProgressView()
                     }
                 }
-                .id(UUID())
+                .id(avatarUrl)
             } else {
                 Image("default.avatar.placeholder")
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 120, height: 120)
+                    .frame(width: 100, height: 100)
                     .clipShape(Circle())
-                    .overlay(
-                        Circle().stroke(Color("AccentColor"), lineWidth: 6)
-                    )
                     .shadow(radius: 1)
                     .padding(.top, 110)
             }

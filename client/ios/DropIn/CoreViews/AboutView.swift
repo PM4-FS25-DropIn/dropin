@@ -7,38 +7,45 @@
 
 import Observation
 import SwiftUI
+import Auth
 
 struct AboutView: View {
-    @State private var vm = SettingsViewModel()
-
+    @Environment(AuthService.self) private var authService
+    @State private var showSignOutAlert = false
+    @State private var user: User?
+    @State private var username: String?
+    
     var body: some View {
         NavigationStack {
             List {
-                AccountSection(vm: vm)
-                SupportSection()
+                accountSection
+                supportSection
             }
             .listStyle(.insetGrouped)
             .listSectionSpacing(5)
             .navigationTitle("About")
+            .onAppear {
+                Task {
+                    if let user = authService.user {
+                        self.user = user
+                    }
+                    username = try await authService.getUsername()
+                }
+            }
         }
     }
-}
-
-
-// MARK: - Sections
-
-private struct AccountSection: View {
-    @Bindable var vm: SettingsViewModel
-    @Environment(AuthService.self) private var authService
-    @State private var showSignOutAlert = false
-
-    var body: some View {
+    
+    
+    private var accountSection: some View {
         Section(header: Text("Account")) {
-            TextField("Email", text: $vm.email)
-                .keyboardType(.emailAddress)
-                .textContentType(.emailAddress)
-                .autocapitalization(.none)
-                .onSubmit { Task { await vm.updateEmail() } }
+            if let user = authService.user {
+                Group {
+                    Text(username ?? "Unknown")
+                    Text(user.email ?? "Unknown")
+                }
+                .foregroundStyle(.secondary)
+                .bold()
+            }
 
             Button("Sign Out") {
                 showSignOutAlert = true
@@ -59,13 +66,10 @@ private struct AccountSection: View {
             }
         }
     }
-}
-
-private struct SupportSection: View {
-    var body: some View {
+    
+    private var supportSection: some View {
         Section(header: Text("Support & About")) {
             Link(
-                // TODO: correct email address
                 "Help & Feedback",
                 destination: URL(string: "mailto:support@example.com")!
             )

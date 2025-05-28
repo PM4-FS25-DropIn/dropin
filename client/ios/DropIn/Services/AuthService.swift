@@ -8,6 +8,7 @@ final class AuthService {
     private(set) var isAuthenticated = false
     
     var userId: UUID?
+    var user: User?
     
     init() {
         Task {
@@ -21,6 +22,7 @@ final class AuthService {
                 isAuthenticated = state.session != nil
                 if isAuthenticated {
                     userId = state.session?.user.id
+                    user = state.session?.user
                 }
             }
         }
@@ -51,6 +53,7 @@ final class AuthService {
     func getCurrentUser() async throws -> User {
         return try await supabase.auth.session.user
     }
+    
     
     func getUsername() async throws -> String {
         let profile: Profile = try await supabase

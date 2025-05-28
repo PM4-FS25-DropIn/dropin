@@ -7,17 +7,26 @@
 --   - Allows authenticated users to upload avatars to their own folder
 -- ============================================
 
-create policy "Users can upload an avatar." on storage.objects
-for insert to authenticated with check (
-    bucket_id = 'avatars'
-);
+CREATE POLICY "Authenticated users can upload an avatar."
+    ON storage.objects
+    FOR INSERT TO authenticated WITH CHECK (
+        bucket_id = 'avatars'
+    );
 
-create policy "Users can update the avatar." on storage.objects
-for update to authenticated using (
-    bucket_id = 'avatars'
-);
+CREATE POLICY "Allow owner to delete their own avatar."
+    ON storage.objects
+    FOR DELETE TO authenticated USING (
+        bucket_id = 'avatars' AND (storage.foldername(name))[1] = (select auth.uid()::text)
+    );
 
-create policy "Users can select the avatar." on storage.objects
-for select to authenticated using (
-    bucket_id = 'avatars'
-);
+CREATE POLICY "Allow owner to update their own avatar."
+    ON storage.objects
+    FOR UPDATE TO authenticated USING (
+        bucket_id = 'avatars' AND (storage.foldername(name))[1] = (select auth.uid()::text)
+    );
+
+CREATE POLICY "Allow everyone to see an avatar."
+    ON storage.objects
+    FOR SELECT TO authenticated USING (
+        bucket_id = 'avatars'
+    );
