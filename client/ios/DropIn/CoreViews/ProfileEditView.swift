@@ -84,7 +84,7 @@ struct ProfileEditView: View {
                             try await loadBannerImage(selectedBannerItem: bannerImageSelection)
                         }
                     } catch {
-                        print("Couldn't load banner iamge")
+                        print("Couldn't load banner image")
                     }
                 }
             }
