@@ -236,7 +236,7 @@ class EventStore {
     
     private func uploadEventThumbnailPhotos(eventId: Int, photos: [EventThumbnail]) async throws -> [String] {
         
-        var publicFileUrlPath: [String] = []
+        var publicFileUrlPaths: [String] = []
         
         for photo in photos {
             let fileName = UUID().uuidString
@@ -252,11 +252,11 @@ class EventStore {
                 .from("event-thumbnails")
                 .getPublicURL(path: "\(eventId)/\(fileName)")
             
-            publicFileUrlPath.append(publicFileUrl.absoluteString)
+            publicFileUrlPaths.append(publicFileUrl.absoluteString)
         }
-        print("File url: \(publicFileUrlPath[0])")
+        print("File url: \(publicFileUrlPaths[0])")
         
-        return publicFileUrlPath
+        return publicFileUrlPaths
     }
 
     
