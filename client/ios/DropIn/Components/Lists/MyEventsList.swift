@@ -10,6 +10,7 @@ import SwiftUI
 
 struct MyEventsList: View {
     @Environment(EventStore.self) private var eventStore
+    @Environment(AuthService.self) private var authService
     
     @State private var events: [DropInEvent] = []
     @State private var onDeleteTaskStatus: AsyncStatus = .idle
@@ -18,7 +19,7 @@ struct MyEventsList: View {
     
     var body: some View {
         List {
-            ForEach(eventStore.fetchEventsOfUser()) { event in
+            ForEach(eventStore.joinedEvents.filter { $0.userId == authService.userId }) { event in
                 EventRowItem(event: event, isHost: true)
                     .listRowInsets(EdgeInsets())
                     .listRowSeparator(.hidden)
@@ -59,4 +60,5 @@ struct MyEventsList: View {
 #Preview {
     MyEventsList()
         .environment(EventStore())
+        .environment(AuthService())
 }

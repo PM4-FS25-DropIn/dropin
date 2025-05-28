@@ -10,16 +10,14 @@ struct ChatListView: View {
         List {
             ForEach(eventStore.joinedEvents) { event in
                 NavigationLink {
-                    // Placeholder destination view for when a chat is tapped
                     ChatRoomView(event: event, authService: authService)
                     
                 } label: {
-                    // Custom view for how each chat row looks
                     ChatRow(event: event)
                 }
             }
         }
-        .listStyle(.plain) // Optional: Removes default inset grouped styling
+        .listStyle(.plain)
         .navigationTitle("Chats")
     }
 
@@ -42,9 +40,7 @@ struct ChatRow: View {
     }
 
     private var groupImage: some View {
-        Circle()
-            .fill(.gray.opacity(0.8))
-            .frame(width: 50, height: 50)
+        eventImageCircle
     }
 
     private var chatPreview: some View {
@@ -52,10 +48,40 @@ struct ChatRow: View {
             Text(event.title)
                 .font(.headline)
                 .lineLimit(1)
-            //Text(chat.lastMessage)
-            //  .font(.subheadline)
-            //.foregroundColor(.gray)
-            // .lineLimit(1)
+        }
+    }
+    
+    private var eventImageCircle: some View {
+        Group {
+            if let eventImagePath = event.imagePaths?.first {
+                AsyncImage(url: URL(string: eventImagePath)) { phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 50, height: 50)
+                            .clipShape(Circle())
+                    } else if phase.error != nil {
+                        VStack(spacing: 5) {
+                            Image(systemName: "exclamationmark.circle.fill")
+                        }
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .frame(width: 50, height: 50)
+                        .background(Circle().fill(Color.gray.opacity(0.2)))
+                    } else {
+                        ProgressView()
+                            .frame(width: 50, height: 50)
+                            .background(Circle().fill(Color.gray.opacity(0.2)))
+                    }
+                }
+            } else {
+                Image("defaut.event.thumbnail")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 50, height: 50)
+                    .clipShape(Circle())
+            }
         }
     }
 
@@ -64,20 +90,6 @@ struct ChatRow: View {
             Text(formatDate(Calendar.current.date(byAdding: .minute, value: -35, to: Date())!))
                 .font(.caption)
                 .foregroundColor(.gray)
-
-            if 5 > 0 {
-                ZStack {
-                    Circle()
-                        .fill(.blue)
-                    Text("\(2)")
-                        .font(.caption2)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                }
-                .frame(width: 20, height: 20)
-            } else {
-                Spacer().frame(height: 20)
-            }
         }
     }
 
@@ -85,13 +97,10 @@ struct ChatRow: View {
     private func formatDate(_ date: Date) -> String {
         let calendar = Calendar.current
         if calendar.isDateInToday(date) {
-            // If today, show time
             return date.formatted(date: .omitted, time: .shortened)
         } else if calendar.isDateInYesterday(date) {
-            // If yesterday, show "Yesterday"
             return "Yesterday"
         } else {
-            // Otherwise, show short date (e.g., "1/23/24")
             return date.formatted(date: .numeric, time: .omitted)
         }
     }

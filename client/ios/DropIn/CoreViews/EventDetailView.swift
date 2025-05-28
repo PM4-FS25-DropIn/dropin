@@ -11,6 +11,7 @@ struct EventDetailView: View {
     
     var event: DropInEvent
     var isHost: Bool = false
+    let joinEventAction: (DropInEvent) async throws -> Void
     
     var body: some View {
         ScrollView {
@@ -19,7 +20,8 @@ struct EventDetailView: View {
                 titleAndDescription
                 buttonGroup
                 EventQuickInfo(event: event)
-                minimap
+                MiniMap(event: event)
+                OpenInMapsButton(event: event)
             }
             .padding()
         }
@@ -44,8 +46,26 @@ struct EventDetailView: View {
     
     private var imageCarousel: some View {
         TabView {
-            ForEach(event.imagePaths, id: \.self) { imagePath in
-                image(imagePath: imagePath)
+            if let eventImagePaths = event.imagePaths {
+                ForEach(eventImagePaths, id: \.self) { imagePath in
+                    AsyncImage(url: URL(string: imagePath)) { phase in
+                        if let image = phase.image {
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .clipped()
+                        } else if phase.error != nil {
+                            ContentUnavailableView("Image Unavailable", systemImage: "exclamationmark.circle.fill")
+                        } else {
+                            ProgressView()
+                        }
+                    }
+                }
+            } else {
+                Image("default.event.thumbnail")
+                    .resizable()
+                    .scaledToFill()
+                    .clipped()
             }
         }
         .tabViewStyle(.page)
@@ -85,28 +105,6 @@ struct EventDetailView: View {
         }
     }
     
-    // MARK: - Minimap
-    
-    private var minimap: some View {
-        VStack {
-            Text("Location")
-                .font(.title2)
-                .bold()
-            Text(formatCoordinates(latitude: event.latitude, longitude: event.longitude))
-                .font(.caption)
-                .bold()
-                .foregroundStyle(.secondary)
-            Map(initialPosition: .region(MKCoordinateRegion(center: .init(latitude: event.latitude, longitude: event.longitude), span: .init(latitudeDelta: 0.001, longitudeDelta: 0.001)))) {
-                Marker("DropIn", systemImage: "drop", coordinate: CLLocationCoordinate2D(latitude: event.latitude, longitude: event.longitude))
-                    .tint(.indigo)
-            }
-            .disabled(true)
-            .containerRelativeFrame(.vertical, count: 12, span: 4, spacing: 0)
-            .mapControlVisibility(.hidden)
-            .clipShape(RoundedRectangle(cornerRadius: 30))
-        }
-    }
-    
     
     private var buttonGroup: some View {
         HStack {
@@ -119,27 +117,12 @@ struct EventDetailView: View {
     
     // MARK: - Functions
     
-    private func image(imagePath: String) -> some View {
-        AsyncImage(url: URL(string: imagePath)) { phase in
-            if let image = phase.image {
-                image
-                    .resizable()
-                    .scaledToFill()
-                    .clipped()
-            } else if phase.error != nil {
-                ContentUnavailableView("Image Unavailable", systemImage: "exclamationmark.circle.fill")
-            } else {
-                ProgressView()
-            }
-        }
-    }
-    
     
     private func joinEvent() {
         Task {
             eventAsyncTaskStatus = .running
             do {
-                _ = try await eventStore.joinEvent(event)
+                try await joinEventAction(event)
                 eventAsyncTaskStatus = .success
                 attendanceStatus = .joined
             } catch {
@@ -167,7 +150,7 @@ struct EventDetailView: View {
 }
 
 #Preview {
-    EventDetailView(event: sampleEvent)
+    EventDetailView(event: sampleEvent, joinEventAction: { _ in })
         .environment(EventStore())
 }
 

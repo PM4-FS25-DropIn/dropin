@@ -2,19 +2,25 @@ import Foundation
 import CoreLocation
 import SwiftUI
 
-struct Profile: Codable {
+struct Profile: Codable, Identifiable {
     let id: UUID
     let username: String
     let avatarUrl: String?
+    let bannerUrl: String?
     let emojicode: String?
     let city: String?
+    let dropinsCreated: Int?
+    let dropinsJoined: Int?
     
     enum CodingKeys: String, CodingKey {
         case id
         case username
         case avatarUrl = "avatar_url"
+        case bannerUrl = "banner_url"
         case emojicode
         case city
+        case dropinsCreated = "dropins_created"
+        case dropinsJoined = "dropins_joined"
     }
 }
 
@@ -69,11 +75,8 @@ struct ChatRoom: Identifiable {
 
 enum EventCategory: String, CaseIterable {
     case forYou = "For You"
-    case trending = "Trending"
-    case nearby = "Nearby"
-    case startingSoon = "Starting Soon"
     case ongoing = "Ongoing"
-    case sponsored = "Sponsored"
+    case startingSoon = "Starting Soon"
 }
 
 struct EventJoins: Codable, Identifiable {
@@ -116,8 +119,63 @@ extension EventThumbnail {
         let image = Image(uiImage: uiImage)
         self.init(image: image, data: data)
     }
+}
+
+struct AvatarImage: Transferable, Equatable {
+    let image: Image
+    let data: Data
+    
+    static var transferRepresentation: some TransferRepresentation {
+        DataRepresentation(importedContentType: .image) { data in
+            guard let image = AvatarImage(data: data) else {
+                throw TransferError.importFailed
+            }
+            
+            return image
+        }
+    }
+}
+
+extension AvatarImage {
+    init?(data: Data) {
+        guard let uiImage = UIImage(data: data) else {
+            return nil
+        }
+        
+        let image = Image(uiImage: uiImage)
+        self.init(image: image, data: data)
+    }
     
 }
+
+
+struct BannerImage: Transferable, Equatable {
+    let image: Image
+    let data: Data
+    
+    static var transferRepresentation: some TransferRepresentation {
+        DataRepresentation(importedContentType: .image) { data in
+            guard let image = BannerImage(data: data) else {
+                throw TransferError.importFailed
+            }
+            
+            return image
+        }
+    }
+}
+
+extension BannerImage {
+    init?(data: Data) {
+        guard let uiImage = UIImage(data: data) else {
+            return nil
+        }
+        
+        let image = Image(uiImage: uiImage)
+        self.init(image: image, data: data)
+    }
+    
+}
+
 
 struct DropInEvent: Codable, Identifiable, Equatable {
     var id: Int?
@@ -125,16 +183,15 @@ struct DropInEvent: Codable, Identifiable, Equatable {
     var updatedAt: Date?
     var title: String
     var description: String
-    var imagePaths: [String]
+    var imagePaths: [String]?
     var userId: UUID?
     var start: Date
     var end: Date
-    var latitude: CLLocationDegrees
-    var longitude: CLLocationDegrees
     var slotLimit: Int
     var slotsTaken: Int?
     var ageRestricted: Bool
     var chatEnabled: Bool
+    var location: GeoJSONPoint
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -146,16 +203,23 @@ struct DropInEvent: Codable, Identifiable, Equatable {
         case userId = "user_id"
         case start
         case end
-        case latitude
-        case longitude
         case slotLimit = "slot_limit"
         case slotsTaken = "slots_taken"
         case ageRestricted = "age_restricted"
         case chatEnabled = "chat_enabled"
+        case location
     }
 }
 
-extension DropInEvent: Hashable { }
+extension DropInEvent: Hashable {
+    var latitude: CLLocationDegrees { location.coordinates[1] }
+    var longitude: CLLocationDegrees { location.coordinates[0] }
+}
+
+struct GeoJSONPoint: Codable, Equatable, Hashable {
+    var type: String = "Point"
+    var coordinates: [Double]
+}
 
 struct OperationState {
     var isRunning = false
@@ -168,9 +232,9 @@ enum AuthMode {
     case signUp
 }
 
+
 // - MARK: Error Types
 
 enum TransferError: Error {
     case importFailed
 }
-

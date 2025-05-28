@@ -7,6 +7,7 @@
 --   - Includes constraints, default values, and a custom enum 'event_status'
 -- ===========================================
 
+create extension if not exists postgis;
 -- Events table
 
 create table public.events (
@@ -15,17 +16,18 @@ create table public.events (
     updated_at timestamp with time zone default now(),
     title text not null,
     description text not null,
-    image_paths text[] not null default array['default.event.thumbnail'],
+    image_paths text[],
     user_id uuid references auth.users on delete cascade not null default auth.uid(),
     start timestamp with time zone not null,
     "end" timestamp with time zone not null,
-    latitude double precision not null check (latitude >= -90 and latitude <= 90),
-    longitude double precision not null check (longitude >= -180 and longitude <= 180),
+    location geography(Point, 4326) not null,
     slot_limit integer not null check (slot_limit >= 1),
-    slots_taken integer not null default 1 check (slots_taken <= slot_limit),
+    slots_taken integer not null default 0 check (slots_taken <= slot_limit),
     age_restricted boolean not null default false,
     chat_enabled boolean not null default true
 );
 
 
 comment on table public.events is 'All dropin events';
+
+create index events_location_gist_idx on public.events using gist(location);

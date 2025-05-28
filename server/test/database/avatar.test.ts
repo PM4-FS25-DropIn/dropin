@@ -1,7 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { createClientHelper, createUser, generateRandomString } from './dbhelpers.js';
-import { SupabaseClient, User } from '@supabase/supabase-js';
+import { createClientHelper, generateRandomString, setupRandomClientAndLogin } from './dbhelpers.js';
 
 /**
  * Tests if an authenticated user can upload an avatar into their directory.
@@ -137,27 +136,25 @@ test('Authenticated user can get other users avatars', async (t) => {
 });
 
 /**
- * Creates a new client and creates a new user using random credentials.
- * @return {client: SupabaseClient, user: User} The client and the user created.
+ * An unauthenticated user should not be able to get another user's avatar.
  */
-async function setupRandomClientAndLogin(): Promise<{client: SupabaseClient<any, any, any>, user: User}> {
+test('An unaithenticated user should not be able to get another users avatar', async (t) => {
+  const { client: uploadClient, user: uploadUser } = await setupRandomClientAndLogin();
+
+  const targetFile = uploadUser.identities![0]!.id + '/avatar1.png';
+  const uploadResult = await uploadClient.storage.from('avatars')
+    .upload(targetFile, generateRandomBlob(1024));
+
+  assert.equal(uploadResult.error, null, "Expected upload to succeed, but it failed: " + uploadResult.error?.message);
+
   const client = createClientHelper();
   
-  const { user, password } = await createUser(client);
+  const downloadResult = await client.storage.from('avatars')
+    .download(targetFile);
 
-  if (user.email == null) {
-    throw new Error('No email returned from user creation');
-  }
+  assert.notEqual(downloadResult.error, null, "Expected download action to fail, but it succeeded: " + downloadResult.error?.message);
+});
 
-  const signInResult = await client.auth.signInWithPassword({
-    email: user.email!,
-    password: password,
-  });
-
-  assert.equal(signInResult.error, null, "Expected sign in to succeed, but it failed: " + signInResult.error?.message);
-
-  return {client, user};
-}
 
 /**
  * Creates a random blob of the given size and type.

@@ -9,9 +9,6 @@ import SwiftUI
 import MapKit
 import PhotosUI
 
-enum error: Error {
-    case error
-}
 
 struct CreateEventWizard: View {
     @Environment(\.dismiss) private var dismiss
@@ -20,12 +17,13 @@ struct CreateEventWizard: View {
     @State private var vm = CreateEventWizardViewModel(selectedPhotos: [])
     
     @State private var launchState: AsyncStatus = .idle
+    @FocusState private var isInputActive: Bool
     
     init(pinLocation: CLLocationCoordinate2D? = nil) {
         if let pinLocation {
             vm.pinLocation = pinLocation
-            vm.event.latitude = pinLocation.latitude
-            vm.event.longitude = pinLocation.longitude
+            vm.event.location.coordinates[0] = pinLocation.longitude
+            vm.event.location.coordinates[1] = pinLocation.latitude
         }
     }
     
@@ -36,6 +34,9 @@ struct CreateEventWizard: View {
                     .font(.title)
                     .foregroundStyle(.accent)
                 titleAndSubtitleTab
+                    .simultaneousGesture(TapGesture().onEnded {
+                        isInputActive = false
+                    })
             }
             Tab {
                 Image(systemName: "location.fill")
@@ -76,9 +77,11 @@ struct CreateEventWizard: View {
             header(title: "What's going on?", description: "Give your DropIn a title and short description so others know what to expect.")
             TextField("Title", text: $vm.event.title)
                 .roundedTextFieldStyle(strokeColor: .secondary)
+                .focused($isInputActive)
             TextEditor(text: $vm.event.description)
                 .roundedTextFieldStyle(strokeColor: .secondary)
                 .containerRelativeFrame(.vertical, count: 10, span: 2, spacing: 0)
+                .focused($isInputActive)
         }
         .autocorrectionDisabled()
         .textInputAutocapitalization(.sentences)
@@ -100,8 +103,8 @@ struct CreateEventWizard: View {
                 .gesture(MyLongPressGesture { position in
                     if let loc = proxy.convert(position, from: .global) {
                         vm.pinLocation = loc
-                        vm.event.latitude = loc.latitude
-                        vm.event.longitude = loc.longitude
+                        vm.event.location.coordinates[0] = loc.latitude
+                        vm.event.location.coordinates[1] = loc.longitude
                     }
                 })
                 .clipShape(RoundedRectangle(cornerRadius: 30))

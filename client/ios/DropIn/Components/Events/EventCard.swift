@@ -12,6 +12,8 @@ struct EventCard: View {
     
     let event: DropInEvent
     
+    let joinEventAction: (DropInEvent) async throws -> Void
+    
     @State private var username = "unknown"
     @State private var attendanceStatus: AttendanceStatus = .undetermined
     @State private var isShowingSheet = false
@@ -39,7 +41,7 @@ struct EventCard: View {
         }
         .sheet(isPresented: $isShowingSheet) {
             NavigationStack {
-                EventDetailView(event: event)
+                EventDetailView(event: event, joinEventAction: joinEventAction)
             }
         }
         .alert("Error", isPresented: $showAlert) {
@@ -51,19 +53,26 @@ struct EventCard: View {
     
     private var eventImageCarousel: some View {
         TabView {
-            ForEach(event.imagePaths, id: \.self) { imagePath in
-                AsyncImage(url: URL(string: imagePath)) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .clipped()
-                    } else if phase.error != nil {
-                        ContentUnavailableView("Image Unavailable", systemImage: "exclamationmark.circle.fill")
-                    } else {
-                        ProgressView()
+            if let eventImagePaths = event.imagePaths {
+                ForEach(eventImagePaths, id: \.self) { imagePath in
+                    AsyncImage(url: URL(string: imagePath)) { phase in
+                        if let image = phase.image {
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .clipped()
+                        } else if phase.error != nil {
+                            ContentUnavailableView("Image Unavailable", systemImage: "exclamationmark.circle.fill")
+                        } else {
+                            ProgressView()
+                        }
                     }
                 }
+            } else {
+                Image("default.event.thumbnail")
+                    .resizable()
+                    .scaledToFill()
+                    .clipped()
             }
         }
         .tabViewStyle(.page)
@@ -118,14 +127,14 @@ struct EventCard: View {
     }
     
     private var joinSection: some View {
-        VStack {
-            HStack {
+        HStack {
+            DropInButton(attendanceStatus: $attendanceStatus, action: joinEvent)
+            if event.start > .now {
                 Text("Starts in")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                countdown
+                EventCountdown(eventStartDate: event.start, isFinished: $isTimerFinished, formatter: formatter())
             }
-            DropInButton(attendanceStatus: $attendanceStatus, action: joinEvent)
         }
     }
     
@@ -133,7 +142,7 @@ struct EventCard: View {
         Task {
             joinEventTaskStatus = .running
             do {
-                _ = try await eventStore.joinEvent(event)
+                try await joinEventAction(event)
                 joinEventTaskStatus = .success
                 attendanceStatus = .joined
             } catch {
@@ -146,6 +155,6 @@ struct EventCard: View {
 }
 
 #Preview {
-    EventCard(event: sampleEvent)
+    EventCard(event: sampleEvent, joinEventAction: { _ in })
         .environment(EventStore())
 }

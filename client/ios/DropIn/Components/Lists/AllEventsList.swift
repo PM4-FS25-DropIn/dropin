@@ -19,7 +19,7 @@ struct AllEventsList: View {
     
     var body: some View {
         List {
-            ForEach(eventStore.joinedEvents) { event in
+            ForEach(eventStore.joinedEvents.sorted(by: { $0.start < $1.start })) { event in
                 EventRowItem(event: event, isHost: event.userId == authService.userId)
                     .listRowInsets(EdgeInsets())
                     .listRowSeparator(.hidden)
@@ -41,6 +41,11 @@ struct AllEventsList: View {
             Button("Ok", role: .cancel) { }
         } message: {
             Text(onSwipeActionStatus.error)
+        }
+        .task {
+            Task {
+                try await eventStore.updateJoinedEvents()
+            }
         }
     }
     

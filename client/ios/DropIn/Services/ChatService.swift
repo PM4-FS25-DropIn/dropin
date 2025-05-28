@@ -3,11 +3,12 @@ import Auth
 import Supabase
 
 @MainActor
-final class ChatService: ObservableObject {
+@Observable
+final class ChatService {
     
     private let authService: AuthService
     //@Published private(set) var currentUser: Profile?
-    @Published var messages: [Message] = []
+    var messages: [Message] = []
     private var channel: RealtimeChannelV2?
 
     private let eventId: Int

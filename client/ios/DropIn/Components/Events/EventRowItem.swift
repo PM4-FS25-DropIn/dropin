@@ -27,31 +27,46 @@ struct EventRowItem: View {
         }
         .sheet(isPresented: $showDetailsView) {
             NavigationStack {
-                EventDetailView(event: event, isHost: isHost)
+                EventDetailView(event: event, isHost: isHost, joinEventAction: { _ in })
             }
         }
+        .overlay(alignment: .topTrailing) {
+            Circle().fill(getEventStatusColorGradient(event.status))
+                .frame(width: 5, height: 5)
+                .padding()
+        }
+        .frame(height: 150)
     }
     
     private var rowImage: some View {
-        AsyncImage(url: URL(string: event.imagePaths[0])) { phase in
-            if let image = phase.image {
-                image
+        Group {
+            if let eventImagePath = event.imagePaths?.first {
+                AsyncImage(url: URL(string: eventImagePath)) { phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .containerRelativeFrame([.horizontal], count: 10, span: 4, spacing: 0)
+                            .clipped()
+                    } else if phase.error != nil {
+                        VStack(spacing: 5) {
+                            Image(systemName: "exclamationmark.circle.fill")
+                            Text("Image Unavailable")
+                        }
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .scaledToFill()
+                        .clipped()
+                    } else {
+                        ProgressView()
+                    }
+                }
+            } else {
+                Image("default.event.thumbnail")
                     .resizable()
                     .scaledToFill()
                     .containerRelativeFrame([.horizontal], count: 10, span: 4, spacing: 0)
                     .clipped()
-            } else if phase.error != nil {
-                VStack(spacing: 5) {
-                    Image(systemName: "exclamationmark.circle.fill")
-                    Text("Image Unavailable")
-                }
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .scaledToFill()
-                .containerRelativeFrame([.horizontal], count: 10, span: 4, spacing: 0)
-                .clipped()
-            } else {
-                ProgressView()
             }
         }
     }

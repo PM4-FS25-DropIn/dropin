@@ -9,7 +9,6 @@ enum LocationPermissionError: Error {
     case alwaysAuthDeniedError(String)
 }
 
-// TODO: Make this an environment
 @MainActor
 @Observable
 final class LocationService {
