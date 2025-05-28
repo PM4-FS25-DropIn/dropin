@@ -18,28 +18,20 @@ struct ProfileView: View {
                     Divider()
                         .padding(.vertical, 16)
                 }
-                .offset(y: -geometry.frame(in: .global).minY / 1.5)  // Header will move slower than the scroll -> offset correction
+                .offset(y: -geometry.frame(in: .global).minY / 1.5)
             }
             .frame(height: 370)
 
             feedSection
                 .background(Color(.systemBackground))
-                .zIndex(1)  // Ensure the profile header is above the feed section
+                .zIndex(1)
                 .cornerRadius(16)
-            
-            Button("Sign out") {
-                Task {
-                    try await authService.signOut()
-                }
-            }
         }
         .edgesIgnoringSafeArea(.top)
         .onAppear {
             Task {
-                print("Getting username")
                 profile = try await authService.getProfile()
-                username = profile?.username ?? "Unnamed"
-                print("Username is: \(username)")
+                username = try await authService.getUsername()
             }
         }
     }
@@ -49,6 +41,7 @@ struct ProfileView: View {
     private var profileHeader: some View {
         ZStack(alignment: .top) {
             backgroundGradient
+            
             bannerImage
 
             VStack(spacing: 8) {
@@ -58,13 +51,14 @@ struct ProfileView: View {
             }
             .frame(maxWidth: .infinity)
         }
+
     }
 
     // The background gradient that fades from AccentColor to the system background
     private var backgroundGradient: some View {
         LinearGradient(
             gradient: Gradient(colors: [
-                Color("AccentColor"), Color(.systemBackground),
+                .accent.opacity(0.6), Color(.systemBackground),
             ]),
             startPoint: .top,
             endPoint: .bottom
@@ -73,61 +67,95 @@ struct ProfileView: View {
 
     // The banner image on top of the header
     private var bannerImage: some View {
-        Image("account_banner_placeholder")
-            .resizable()
-            .scaledToFill()
-            .frame(height: 160)
-            .clipped()
+        Group {
+            if let bannerUrl = profile?.bannerUrl {
+                AsyncImage(url: URL(string: bannerUrl)) { phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(height: 160)
+                            .clipped()
+                    } else if phase.error != nil {
+                        ContentUnavailableView("Image Unavailable", systemImage: "exclamationmark.circle.fill")
+                    } else {
+                        ProgressView()
+                    }
+                }
+                .id(bannerUrl)
+            } else {
+                Image("default.event.thumbnail")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(height: 160)
+                    .clipped()
+            }
+        }
     }
 
     // Row with the settings button, profile image, and edit button.
     private var headerButtonsRow: some View {
         HStack {
-            settingsButton
+            NavigationLink {
+                AboutView()
+            } label: {
+                Image(systemName: "info.circle.fill")
+                    .font(.title2)
+                    .foregroundColor(.primary)
+                    .padding()
+            }
+            .padding(.top, 160)
+            
             Spacer()
+            
             profileImageView
+                
             Spacer()
-            editButton
+            
+            NavigationLink {
+                ProfileEditView()
+            } label: {
+                Image(systemName: "pencil.line")
+                    .font(.title2)
+                    .foregroundColor(.primary)
+                    .padding()
+            }
+            .padding(.top, 160)
         }
         .padding(.horizontal)
-    }
 
-    private var settingsButton: some View {
-        Button(action: {
-            // TODO: Navigate to settings
-        }) {
-            Image(systemName: "gearshape.fill")
-                .font(.title2)
-                .foregroundColor(.primary)
-                .padding()
-        }
-        .padding(.top, 160)
-    }
-
-    private var editButton: some View {
-        Button(action: {
-            // TODO: Edit profile action
-        }) {
-            Image(systemName: "pencil.line")
-                .font(.title2)
-                .foregroundColor(.primary)
-                .padding()
-        }
-        .padding(.top, 160)
     }
 
     // The profile image (avatar)
     private var profileImageView: some View {
-        Image("profile_avatar_placeholder")
-            .resizable()
-            .scaledToFill()
-            .frame(width: 120, height: 120)
-            .clipShape(Circle())
-            .overlay(
-                Circle().stroke(Color("AccentColor"), lineWidth: 6)
-            )
-            .shadow(radius: 1)
-            .padding(.top, 110)
+        Group {
+            if let avatarUrl = profile?.avatarUrl {
+                AsyncImage(url: URL(string: avatarUrl)) { phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 100, height: 100)
+                            .clipShape(Circle())
+                            .shadow(radius: 1)
+                            .padding(.top, 110)
+                    } else if phase.error != nil {
+                        ContentUnavailableView("Image Unavailable", systemImage: "exclamationmark.circle.fill")
+                    } else {
+                        ProgressView()
+                    }
+                }
+                .id(avatarUrl)
+            } else {
+                Image("default.avatar.placeholder")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 100, height: 100)
+                    .clipShape(Circle())
+                    .shadow(radius: 1)
+                    .padding(.top, 110)
+            }
+        }
     }
 
     // Name and username texts
