@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct DropInFeedView: View {
     @Environment(AuthService.self) private var authService
@@ -62,8 +63,13 @@ struct DropInFeedView: View {
     private func rowImage(event: DropInEvent) -> some View {
         Group {
             if let eventImagePath = event.imagePaths?.first {
-                var _ = print("Event image path is \(eventImagePath)")
-                AsyncImage(url: URL(string: eventImagePath)) { phase in
+                KFImage(URL(string: eventImagePath))
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 50, height: 50)
+                    .clipShape(RoundedRectangle(cornerRadius: 30))
+                
+                /*AsyncImage(url: URL(string: eventImagePath)) { phase in
                     if let image = phase.image {
                         image
                             .resizable()
@@ -82,6 +88,7 @@ struct DropInFeedView: View {
                         ProgressView()
                     }
                 }
+                 */
             } else {
                 Image("default.event.thumbnail")
                     .resizable()

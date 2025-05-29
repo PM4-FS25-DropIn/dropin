@@ -1,4 +1,5 @@
 import SwiftUI
+import Kingfisher
 
 
 struct ProfileView: View {
@@ -69,7 +70,12 @@ struct ProfileView: View {
     private var bannerImage: some View {
         Group {
             if let bannerUrl = profile?.bannerUrl {
-                AsyncImage(url: URL(string: bannerUrl)) { phase in
+                KFImage(URL(string: bannerUrl))
+                    .resizable()
+                    .scaledToFill()
+                    .frame(height: 160)
+                    .clipped()
+                /*AsyncImage(url: URL(string: bannerUrl)) { phase in
                     if let image = phase.image {
                         image
                             .resizable()
@@ -83,6 +89,7 @@ struct ProfileView: View {
                     }
                 }
                 .id(bannerUrl)
+                 */
             } else {
                 Image("default.event.thumbnail")
                     .resizable()
@@ -130,7 +137,14 @@ struct ProfileView: View {
     private var profileImageView: some View {
         Group {
             if let avatarUrl = profile?.avatarUrl {
-                AsyncImage(url: URL(string: avatarUrl)) { phase in
+                KFImage(URL(string: avatarUrl))
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 100, height: 100)
+                    .clipShape(Circle())
+                    .shadow(radius: 1)
+                    .padding(.top, 110)
+                /*AsyncImage(url: URL(string: avatarUrl)) { phase in
                     if let image = phase.image {
                         image
                             .resizable()
@@ -146,6 +160,7 @@ struct ProfileView: View {
                     }
                 }
                 .id(avatarUrl)
+                 */
             } else {
                 Image("default.avatar.placeholder")
                     .resizable()

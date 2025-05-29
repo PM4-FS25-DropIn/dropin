@@ -8,6 +8,7 @@
 /// Simple circular shaped thumbnail of the event.
 /// Has a border that indicates the status of the event, which gets updated every minute.
 import SwiftUI
+import Kingfisher
 
 struct EventBubble: View {
     
@@ -22,7 +23,12 @@ struct EventBubble: View {
     private var image: some View {
         Group {
             if let eventImagePath = event.imagePaths?.first {
-                AsyncImage(url: URL(string: eventImagePath)) { phase in
+                KFImage(URL(string: eventImagePath))
+                    .resizable()
+                    .scaledToFill()
+                    .clipShape(Circle())
+                    .overlay(Circle().stroke(ringColor, lineWidth: 3))
+                /*AsyncImage(url: URL(string: eventImagePath)) { phase in
                     if let image = phase.image {
                         image
                             .resizable()
@@ -37,7 +43,7 @@ struct EventBubble: View {
                     } else {
                         ProgressView()
                     }
-                }
+                }*/
             } else {
                 Image("default.event.thumbnail")
                     .resizable()

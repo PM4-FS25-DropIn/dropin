@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct EventCard: View {
     @Environment(EventStore.self) private var eventStore
@@ -55,7 +56,12 @@ struct EventCard: View {
         TabView {
             if let eventImagePaths = event.imagePaths {
                 ForEach(eventImagePaths, id: \.self) { imagePath in
-                    AsyncImage(url: URL(string: imagePath)) { phase in
+                    KFImage(URL(string: imagePath))
+                        .resizable()
+                        .scaledToFill()
+                        .clipped()
+
+                    /*AsyncImage(url: URL(string: imagePath)) { phase in
                         if let image = phase.image {
                             image
                                 .resizable()
@@ -66,7 +72,7 @@ struct EventCard: View {
                         } else {
                             ProgressView()
                         }
-                    }
+                    }*/
                 }
             } else {
                 Image("default.event.thumbnail")

@@ -1,4 +1,5 @@
 import SwiftUI
+import Kingfisher
 
 // MARK: - Chats View
 
@@ -54,6 +55,12 @@ struct ChatRow: View {
     private var eventImageCircle: some View {
         Group {
             if let eventImagePath = event.imagePaths?.first {
+                KFImage(URL(string: eventImagePath)!)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 50, height: 50)
+                    .clipShape(Circle())
+                /*
                 AsyncImage(url: URL(string: eventImagePath)) { phase in
                     if let image = phase.image {
                         image
@@ -75,6 +82,7 @@ struct ChatRow: View {
                             .background(Circle().fill(Color.gray.opacity(0.2)))
                     }
                 }
+                 */
             } else {
                 Image("defaut.event.thumbnail")
                     .resizable()

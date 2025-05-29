@@ -7,6 +7,7 @@
 
 
 import SwiftUI
+import Kingfisher
 
 struct EventRowItem: View {
     
@@ -41,6 +42,14 @@ struct EventRowItem: View {
     private var rowImage: some View {
         Group {
             if let eventImagePath = event.imagePaths?.first {
+                KFImage(URL(string: eventImagePath)!)
+                    .resizable()
+                    .scaledToFill()
+                    .containerRelativeFrame([.horizontal], count: 10, span: 4, spacing: 0)
+                    .clipped()
+            }
+            /*
+            if let eventImagePath = event.imagePaths?.first {
                 AsyncImage(url: URL(string: eventImagePath)) { phase in
                     if let image = phase.image {
                         image
@@ -68,6 +77,7 @@ struct EventRowItem: View {
                     .containerRelativeFrame([.horizontal], count: 10, span: 4, spacing: 0)
                     .clipped()
             }
+            */
         }
     }
     
@@ -76,8 +86,6 @@ struct EventRowItem: View {
             HStack {
                 Text(event.title)
                     .font(.headline)
-                    .scaledToFit()
-                    .minimumScaleFactor(0.5)
                     .lineLimit(1)
                 if isHost {
                     Image(systemName: "crown.fill")
@@ -88,8 +96,6 @@ struct EventRowItem: View {
             Text(event.description)
                 .font(.caption)
                 .foregroundStyle(.secondary)
-                .scaledToFit()
-                .minimumScaleFactor(0.2)
                 .lineLimit(2)
             Spacer()
             VStack(alignment: .leading) {

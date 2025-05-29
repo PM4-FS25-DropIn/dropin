@@ -1,5 +1,6 @@
 import SwiftUI
 import MapKit
+import Kingfisher
 
 struct EventDetailView: View {
     @Environment(EventStore.self) private var eventStore
@@ -48,7 +49,14 @@ struct EventDetailView: View {
         TabView {
             if let eventImagePaths = event.imagePaths {
                 ForEach(eventImagePaths, id: \.self) { imagePath in
-                    AsyncImage(url: URL(string: imagePath)) { phase in
+                    KFImage.url(URL(string: imagePath))
+                        .placeholder() {
+                            ProgressView()
+                        }
+                        .resizable()
+                        .scaledToFill()
+                        .clipped()
+                    /*AsyncImage(url: URL(string: imagePath)) { phase in
                         if let image = phase.image {
                             image
                                 .resizable()
@@ -59,7 +67,7 @@ struct EventDetailView: View {
                         } else {
                             ProgressView()
                         }
-                    }
+                    }*/
                 }
             } else {
                 Image("default.event.thumbnail")

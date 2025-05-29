@@ -7,6 +7,7 @@
 
 
 import SwiftUI
+import Kingfisher
 @preconcurrency import MapKit
 
 struct MapEventItemDetailSheet: View {
@@ -33,7 +34,6 @@ struct MapEventItemDetailSheet: View {
         } message: {
             Text(joinEventTaskStatus.error)
         }
-        .ignoresSafeArea()
     }
     
     var header: some View {
@@ -42,10 +42,12 @@ struct MapEventItemDetailSheet: View {
                 Text(event.title)
                     .font(.title)
                     .bold()
+                    .lineLimit(1)
                 Text(formatCoordinates(latitude: event.latitude, longitude: event.longitude))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .bold()
+                    .lineLimit(1)
                 estimatedTimeDisplay
             }
             Spacer()
@@ -104,7 +106,11 @@ struct MapEventItemDetailSheet: View {
         TabView {
             if let eventImagePaths = event.imagePaths {
                 ForEach(eventImagePaths, id: \.self) { imagePath in
-                    AsyncImage(url: URL(string: imagePath)) { phase in
+                    KFImage(URL(string: imagePath))
+                        .resizable()
+                        .scaledToFill()
+                        .clipped()
+                    /*AsyncImage(url: URL(string: imagePath)) { phase in
                         if let image = phase.image {
                             image
                                 .resizable()
@@ -115,7 +121,7 @@ struct MapEventItemDetailSheet: View {
                         } else {
                             ProgressView()
                         }
-                    }
+                    }*/
                 }
             } else {
                 Image("default.event.thumbnail")
