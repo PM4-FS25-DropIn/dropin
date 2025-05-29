@@ -117,7 +117,11 @@ struct EventMap: View {
                 }
             }
         }
-        .presentationDetents([.medium, .large])
+        .presentationDetents([.fraction(0.25), .medium, .large])
+        .presentationDragIndicator(.visible)
+        .presentationBackgroundInteraction(.enabled)
+        .interactiveDismissDisabled()
+        .presentationContentInteraction(.resizes)
     }
     
     
