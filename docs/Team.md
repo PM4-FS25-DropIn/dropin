@@ -2,7 +2,7 @@
 |-----------------------|-------------------------------|
 | Shpetim Veseli (veselshp) | Scrum Master / Fullstack |
 | Moritz Feuchter (feuchmor) | iOS Dev                   |
-| Leonard Boedi (boedileo) | PO (Slave Master) / iOS Dev |
+| Leonard Boedi (boedileo) | PO / iOS Dev |
 | Din Jakupi (jakupdin)   | Backend Dev                 |
 | Benjamin Brandis (brandben) | Backend Dev             |
 | Michael Voemel (voememic) | Fullstack                 |
