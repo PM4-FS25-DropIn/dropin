@@ -82,7 +82,7 @@ struct DiscoveryEventList: View {
                 .bold()
                 .foregroundStyle(.secondary)
             Button(fetchEventsStatus.isRunning ? "Searching" : "Search again") {
-                fetchAdditionalEvents()
+                refreshFeed()
             }
             .disabled(fetchEventsStatus.isRunning)
             Spacer()
