@@ -53,19 +53,26 @@ struct EventCard: View {
     
     private var eventImageCarousel: some View {
         TabView {
-            ForEach(event.imagePaths, id: \.self) { imagePath in
-                AsyncImage(url: URL(string: imagePath)) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .clipped()
-                    } else if phase.error != nil {
-                        ContentUnavailableView("Image Unavailable", systemImage: "exclamationmark.circle.fill")
-                    } else {
-                        ProgressView()
+            if let eventImagePaths = event.imagePaths {
+                ForEach(eventImagePaths, id: \.self) { imagePath in
+                    AsyncImage(url: URL(string: imagePath)) { phase in
+                        if let image = phase.image {
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .clipped()
+                        } else if phase.error != nil {
+                            ContentUnavailableView("Image Unavailable", systemImage: "exclamationmark.circle.fill")
+                        } else {
+                            ProgressView()
+                        }
                     }
                 }
+            } else {
+                Image("default.event.thumbnail")
+                    .resizable()
+                    .scaledToFill()
+                    .clipped()
             }
         }
         .tabViewStyle(.page)

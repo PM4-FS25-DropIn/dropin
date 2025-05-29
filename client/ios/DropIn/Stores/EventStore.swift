@@ -15,7 +15,7 @@ class EventStore {
     /// Events the user joined (including his own).
     var joinedEvents: [DropInEvent] = []
     
-    var searchDelta: Double = 0.25
+    var searchDelta: Double = 0
     
     private var userId: UUID?
     private var userLocation: CLLocationCoordinate2D?
@@ -25,7 +25,6 @@ class EventStore {
             try await updateJoinedEvents()
             userId = try await getUserId()
             userLocation = LocationService.shared.lastLocation.coordinate
-            print("Initialized EventStore with userId: \(userId?.debugDescription ?? "nil")")
             isInitialized = true
         }
     }
@@ -36,50 +35,31 @@ class EventStore {
     
     
     func updateJoinedEvents() async throws {
-        /*try await supabase.rpc("get_joined_events_of_user")
-            .execute()
-            .value"*/
         joinedEvents = try await supabase
             .from("events_joined_by_user")
             .select()
             .execute()
             .value
+        
+        pruneExpiredJoinedEvents()
     }
     
-    
-    /// Clear events and search nearby events again. Fallback events if location unavailable or disabled.
-    func refreshEventsFeed() async throws {
-        var events: [DropInEvent] = try await searchEventsInRegion(latitude: userLocation?.latitude ?? 0, longitude: userLocation?.longitude ?? 0, latitudeDelta: searchDelta, longitudeDelta: searchDelta)
-
-        
-        // Fallback if user is located in devils ass crack.
-        if events.isEmpty {
-            print("Nothing found during refresh")
-            events = try await supabase
-                .from("events_not_joined")
-                .select()
-                .limit(10)
-                .execute()
-                .value
+    func pruneExpiredJoinedEvents() {
+        joinedEvents.removeAll { event in
+            return event.end < .now
         }
-        
-        self.events = events
+    }
+    
+    /// Clear events.
+    func clearEvents() async throws {
+        self.events = []
         searchDelta = 0
     }
     
     func getNotJoinedEvents() -> [DropInEvent] {
-        /*let eventsJoined: [DropInEvent] = try await supabase
-            .from("events_joined_by_user")
-            .select()
-            .execute()
-            .value
-         */
-        
-        //let joinedIds = Set(eventsJoined.compactMap((\.id)))
         let joinedIds = Set(joinedEvents.compactMap((\.id)))
 
-        print("Joined ids are \(joinedIds)")
-        
+        pruneExpiredJoinedEvents()
         // Return all events that have not the same id as in the eventsJoined array
         return events.filter { event in
             guard let id = event.id else { return false }
@@ -88,23 +68,11 @@ class EventStore {
     }
     
     
-    /// Fetch events created by the user.
-    func fetchEventsOfUser() -> [DropInEvent] {
-        var events: [DropInEvent] = []
-        
-        for event in joinedEvents {
-            guard let eventUserId = event.userId else { continue }
-            if eventUserId == userId {
-                events.append(event)
-            }
-        }
-        return events
-    }
-    
     /// Check if an event has been joined by the current user.
     func checkIfEventIsJoinedByUser(_ event: DropInEvent) -> Bool {
         guard let eventId = event.id, let eventUserId = event.userId else { return false }
         
+        pruneExpiredJoinedEvents()
         for event in joinedEvents {
             guard let joinedEventId = event.id, let joinedEventUserId = event.userId else { continue }
             if eventId == joinedEventId && eventUserId == joinedEventUserId {
@@ -119,25 +87,11 @@ class EventStore {
         searchDelta += 0.25
         print("Search Delta is: \(searchDelta)")
         
-        var events: [DropInEvent] = try await searchEventsInRegion(latitude: userLocation?.latitude ?? 0, longitude: userLocation?.longitude ?? 0, latitudeDelta: searchDelta, longitudeDelta: searchDelta)
+        let events: [DropInEvent] = try await searchEventsInRegion(latitude: userLocation?.latitude ?? 0, longitude: userLocation?.longitude ?? 0, latitudeDelta: searchDelta, longitudeDelta: searchDelta)
         
-        var filteredEvents = filterNewEvents(events, from: events)
+        let filteredEvents = filterNewEvents(events, from: self.events)
         
-        // Fallback if user is located in devils ass crack.
-        if filteredEvents.isEmpty {
-            print("Empty. Using fallback")
-            events = try await supabase
-                .from("events_not_joined")
-                .select()
-                .limit(10)
-                .execute()
-                .value
-            filteredEvents = filterNewEvents(events, from: self.events)
-            print("Filtered Events count is \(filteredEvents.count)")
-        }
-        
-        events.append(contentsOf: filteredEvents)
-        print("Now has \(events.count)")
+        self.events.append(contentsOf: filteredEvents)
         return filteredEvents
     }
     
@@ -147,7 +101,6 @@ class EventStore {
         
         let filteredEvents = filterNewEvents(events, from: self.events)
         
-        print("Filtered Events count \(filteredEvents.count)")
         self.events.append(contentsOf: filteredEvents)
         
         searchDelta = max(latitudeDelta, longitudeDelta)
@@ -161,8 +114,6 @@ class EventStore {
             .execute()
             .value
         
-        print("Calling fetch Events in region")
-        print("Now has: \(events.count)")
         return events
     }
     
@@ -251,17 +202,16 @@ class EventStore {
     
     /// Delete an event.
     func deleteEvent(_ event: DropInEvent) async throws {
-        print("Deleting event with id: \(event.id ?? 0)")
+        guard let eventId = event.id else { return }
+        print("Deleting event with id: \(eventId)")
         try await supabase
             .from("events")
             .delete()
-            .eq("id", value: event.id)
+            .eq("id", value: eventId)
             .execute()
         
-        joinedEvents.removeAll { $0.id == event.id }
-        events.removeAll { $0.id == event.id }
-        //feedEvents.removeAll { $0.id == event.id }
-        //mapEvents.removeAll { $0.id == event.id }
+        joinedEvents.removeAll { $0.id == eventId }
+        events.removeAll { $0.id == eventId }
     }
     
     /// Update an event.
@@ -277,7 +227,7 @@ class EventStore {
     
     private func uploadEventThumbnailPhotos(eventId: Int, photos: [EventThumbnail]) async throws -> [String] {
         
-        var publicFileUrlPath: [String] = []
+        var publicFileUrlPaths: [String] = []
         
         for photo in photos {
             let fileName = UUID().uuidString
@@ -293,11 +243,11 @@ class EventStore {
                 .from("event-thumbnails")
                 .getPublicURL(path: "\(eventId)/\(fileName)")
             
-            publicFileUrlPath.append(publicFileUrl.absoluteString)
+            publicFileUrlPaths.append(publicFileUrl.absoluteString)
         }
-        print("File url: \(publicFileUrlPath[0])")
+        print("File url: \(publicFileUrlPaths[0])")
         
-        return publicFileUrlPath
+        return publicFileUrlPaths
     }
 
     

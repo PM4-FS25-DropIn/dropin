@@ -6,15 +6,21 @@ struct Profile: Codable, Identifiable {
     let id: UUID
     let username: String
     let avatarUrl: String?
+    let bannerUrl: String?
     let emojicode: String?
     let city: String?
+    let dropinsCreated: Int?
+    let dropinsJoined: Int?
     
     enum CodingKeys: String, CodingKey {
         case id
         case username
         case avatarUrl = "avatar_url"
+        case bannerUrl = "banner_url"
         case emojicode
         case city
+        case dropinsCreated = "dropins_created"
+        case dropinsJoined = "dropins_joined"
     }
 }
 
@@ -113,8 +119,63 @@ extension EventThumbnail {
         let image = Image(uiImage: uiImage)
         self.init(image: image, data: data)
     }
+}
+
+struct AvatarImage: Transferable, Equatable {
+    let image: Image
+    let data: Data
+    
+    static var transferRepresentation: some TransferRepresentation {
+        DataRepresentation(importedContentType: .image) { data in
+            guard let image = AvatarImage(data: data) else {
+                throw TransferError.importFailed
+            }
+            
+            return image
+        }
+    }
+}
+
+extension AvatarImage {
+    init?(data: Data) {
+        guard let uiImage = UIImage(data: data) else {
+            return nil
+        }
+        
+        let image = Image(uiImage: uiImage)
+        self.init(image: image, data: data)
+    }
     
 }
+
+
+struct BannerImage: Transferable, Equatable {
+    let image: Image
+    let data: Data
+    
+    static var transferRepresentation: some TransferRepresentation {
+        DataRepresentation(importedContentType: .image) { data in
+            guard let image = BannerImage(data: data) else {
+                throw TransferError.importFailed
+            }
+            
+            return image
+        }
+    }
+}
+
+extension BannerImage {
+    init?(data: Data) {
+        guard let uiImage = UIImage(data: data) else {
+            return nil
+        }
+        
+        let image = Image(uiImage: uiImage)
+        self.init(image: image, data: data)
+    }
+    
+}
+
 
 struct DropInEvent: Codable, Identifiable, Equatable {
     var id: Int?
@@ -122,7 +183,7 @@ struct DropInEvent: Codable, Identifiable, Equatable {
     var updatedAt: Date?
     var title: String
     var description: String
-    var imagePaths: [String]
+    var imagePaths: [String]?
     var userId: UUID?
     var start: Date
     var end: Date
@@ -171,9 +232,9 @@ enum AuthMode {
     case signUp
 }
 
+
 // - MARK: Error Types
 
 enum TransferError: Error {
     case importFailed
 }
-

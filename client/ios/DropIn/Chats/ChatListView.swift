@@ -52,25 +52,35 @@ struct ChatRow: View {
     }
     
     private var eventImageCircle: some View {
-        AsyncImage(url: URL(string: event.imagePaths[0])) { phase in
-            if let image = phase.image {
-                image
+        Group {
+            if let eventImagePath = event.imagePaths?.first {
+                AsyncImage(url: URL(string: eventImagePath)) { phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 50, height: 50)
+                            .clipShape(Circle())
+                    } else if phase.error != nil {
+                        VStack(spacing: 5) {
+                            Image(systemName: "exclamationmark.circle.fill")
+                        }
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .frame(width: 50, height: 50)
+                        .background(Circle().fill(Color.gray.opacity(0.2)))
+                    } else {
+                        ProgressView()
+                            .frame(width: 50, height: 50)
+                            .background(Circle().fill(Color.gray.opacity(0.2)))
+                    }
+                }
+            } else {
+                Image("defaut.event.thumbnail")
                     .resizable()
                     .scaledToFill()
                     .frame(width: 50, height: 50)
                     .clipShape(Circle())
-            } else if phase.error != nil {
-                VStack(spacing: 5) {
-                    Image(systemName: "exclamationmark.circle.fill")
-                }
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .frame(width: 50, height: 50)
-                .background(Circle().fill(Color.gray.opacity(0.2)))
-            } else {
-                ProgressView()
-                    .frame(width: 50, height: 50)
-                    .background(Circle().fill(Color.gray.opacity(0.2)))
             }
         }
     }

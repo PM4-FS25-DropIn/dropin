@@ -5,7 +5,9 @@ struct HomeView: View {
     var body: some View {
         VStack {
             header
-            FriendAvatarCarousel()
+            EventTimeLine()
+                .padding(.vertical)
+            Divider()
             DiscoveryEventList()
         }
     }
@@ -14,11 +16,12 @@ struct HomeView: View {
         HStack {
             NavigationLink(destination: EmptyView()) {
                 Image(systemName: "bell.fill")
+                    .foregroundStyle(.accent)
             }
             Spacer()
             NavigationLink(destination: ChatListView()) {
                 Image(systemName: "paperplane.fill")
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(.accent)
             }
         }
         .font(.title2)

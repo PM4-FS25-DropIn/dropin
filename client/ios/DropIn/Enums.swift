@@ -10,6 +10,7 @@ enum EventStatus: String, CaseIterable, Codable {
     case upcoming = "Upcoming"
     case live = "Live"
     case closing = "Closing"
+    case closed = "Closed"
 }
 
 enum AttendanceStatus: String, CaseIterable {

@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "DropInTransparent.png",
+      "filename" : "DropIn.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -13,7 +13,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "DropIn.png",
+      "filename" : "DropInTransparent.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"

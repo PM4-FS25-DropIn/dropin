@@ -25,6 +25,11 @@ struct DiscoveryEventList: View {
                 eventList
             }
         }
+        .onAppear {
+            Task {
+                initialFetch()
+            }
+        }
     }
     
     private var eventList: some View {
@@ -34,7 +39,6 @@ struct DiscoveryEventList: View {
             } else {
                 ScrollView {
                     LazyVStack(alignment: .center, spacing: 25) {
-                        var _ = print("Discovery Events are \(vm.events.count)")
                         ForEach(vm.getCategoryBasedEvents()) { event in
                             EventCard(event: event, joinEventAction: vm.joinEvent)
                                 .onAppear {
@@ -64,16 +68,6 @@ struct DiscoveryEventList: View {
         }
         .onAppear {
             vm.eventStore = eventStore
-            if eventStore.isInitialized {
-                vm.updateEvents()
-            } else {
-                Task {
-                    while !eventStore.isInitialized {
-                        try? await Task.sleep(nanoseconds: 100_000_000)
-                    }
-                    vm.updateEvents()
-                }
-            }
         }
     }
     
@@ -88,7 +82,7 @@ struct DiscoveryEventList: View {
                 .bold()
                 .foregroundStyle(.secondary)
             Button(fetchEventsStatus.isRunning ? "Searching" : "Search again") {
-                refreshFeed()
+                fetchAdditionalEvents()
             }
             .disabled(fetchEventsStatus.isRunning)
             Spacer()
@@ -110,7 +104,21 @@ struct DiscoveryEventList: View {
         Task {
             do {
                 fetchEventsStatus = .running
-                try await Task.sleep(for: .seconds(2))
+                try await Task.sleep(for: .seconds(0.5))
+                try await vm.refreshFeed()
+
+                fetchEventsStatus = .success
+            } catch {
+                fetchEventsStatus = .failure(error)
+            }
+        }
+    }
+    
+    private func initialFetch() {
+        Task {
+            do {
+                fetchEventsStatus = .running
+                try await Task.sleep(for: .seconds(0.5))
                 try await vm.refreshFeed()
                 fetchEventsStatus = .success
             } catch {
