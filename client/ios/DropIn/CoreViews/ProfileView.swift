@@ -186,6 +186,7 @@ struct ProfileView: View {
     private var feedSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             DropInFeedView()
+                .id(UUID())
         }
         .padding(.horizontal)
         .padding(.top, 16)
