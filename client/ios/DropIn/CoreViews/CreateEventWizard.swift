@@ -103,8 +103,8 @@ struct CreateEventWizard: View {
                 .gesture(MyLongPressGesture { position in
                     if let loc = proxy.convert(position, from: .global) {
                         vm.pinLocation = loc
-                        vm.event.location.coordinates[0] = loc.latitude
-                        vm.event.location.coordinates[1] = loc.longitude
+                        vm.event.location.coordinates[0] = loc.longitude
+                        vm.event.location.coordinates[1] = loc.latitude
                     }
                 })
                 .clipShape(RoundedRectangle(cornerRadius: 30))
