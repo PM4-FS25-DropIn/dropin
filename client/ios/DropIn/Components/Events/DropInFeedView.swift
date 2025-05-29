@@ -51,7 +51,8 @@ struct DropInFeedView: View {
             }
             Spacer()
         }
-        .padding()
+        .padding(4)
+        .frame(height: 60)
         .frame(maxWidth: .infinity)
         .background(Color(.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 30))
