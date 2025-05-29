@@ -114,3 +114,13 @@ export async function createEvent(client: SupabaseClient<any, any, any>): Promis
 
     return (<any>data)[0];
 }
+
+/**
+ * Creates a random blob of the given size and type.
+ * @param size The size of the blob in bytes.
+ * @param type The type of the blob. Default is 'image/png'.
+ * @returns {Blob} The created blob.
+ */
+export function generateRandomBlob(size: number, type: string = 'image/png'): Blob {
+    return new Blob([new ArrayBuffer(size)], { type });
+};
