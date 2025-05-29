@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B377A7392DE2541100E6802A /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B377A7382DE2541100E6802A /* Launch Screen.storyboard */; };
+		B3C47E532DE8826100DDBA09 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = B3C47E522DE8826100DDBA09 /* Kingfisher */; };
 		EE3385912DAC5D25006C95F4 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = EE3385902DAC5D25006C95F4 /* Supabase */; };
 /* End PBXBuildFile section */
 
@@ -72,6 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3C47E532DE8826100DDBA09 /* Kingfisher in Frameworks */,
 				EE3385912DAC5D25006C95F4 /* Supabase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -101,6 +103,7 @@
 				B3B7160E2D872E1D0023465A /* DropIn */,
 				B3B7161F2D872E1F0023465A /* DropInTests */,
 				B3B716292D872E1F0023465A /* DropInUITests */,
+				B3C47E512DE8826100DDBA09 /* Frameworks */,
 				B3B7160D2D872E1D0023465A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -113,6 +116,13 @@
 				B3B716262D872E1F0023465A /* DropInUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B3C47E512DE8826100DDBA09 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -136,6 +146,7 @@
 			name = DropIn;
 			packageProductDependencies = (
 				EE3385902DAC5D25006C95F4 /* Supabase */,
+				B3C47E522DE8826100DDBA09 /* Kingfisher */,
 			);
 			productName = dropin;
 			productReference = B3B7160C2D872E1D0023465A /* DropIn.app */;
@@ -222,6 +233,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				EE33858F2DAC5D25006C95F4 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				B3EE05312DE87EA2002EED78 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B3B7160D2D872E1D0023465A /* Products */;
@@ -637,6 +649,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		B3EE05312DE87EA2002EED78 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.3.2;
+			};
+		};
 		EE33858F2DAC5D25006C95F4 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/supabase/supabase-swift.git";
@@ -648,6 +668,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		B3C47E522DE8826100DDBA09 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3EE05312DE87EA2002EED78 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
 		EE3385902DAC5D25006C95F4 /* Supabase */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = EE33858F2DAC5D25006C95F4 /* XCRemoteSwiftPackageReference "supabase-swift" */;
