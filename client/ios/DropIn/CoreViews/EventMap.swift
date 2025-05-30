@@ -119,7 +119,7 @@ struct EventMap: View {
         }
         .presentationDetents([.fraction(0.25), .medium, .large])
         .presentationDragIndicator(.visible)
-        .presentationBackgroundInteraction(.enabled)
+        .presentationBackgroundInteraction(.enabled(upThrough: .fraction(0.25)))
         .interactiveDismissDisabled()
         .presentationContentInteraction(.resizes)
     }
