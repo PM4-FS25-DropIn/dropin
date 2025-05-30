@@ -92,12 +92,12 @@ final class AuthService {
     }
     
     func updateAvatar(avatar: AvatarImage) async throws {
-        try await uploadAvatarImage(avatar.data)
+        guard let filePath = try await uploadAvatarImage(avatar.data) else { return }
         
         if let userId {
             let publicFileUrl = try supabase.storage
                 .from("avatars")
-                .getPublicURL(path: "\(userId)/avatar")
+                .getPublicURL(path: filePath)
             
             try await supabase
                 .from("profiles")
@@ -109,26 +109,47 @@ final class AuthService {
         print("Done avatar.")
     }
     
-    private func uploadAvatarImage(_ imageData: Data) async throws {
-        guard let userId else { return }
-        let filePath = "\(userId)/avatar"
+    private func uploadAvatarImage(_ imageData: Data) async throws -> String? {
+        guard let userId else { return nil }
+        let filePath = "\(userId.uuidString.lowercased())/\(UUID().uuidString)"
         
-        try await supabase.storage
-            .from("avatars")
-            .upload(
-                filePath,
-                data: imageData,
-                options: FileOptions(contentType: "image/jpeg", upsert: true)
-            )
+        if try await isFolderEmpty(bucket: "avatars", folder: userId.uuidString) {
+            try await supabase.storage
+                .from("avatars")
+                .upload(
+                    filePath,
+                    data: imageData,
+                    options: FileOptions(
+                        cacheControl: "3600",
+                        contentType: "image/jpeg",
+                        upsert: false
+                    )
+                )
+        } else {
+            print("Folder not empty. Updating avatar...")
+            try await supabase.storage
+                .from("avatars")
+                .update(
+                    filePath,
+                    data: imageData,
+                    options: FileOptions(
+                        cacheControl: "3600",
+                        contentType: "image/jpeg",
+                        upsert: true
+                    )
+                )
+        }
+        
+        return filePath
     }
     
     func updateBanner(banner: BannerImage) async throws {
-        try await uploadBannerImage(banner.data)
+        guard let filePath = try await uploadBannerImage(banner.data) else { return }
         
         if let userId {
             let publicFileUrl = try supabase.storage
                 .from("banners")
-                .getPublicURL(path: "\(userId)/banner")
+                .getPublicURL(path: filePath)
             
             try await supabase
                 .from("profiles")
@@ -136,20 +157,53 @@ final class AuthService {
                 .eq("id", value: userId)
                 .execute()
         }
-        
     }
     
-    private func uploadBannerImage(_ imageData: Data) async throws {
-        guard let userId else { return }
-        let filePath = "\(userId)/banner"
-        
-        try await supabase.storage
-            .from("banners")
-            .upload(
-                filePath,
-                data: imageData,
-                options: FileOptions(contentType: "image/jpeg", upsert: true)
+    private func isFolderEmpty(bucket: String, folder: String) async throws -> Bool {
+        let files = try await supabase.storage
+            .from(bucket)
+            .list(
+                path: folder,
+                options: SearchOptions(
+                    limit: 1,
+                    offset: 0,
+                    )
             )
+        print("Files returned \(files.count)")
+        return files.isEmpty
+    }
+    
+    private func uploadBannerImage(_ imageData: Data) async throws -> String? {
+        guard let userId else { return nil }
+        let filePath = "\(userId.uuidString.lowercased())/\(UUID().uuidString)"
+        
+        
+        if try await isFolderEmpty(bucket: "banners", folder: userId.uuidString) {
+            try await supabase.storage
+                .from("banners")
+                .upload(
+                    filePath,
+                    data: imageData,
+                    options: FileOptions(
+                        cacheControl: "3600",
+                        contentType: "image/jpeg",
+                        upsert: false
+                    )
+                )
+        } else {
+            try await supabase.storage
+                .from("banners")
+                .update(
+                    filePath,
+                    data: imageData,
+                    options: FileOptions(
+                        cacheControl: "3600",
+                        contentType: "image/jpeg",
+                        upsert: true
+                    )
+                )
+        }
+        return filePath
     }
     
 }
