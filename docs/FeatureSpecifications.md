@@ -29,7 +29,6 @@ This document outlines the core and potential features of DropIn, providing a st
 **🔍 Description:** Helps users discover events based on proximity and preferences.
 **✅ Key Functionality:**
 *   Events filtered by categories, location, and time.
-*   Smart recommendations based on past attendance.
 
 ### 5️⃣ Notification System
 **🔔 Description:** Keeps users updated on relevant events and activities.
