@@ -113,7 +113,9 @@ final class AuthService {
         guard let userId else { return nil }
         let filePath = "\(userId.uuidString.lowercased())/\(UUID().uuidString)"
         
-        if try await isFolderEmpty(bucket: "avatars", folder: userId.uuidString) {
+        let filesInFolder = try await getFilesInFolder(bucket: "avatars", folder: userId.uuidString.lowercased())
+        
+        if filesInFolder.isEmpty {
             try await supabase.storage
                 .from("avatars")
                 .upload(
@@ -127,6 +129,10 @@ final class AuthService {
                 )
         } else {
             print("Folder not empty. Updating avatar...")
+            try await supabase.storage
+                .from("avatars")
+                .remove(paths: ["\(userId.uuidString.lowercased())/\(filesInFolder[0].name)"])
+            
             try await supabase.storage
                 .from("avatars")
                 .update(
@@ -159,26 +165,27 @@ final class AuthService {
         }
     }
     
-    private func isFolderEmpty(bucket: String, folder: String) async throws -> Bool {
+    private func getFilesInFolder(bucket: String, folder: String) async throws -> [FileObject] {
         let files = try await supabase.storage
             .from(bucket)
             .list(
                 path: folder,
                 options: SearchOptions(
                     limit: 1,
-                    offset: 0,
+                    offset: 0
                     )
             )
         print("Files returned \(files.count)")
-        return files.isEmpty
+        return files
     }
     
     private func uploadBannerImage(_ imageData: Data) async throws -> String? {
         guard let userId else { return nil }
         let filePath = "\(userId.uuidString.lowercased())/\(UUID().uuidString)"
         
+        let filesInFolder = try await getFilesInFolder(bucket: "banners", folder: userId.uuidString.lowercased())
         
-        if try await isFolderEmpty(bucket: "banners", folder: userId.uuidString) {
+        if filesInFolder.isEmpty {
             try await supabase.storage
                 .from("banners")
                 .upload(
@@ -191,6 +198,11 @@ final class AuthService {
                     )
                 )
         } else {
+            print("Files in folder name \(filesInFolder[0].name)")
+            try await supabase.storage
+                .from("banners")
+                .remove(paths: ["\(userId.uuidString.lowercased())/\(filesInFolder[0].name)"])
+            
             try await supabase.storage
                 .from("banners")
                 .update(
