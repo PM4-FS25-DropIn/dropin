@@ -41,7 +41,6 @@ struct EventMap: View {
                 }
                 ForEach(eventStore.events.indices, id: \.self) { index in
                     let event = eventStore.events[index]
-                    var _ = print("Event in for each is \(event.latitude)")
                     Marker(event.title, systemImage: getDropIcon(event: event), coordinate: CLLocationCoordinate2D(latitude: event.latitude, longitude: event.longitude))
                         .tag(MapSelection(index))
                         .tint(getEventStatusColor(event.status))
@@ -120,7 +119,6 @@ struct EventMap: View {
         .presentationDetents([.fraction(0.25), .medium, .large])
         .presentationDragIndicator(.visible)
         .presentationBackgroundInteraction(.enabled(upThrough: .fraction(0.25)))
-        .interactiveDismissDisabled()
         .presentationContentInteraction(.resizes)
     }
     
