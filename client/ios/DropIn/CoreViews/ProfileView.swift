@@ -189,7 +189,7 @@ struct ProfileView: View {
     // Evenly spaced stats row
     private var statsRow: some View {
         HStack {
-            statItem(number: "\(profile?.dropinsCreated ?? 0)", label: "DropIns Created",sf_icon: "sparkles")
+            statItem(number: "\(profile?.dropinsCreated ?? 0)", label: "DropIns created",sf_icon: "sparkles")
                 .frame(maxWidth: .infinity)
             statItem(number: "\(profile?.dropinsJoined ?? 0)", label: "DropIns attended",sf_icon: "figure.wave")
                 .frame(maxWidth: .infinity)
