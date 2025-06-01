@@ -21,6 +21,7 @@ final class DropInUITests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
         
+        testOnboarding(app: app)
         testHomeView(app: app)
         testChatView(app: app)
         testNotificationView(app: app)
@@ -28,7 +29,28 @@ final class DropInUITests: XCTestCase {
         testMapView(app: app)
         testDropInsView(app: app)
         testProfileView(app: app)
- 
+    }
+    
+    func testOnboarding(app: XCUIApplication) {
+        XCTContext.runActivity(named: "Test onboarding") { activity in
+            XCTAssertTrue(app.staticTexts["Welcome to\nDropIn."].waitForExistence(timeout: 1))
+            app.buttons["Get Started"].tap()
+            
+            XCTAssertTrue(app.staticTexts["What is DropIn?"].waitForExistence(timeout: 1))
+            app.swipeLeft()
+            
+            XCTAssertTrue(app.staticTexts["How it Works."].waitForExistence(timeout: 1))
+            app.swipeLeft()
+            
+            XCTAssertTrue(app.staticTexts["Enable Your Location."].waitForExistence(timeout: 1))
+            app.swipeLeft()
+            
+            XCTAssertTrue(app.staticTexts["Stay in the Loop."].waitForExistence(timeout: 1))
+            app.swipeLeft()
+            
+            XCTAssertTrue(app.staticTexts["Time For Adventures!"].waitForExistence(timeout: 1))
+            app.buttons["Sign Up"].tap()
+        }
     }
     
     func testHomeView(app: XCUIApplication) {
