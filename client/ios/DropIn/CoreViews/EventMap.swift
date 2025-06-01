@@ -8,6 +8,7 @@
 import SwiftUI
 @preconcurrency import MapKit
 
+/// A map displaying events.
 struct EventMap: View {
     @Environment(EventStore.self) private var eventStore
     @Bindable var viewModel: EventMapViewModel

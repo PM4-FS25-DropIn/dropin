@@ -10,6 +10,7 @@ import SwiftUI
 import Kingfisher
 @preconcurrency import MapKit
 
+/// A detail sheet for a selected event on the event map.
 struct MapEventItemDetailSheet: View {
     @Environment(EventStore.self) private var eventStore
     
@@ -110,18 +111,6 @@ struct MapEventItemDetailSheet: View {
                         .resizable()
                         .scaledToFill()
                         .clipped()
-                    /*AsyncImage(url: URL(string: imagePath)) { phase in
-                        if let image = phase.image {
-                            image
-                                .resizable()
-                                .scaledToFill()
-                                .clipped()
-                        } else if phase.error != nil {
-                            ContentUnavailableView("Image Unavailable", systemImage: "exclamationmark.circle.fill")
-                        } else {
-                            ProgressView()
-                        }
-                    }*/
                 }
             } else {
                 Image("default.event.thumbnail")

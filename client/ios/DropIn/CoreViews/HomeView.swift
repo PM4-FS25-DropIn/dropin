@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// The home view of the app.
 struct HomeView: View {
     
     var body: some View {

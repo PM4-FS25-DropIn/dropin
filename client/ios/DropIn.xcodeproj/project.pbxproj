@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B34490362DECFD3F008D9B28 /* DropIn.docc in Sources */ = {isa = PBXBuildFile; fileRef = B34490352DECFD3F008D9B28 /* DropIn.docc */; };
 		B377A7392DE2541100E6802A /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B377A7382DE2541100E6802A /* Launch Screen.storyboard */; };
 		B3C47E532DE8826100DDBA09 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = B3C47E522DE8826100DDBA09 /* Kingfisher */; };
 		EE3385912DAC5D25006C95F4 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = EE3385902DAC5D25006C95F4 /* Supabase */; };
@@ -30,6 +31,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B34490352DECFD3F008D9B28 /* DropIn.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = DropIn.docc; sourceTree = "<group>"; };
 		B377A7382DE2541100E6802A /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		B3B7160C2D872E1D0023465A /* DropIn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DropIn.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B7161C2D872E1F0023465A /* DropInTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DropInTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -98,6 +100,7 @@
 		B3B716032D872E1D0023465A = {
 			isa = PBXGroup;
 			children = (
+				B34490352DECFD3F008D9B28 /* DropIn.docc */,
 				B377A7382DE2541100E6802A /* Launch Screen.storyboard */,
 				B3DA19172DCBA15F000A8E7B /* DropIn.xctestplan */,
 				B3B7160E2D872E1D0023465A /* DropIn */,
@@ -277,6 +280,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B34490362DECFD3F008D9B28 /* DropIn.docc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

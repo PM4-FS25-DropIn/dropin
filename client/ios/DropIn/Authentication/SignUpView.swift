@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// The sign up interface for the user.
 struct SignUpView: View {
     @Environment(AuthService.self) private var authService
     
@@ -98,7 +99,6 @@ struct SignUpView: View {
     }
     
     private func signUp() {
-        print("Signing up...")
         Task {
             signUpState = .running
             do {
@@ -138,7 +138,7 @@ struct SignUpView: View {
         .environment(AuthService())
 }
 
-enum SignUpError: String, Error, LocalizedError {
+private enum SignUpError: String, Error, LocalizedError {
     case usernameTaken = "Username already taken"
     
     var errorDescription: String? { rawValue }

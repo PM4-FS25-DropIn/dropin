@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-
+/// Shows a status badge for an event.
 struct EventCardStatusBadge: View {
     
     var status: EventStatus

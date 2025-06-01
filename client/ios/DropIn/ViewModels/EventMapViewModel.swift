@@ -2,21 +2,30 @@ import SwiftUI
 @preconcurrency import MapKit
 
 
+/// View model for managing map interactions and navigation to DropIn events.
+/// Handles camera state, selected events, and route calculations.
 @MainActor
 @Observable
 final class EventMapViewModel {
     
+    /// Shared location service instance used to retrieve the user's current location.
     @ObservationIgnored var locationService = LocationService.shared
+    /// Reference to the shared event store containing all available events.
     @ObservationIgnored var eventStore: EventStore?
     
+    /// Current visible map region, updated on camera movement.
     var visibleRegion: MKCoordinateRegion?
     
+    /// The ID of the currently selected event on the map.
     var selectedEventId: Int?
     
+    /// Route to the selected event, calculated using MapKit directions.
     var route: MKRoute?
     
+    /// Timestamp of the last camera region update.
     var lastCameraUpdate = Date()
     
+    /// Formatted estimated travel time to the selected event.
     var travelTime: String? {
         guard let route = route else { return nil }
         let formatter = DateComponentsFormatter()
@@ -25,7 +34,8 @@ final class EventMapViewModel {
         return formatter.string(from: route.expectedTravelTime)
     }
     
-    /// Get Directions to an event
+    /// Calculates walking directions from the user's location to the selected event.
+    /// - Parameter selectedItem: The selected map item containing the event ID.
     func getDirections(of selectedItem: MapSelection<Int>) {
         route = nil
         guard let eventStore else { return }

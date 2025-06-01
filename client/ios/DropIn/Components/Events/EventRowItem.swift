@@ -9,6 +9,7 @@
 import SwiftUI
 import Kingfisher
 
+/// Displays a row for an event.
 struct EventRowItem: View {
     
     @State private var showDetailsView = false
@@ -47,29 +48,6 @@ struct EventRowItem: View {
                     .scaledToFill()
                     .containerRelativeFrame([.horizontal], count: 10, span: 4, spacing: 0)
                     .clipped()
-            }
-            /*
-            if let eventImagePath = event.imagePaths?.first {
-                AsyncImage(url: URL(string: eventImagePath)) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .containerRelativeFrame([.horizontal], count: 10, span: 4, spacing: 0)
-                            .clipped()
-                    } else if phase.error != nil {
-                        VStack(spacing: 5) {
-                            Image(systemName: "exclamationmark.circle.fill")
-                            Text("Image Unavailable")
-                        }
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .scaledToFill()
-                        .clipped()
-                    } else {
-                        ProgressView()
-                    }
-                }
             } else {
                 Image("default.event.thumbnail")
                     .resizable()
@@ -77,7 +55,6 @@ struct EventRowItem: View {
                     .containerRelativeFrame([.horizontal], count: 10, span: 4, spacing: 0)
                     .clipped()
             }
-            */
         }
     }
     

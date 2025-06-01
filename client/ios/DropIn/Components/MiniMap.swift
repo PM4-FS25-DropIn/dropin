@@ -8,6 +8,7 @@
 import SwiftUI
 import MapKit
 
+/// A small map displaying a single event.
 struct MiniMap: View {
     
     var event: DropInEvent

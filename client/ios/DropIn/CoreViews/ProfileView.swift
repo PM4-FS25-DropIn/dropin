@@ -1,7 +1,7 @@
 import SwiftUI
 import Kingfisher
 
-
+/// Displays the profile of a user.
 struct ProfileView: View {
     
     @Environment(AuthService.self) private var authService
@@ -75,21 +75,6 @@ struct ProfileView: View {
                     .scaledToFill()
                     .frame(height: 160)
                     .clipped()
-                /*AsyncImage(url: URL(string: bannerUrl)) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(height: 160)
-                            .clipped()
-                    } else if phase.error != nil {
-                        ContentUnavailableView("Image Unavailable", systemImage: "exclamationmark.circle.fill")
-                    } else {
-                        ProgressView()
-                    }
-                }
-                .id(bannerUrl)
-                 */
             } else {
                 Image("default.event.thumbnail")
                     .resizable()
@@ -144,23 +129,6 @@ struct ProfileView: View {
                     .clipShape(Circle())
                     .shadow(radius: 1)
                     .padding(.top, 110)
-                /*AsyncImage(url: URL(string: avatarUrl)) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 100, height: 100)
-                            .clipShape(Circle())
-                            .shadow(radius: 1)
-                            .padding(.top, 110)
-                    } else if phase.error != nil {
-                        ContentUnavailableView("Image Unavailable", systemImage: "exclamationmark.circle.fill")
-                    } else {
-                        ProgressView()
-                    }
-                }
-                .id(avatarUrl)
-                 */
             } else {
                 Image("default.avatar.placeholder")
                     .resizable()

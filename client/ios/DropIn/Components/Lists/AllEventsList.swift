@@ -9,7 +9,7 @@
 import SwiftUI
 
 
-/// Displays a list of joined events of user
+/// Displays a list of joined events of the user.
 struct AllEventsList: View {
     @Environment(EventStore.self) private var eventStore
     @Environment(AuthService.self) private var authService

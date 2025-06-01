@@ -1,7 +1,6 @@
 import Foundation
 import MapKit
 
-
 extension DropInEvent {
     var mapItem: MKMapItem {
         let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)

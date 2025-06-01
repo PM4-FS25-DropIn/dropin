@@ -8,6 +8,7 @@
 import Foundation
 import CoreLocation
 
+/// Util function to format coordinates.
 func formatCoordinates(latitude: CLLocationDegrees, longitude: CLLocationDegrees) -> String {
     let latDirection = latitude >= 0 ? "N" : "S"
     let lonDirection = longitude >= 0 ? "E" : "W"

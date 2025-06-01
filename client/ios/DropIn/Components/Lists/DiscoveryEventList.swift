@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+/// Displays a list of possible nearby events in the HomeView.
 struct DiscoveryEventList: View {
     @Environment(EventStore.self) private var eventStore
     @State private var vm: DiscoveryEventListViewModel = DiscoveryEventListViewModel()

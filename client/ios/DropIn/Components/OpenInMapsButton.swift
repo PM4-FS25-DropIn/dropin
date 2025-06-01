@@ -8,6 +8,7 @@
 import SwiftUI
 import MapKit
 
+/// A button to open an event in Apple Maps.
 struct OpenInMapsButton: View {
     
     var event: DropInEvent

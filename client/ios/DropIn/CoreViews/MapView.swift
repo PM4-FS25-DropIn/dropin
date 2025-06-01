@@ -8,7 +8,7 @@
 import SwiftUI
 import MapKit
 
-
+/// The map view of the app.
 struct MapView: View {
     
     @State private var eventMapViewModel = EventMapViewModel()

@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// Authentication wrapper view for SignIn and SignUp.
 struct AuthView: View {
     @State private var selectedAuthMode: AuthMode = .signUp
     

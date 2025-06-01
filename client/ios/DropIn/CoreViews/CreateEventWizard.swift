@@ -9,7 +9,7 @@ import SwiftUI
 import MapKit
 import PhotosUI
 
-
+/// A multi-step wizard for creating a new event.
 struct CreateEventWizard: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(EventStore.self) private var eventStore

@@ -5,10 +5,10 @@
 //  Created on 01/05/2025.
 //
 
-
 import SwiftUI
 import PhotosUI
 
+/// A component to select photos.
 struct PhotoSelector: View {
     @Binding var selectedPhotos: [PhotosPickerItem]
     
