@@ -31,12 +31,12 @@ struct ChatServiceTests {
         self.chatService = ChatService(authService: self.authService, event: self.event)
     }
     
-    @Test("fetch messages")
+    @Test("Message fetching")
     func fetchMessages() async throws {
         await chatService.fetchMessages(for: 1)
     }
     
-    @Test("send message")
+    @Test("Message sending")
     func sendMessage() async throws {
         Task {
             do {
@@ -49,7 +49,7 @@ struct ChatServiceTests {
         #expect(true)
     }
     
-    @Test("subscribe channel testing")
+    @Test("Subscribe channel testing")
     func subscribeChannel() async throws {
         chatService.subscribeMessages()
         
@@ -61,7 +61,7 @@ struct ChatServiceTests {
         #expect(chatService.messages.count == 2)
     }
     
-    @Test("unsubscribe channel testing")
+    @Test("Unsubscribe channel testing")
     func handleInsertedMessage() async throws {
         await chatService.unsubscribeMessages()
     }

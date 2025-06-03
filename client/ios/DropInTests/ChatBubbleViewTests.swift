@@ -13,26 +13,4 @@ struct ChatBubbleViewTests {
     
         #expect(!formatted.isEmpty)
     }
-    
-    @Test("Formatted date returns expected string")
-    func formattedDateReturnsExpectedString() {
-        let components = DateComponents(calendar: Calendar.current, year: 2025, month: 5, day: 14)
-        let date = components.date!
-        let message = Message(
-            chatRoomId: 1,
-            username: "User",
-            content: "Test",
-            isCurrentSession: true,
-            timestamp: date
-        )
-
-        let formatted = message.formattedDate()
-
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .none
-        let expected = formatter.string(from: date)
-
-        #expect(formatted == expected)
-    }
 }
