@@ -28,6 +28,3 @@ CREATE POLICY "Only allow up to 10 avatar images per user"
         (bucket_id = 'avatars')
         AND (count_user_uploads_in('avatars') <= 10)
     );
-
--- Limit file size to 5MB and limit mime types to images only
-UPDATE storage.buckets SET file_size_limit = 5242880, allowed_mime_types = ARRAY['image/*'] WHERE id = 'avatars';
