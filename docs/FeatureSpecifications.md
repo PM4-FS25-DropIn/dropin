@@ -30,43 +30,51 @@ This document outlines the core and potential features of DropIn, providing a st
 **✅ Key Functionality:**
 *   Events filtered by categories, location, and time.
 
-### 5️⃣ Notification System
+## 🚀 Future Enhancements (If Time Allows)
+*"Nice-to-Have" Features for Extended Functionality*
+
+### 🕐 DropIn (24h) + DropSoon (up to 7 days in advance) Events
+**⏳ Description:** Two event types for different planning needs.
+**✅ Key Functionality:**
+*   DropIn Events: Spontaneous, expire in 24 hours.
+*   DropSoon Events: Can be planned up to 7 days in advance.
+
+### 🔔 Notification System
 **🔔 Description:** Keeps users updated on relevant events and activities.
 **✅ Key Functionality:**
 *   Push notifications for nearby events, invitations, and updates.
 *   Customizable notification preferences.
 
-### 6️⃣ Event Rating + Feedback
+### 💬 Event Rating + Feedback
 **⭐ Description:** Users can rate events and provide feedback.
 **✅ Key Functionality:**
 *   Star rating system for past events.
 *   Option to leave comments for the host.
 *   Helps improve event quality.
 
-### 7️⃣ DropIn (24h) + DropSoon (up to 7 days in advance) Events
-**⏳ Description:** Two event types for different planning needs.
+### 5️⃣ DropIn Network
+**🌐 Description:** Social features to connect users and enhance event discovery.
 **✅ Key Functionality:**
-*   DropIn Events: Spontaneous, expire in 24 hours.
-*   DropSoon Events: Can be planned up to 7 days in advance.
+*   Add friends and receive notifications when they attend or create events.
+*   Friend activity feed with customizable privacy settings.
 
-## 🚀 Future Enhancements (If Time Allows)
-*"Nice-to-Have" Features for Extended Functionality*
+### 6️⃣ Event Photo Sharing
+**📸 Description:** Share moments and memories within events.
+**✅ Key Functionality:**
+*   Upload and share photos in the event group chat.
+*   Hosts can enable or disable photo sharing for their events.
 
-### 🌐 DropIn Network
-*   Option to add friends and get notified when they attend or create events.
-*   Friend activity feed (privacy settings included).
-
-### 📸 Event Photo Sharing
-*   Users can upload and share photos within the event chat.
-*   Hosts can enable/disable this feature.
-
-### 🆔 Personal & Business Accounts
+### 7️⃣ Personal & Business Accounts
+**🆔 Description:** Different account types for varied user needs.
+**✅ Key Functionality:**
 *   Business accounts can create promotional or ticketed events.
-*   Personal accounts remain casual and social.
+*   Personal accounts focus on casual and social participation.
 
-### 💎 Pro Subscription for More Features
-*   Premium users get access to exclusive event filters, analytics, and priority event visibility.
-*   Subscription model for monetization.
+### 8️⃣ Pro Subscription Features
+**💎 Description:** Premium tier for advanced functionality and monetization.
+**✅ Key Functionality:**
+*   Access to exclusive event filters, analytics, and priority event visibility.
+*   Subscription-based model for unlocking premium features.
 
 ## 📌 Notes
 *   Core features are prioritized for MVP.
