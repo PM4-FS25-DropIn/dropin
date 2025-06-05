@@ -7,7 +7,7 @@
 [![Swift iOS Client CI](https://github.com/PM4-FS25-DropIn/dropin/actions/workflows/ci-client-swift.yml/badge.svg)](https://github.com/PM4-FS25-DropIn/dropin/actions/workflows/ci-client-swift.yml) [![SonarQube Build](https://github.com/PM4-FS25-DropIn/dropin/actions/workflows/sonarqube.yml/badge.svg)](https://github.com/PM4-FS25-DropIn/dropin/actions/workflows/sonarqube.yml)
 
 </div>
-DropIn is a social app designed for spontaneous meetups and short-term events. Users can create events that others can quickly join ("drop in"), with events planned up to 7 days in advance. The platform supports both personal and business-created events, encouraging a dynamic mix of activities. Each event features its own chat and media sharing, allowing participants to stay connected and share their experiences. A swipe or map-based interface lets users easily browse through events happening nearby.j
+DropIn is a social app designed for spontaneous meetups and short-term events. Users can create events that others can quickly join ("drop in"). The platform supports both personal and business-created events, encouraging a dynamic mix of activities. Each event features its own chat and media sharing, allowing participants to stay connected and share their experiences. A swipe or map-based interface lets users easily browse through events happening nearby.
 
 ## Availability
 DropIn is currently available exclusively on iOS and optimized for iPhones using SwiftUI.
