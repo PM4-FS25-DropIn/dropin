@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// A styled text field.
 struct AuthTextField: View {
     let placeholder: String
     @Binding var value: String

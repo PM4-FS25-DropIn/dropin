@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// A custom gesture recognizing a long press.
 struct MyLongPressGesture: UIGestureRecognizerRepresentable {
     private let longPressAt: (_ position: CGPoint) -> Void
     

@@ -6,7 +6,10 @@
 //
 
 import SwiftUI
+import Kingfisher
 
+
+/// Card component displaying information about an event.
 struct EventCard: View {
     @Environment(EventStore.self) private var eventStore
     
@@ -55,18 +58,10 @@ struct EventCard: View {
         TabView {
             if let eventImagePaths = event.imagePaths {
                 ForEach(eventImagePaths, id: \.self) { imagePath in
-                    AsyncImage(url: URL(string: imagePath)) { phase in
-                        if let image = phase.image {
-                            image
-                                .resizable()
-                                .scaledToFill()
-                                .clipped()
-                        } else if phase.error != nil {
-                            ContentUnavailableView("Image Unavailable", systemImage: "exclamationmark.circle.fill")
-                        } else {
-                            ProgressView()
-                        }
-                    }
+                    KFImage(URL(string: imagePath))
+                        .resizable()
+                        .scaledToFill()
+                        .clipped()
                 }
             } else {
                 Image("default.event.thumbnail")

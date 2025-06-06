@@ -1,10 +1,12 @@
 import SwiftUI
 
-enum EventTabSelection: String, CaseIterable {
+/// Options for the DropInsView picker.
+private enum EventTabSelection: String, CaseIterable {
     case allEvents = "All DropIns"
     case myEvents = "My DropIns"
 }
 
+/// Displays a picker with two views displaying either all joined events or only events created by the user.
 struct DropInsView: View {
     @Environment(\.dismiss) var dismiss
     

@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// Displays a view for an onboarding section.
 struct OnboardingView: View {
     @Binding var showOnboarding: Bool
     @State private var currentPageIndex = 0

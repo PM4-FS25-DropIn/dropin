@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// The sign in interface for the user.
 struct SignInView: View {
     @Environment(AuthService.self) private var authService
     

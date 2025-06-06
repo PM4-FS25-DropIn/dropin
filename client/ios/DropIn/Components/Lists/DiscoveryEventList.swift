@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+/// Displays a list of possible nearby events in the HomeView.
 struct DiscoveryEventList: View {
     @Environment(EventStore.self) private var eventStore
     @State private var vm: DiscoveryEventListViewModel = DiscoveryEventListViewModel()
@@ -82,7 +83,7 @@ struct DiscoveryEventList: View {
                 .bold()
                 .foregroundStyle(.secondary)
             Button(fetchEventsStatus.isRunning ? "Searching" : "Search again") {
-                fetchAdditionalEvents()
+                refreshFeed()
             }
             .disabled(fetchEventsStatus.isRunning)
             Spacer()

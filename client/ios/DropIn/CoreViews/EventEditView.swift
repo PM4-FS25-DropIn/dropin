@@ -2,6 +2,7 @@ import SwiftUI
 import PhotosUI
 import MapKit
 
+/// Displays a view with options to edit an event.
 struct EventEditView: View {
     @Environment(EventStore.self) private var eventStore
     @Environment(\.dismiss) private var dismiss

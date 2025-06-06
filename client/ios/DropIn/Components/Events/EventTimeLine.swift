@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// Displays a component showing a timeline of joined events.
 struct EventTimeLine: View {
     @Environment(EventStore.self) private var eventStore
     

@@ -7,6 +7,7 @@
 import SwiftUI
 import MapKit
 
+/// Defines the view of a chatroom.
 struct ChatRoomView: View {
     @Environment(AuthService.self) private var authService
     @Environment(EventStore.self) private var eventStore

@@ -31,7 +31,7 @@ let onboardingPages = [
             """,
         imageName: "Onboarding/location"),
     OnboardingPage(
-        title: "Enable Your Location",
+        title: "Enable Your Location.",
         description:
             """
             To find events near you, we need access to your location. 

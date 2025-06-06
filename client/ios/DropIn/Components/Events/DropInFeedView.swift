@@ -6,7 +6,9 @@
 //
 
 import SwiftUI
+import Kingfisher
 
+/// Displays the joined events of a user in the ProfileView.
 struct DropInFeedView: View {
     @Environment(AuthService.self) private var authService
     @Environment(EventStore.self) private var eventStore
@@ -62,26 +64,11 @@ struct DropInFeedView: View {
     private func rowImage(event: DropInEvent) -> some View {
         Group {
             if let eventImagePath = event.imagePaths?.first {
-                var _ = print("Event image path is \(eventImagePath)")
-                AsyncImage(url: URL(string: eventImagePath)) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 50, height: 50)
-                            .clipShape(RoundedRectangle(cornerRadius: 30))
-                    } else if phase.error != nil {
-                        VStack(spacing: 5) {
-                            Image(systemName: "exclamationmark.circle.fill")
-                        }
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .scaledToFill()
-                        .clipped()
-                    } else {
-                        ProgressView()
-                    }
-                }
+                KFImage(URL(string: eventImagePath))
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 50, height: 50)
+                    .clipShape(RoundedRectangle(cornerRadius: 30))
             } else {
                 Image("default.event.thumbnail")
                     .resizable()

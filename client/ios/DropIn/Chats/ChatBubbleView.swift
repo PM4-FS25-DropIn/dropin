@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// Defines a chat message bubble.
 struct ChatBubbleView: View {
     let message: Message
     

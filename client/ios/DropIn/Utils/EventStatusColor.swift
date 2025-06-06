@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-
+/// Return a color based on the status of an event.
 func getEventStatusColor(_ status: EventStatus) -> Color {
     switch status {
     case .upcoming: return .teal
@@ -17,7 +17,7 @@ func getEventStatusColor(_ status: EventStatus) -> Color {
     }
 }
 
-
+/// Return a gradient based on the status of an event.
 func getEventStatusColorGradient(_ status: EventStatus) -> LinearGradient {
     switch status {
     case .upcoming: return LinearGradient(gradient: Gradient(colors: [.lightCyan, .pacificCyan]), startPoint: .topLeading,

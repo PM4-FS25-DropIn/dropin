@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// 
+/// The entry point after successful authentication.
 struct AppView: View {
     @State private var eventStore = EventStore()
     
