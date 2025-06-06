@@ -3,7 +3,7 @@
 The following ERD shows the core tables used by DropIn.
 ```mermaid
 erDiagram
-    public.users {
+    "auth.users" {
         character_varying aud 
         timestamp_with_time_zone banned_until 
         timestamp_with_time_zone confirmation_sent_at 
@@ -41,7 +41,7 @@ erDiagram
         timestamp_with_time_zone updated_at 
     }
 
-    public.event_joins {
+    "public.event_joins" {
         timestamp_with_time_zone created_at 
         bigint event_id FK,UK 
         bigint id PK 
@@ -49,7 +49,7 @@ erDiagram
         uuid user_id FK,UK 
     }
 
-    public.events {
+    "public.events" {
         boolean age_restricted 
         boolean chat_enabled 
         timestamp_with_time_zone created_at 
@@ -57,8 +57,7 @@ erDiagram
         timestamp_with_time_zone end 
         bigint id PK 
         ARRAY image_paths 
-        double_precision latitude 
-        double_precision longitude 
+        geography location 
         integer slot_limit 
         integer slots_taken 
         timestamp_with_time_zone start 
@@ -67,7 +66,7 @@ erDiagram
         uuid user_id FK 
     }
 
-    public.messages {
+    "public.messages" {
         bigint chat_room_id FK 
         text content 
         timestamp_with_time_zone created_at 
@@ -76,20 +75,35 @@ erDiagram
         text session_name 
     }
 
-    public.profiles {
+    "public.profiles" {
         text avatar_url 
+        text banner_url 
         text city 
+        integer dropins_created 
+        integer dropins_joined 
         text emojicode 
         uuid id PK,FK 
         timestamp_with_time_zone updated_at 
         text username UK 
     }
 
-    event_joins }o--|| users : "user_id"
-    event_joins }o--|| events : "event_id"
-    events }o--|| users : "user_id"
-    messages }o--|| events : "chat_room_id"
-    profiles |o--|| users : "id"
+    "public.messages" {
+        text event 
+        text extension 
+        uuid id PK 
+        timestamp_without_time_zone inserted_at PK 
+        jsonb payload 
+        boolean private 
+        text topic 
+        timestamp_without_time_zone updated_at 
+    }
+
+    "public.event_joins" }o--|| "auth.users" : "user_id"
+    "public.event_joins" }o--|| "public.events" : "event_id"
+    "public.events" }o--|| "auth.users" : "user_id"
+    "public.messages" }o--|| "public.events" : "chat_room_id"
+    "public.profiles" |o--|| "auth.users" : "id"
+
 ```
 
 We use the authentication service of Supabase, thus we use the ID Provided by the `auth.users` table to identify the user throughout the system.
