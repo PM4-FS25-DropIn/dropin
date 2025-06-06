@@ -7,7 +7,9 @@
 
 
 import SwiftUI
+import Kingfisher
 
+/// Displays a row for an event.
 struct EventRowItem: View {
     
     @State private var showDetailsView = false
@@ -41,26 +43,11 @@ struct EventRowItem: View {
     private var rowImage: some View {
         Group {
             if let eventImagePath = event.imagePaths?.first {
-                AsyncImage(url: URL(string: eventImagePath)) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .containerRelativeFrame([.horizontal], count: 10, span: 4, spacing: 0)
-                            .clipped()
-                    } else if phase.error != nil {
-                        VStack(spacing: 5) {
-                            Image(systemName: "exclamationmark.circle.fill")
-                            Text("Image Unavailable")
-                        }
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .scaledToFill()
-                        .clipped()
-                    } else {
-                        ProgressView()
-                    }
-                }
+                KFImage(URL(string: eventImagePath)!)
+                    .resizable()
+                    .scaledToFill()
+                    .containerRelativeFrame([.horizontal], count: 10, span: 4, spacing: 0)
+                    .clipped()
             } else {
                 Image("default.event.thumbnail")
                     .resizable()
@@ -76,8 +63,6 @@ struct EventRowItem: View {
             HStack {
                 Text(event.title)
                     .font(.headline)
-                    .scaledToFit()
-                    .minimumScaleFactor(0.5)
                     .lineLimit(1)
                 if isHost {
                     Image(systemName: "crown.fill")
@@ -88,8 +73,6 @@ struct EventRowItem: View {
             Text(event.description)
                 .font(.caption)
                 .foregroundStyle(.secondary)
-                .scaledToFit()
-                .minimumScaleFactor(0.2)
                 .lineLimit(2)
             Spacer()
             VStack(alignment: .leading) {

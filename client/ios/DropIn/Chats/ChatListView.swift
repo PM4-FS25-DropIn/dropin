@@ -1,7 +1,8 @@
 import SwiftUI
+import Kingfisher
 
-// MARK: - Chats View
 
+/// A list of the temporary event chats.
 struct ChatListView: View {
     @Environment(AuthService.self) private var authService
     @Environment(EventStore.self) private var eventStore
@@ -26,6 +27,7 @@ struct ChatListView: View {
 
 // MARK: - Chat Row View
 
+/// A single chat row used in a list.
 struct ChatRow: View {
     let event: DropInEvent
 
@@ -54,27 +56,11 @@ struct ChatRow: View {
     private var eventImageCircle: some View {
         Group {
             if let eventImagePath = event.imagePaths?.first {
-                AsyncImage(url: URL(string: eventImagePath)) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 50, height: 50)
-                            .clipShape(Circle())
-                    } else if phase.error != nil {
-                        VStack(spacing: 5) {
-                            Image(systemName: "exclamationmark.circle.fill")
-                        }
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .frame(width: 50, height: 50)
-                        .background(Circle().fill(Color.gray.opacity(0.2)))
-                    } else {
-                        ProgressView()
-                            .frame(width: 50, height: 50)
-                            .background(Circle().fill(Color.gray.opacity(0.2)))
-                    }
-                }
+                KFImage(URL(string: eventImagePath)!)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 50, height: 50)
+                    .clipShape(Circle())
             } else {
                 Image("defaut.event.thumbnail")
                     .resizable()
@@ -93,7 +79,6 @@ struct ChatRow: View {
         }
     }
 
-    // Helper function to format the date nicely
     private func formatDate(_ date: Date) -> String {
         let calendar = Calendar.current
         if calendar.isDateInToday(date) {

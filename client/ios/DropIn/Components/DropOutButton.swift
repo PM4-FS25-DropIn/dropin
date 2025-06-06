@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// A styled button for leaving an event.
 struct DropOutButton: View {
     @Binding var attendanceStatus: AttendanceStatus
     

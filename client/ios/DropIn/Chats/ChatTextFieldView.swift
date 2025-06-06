@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+/// The text input field for the chat interface.
 struct ChatTextFieldView: View {
     @Binding var message: String
     var onSend: () -> Void

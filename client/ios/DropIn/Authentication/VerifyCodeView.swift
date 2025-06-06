@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Displays an interface to enter verification code.
 struct VerifyCodeView: View {
     var authData: AuthCredentials
     

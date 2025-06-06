@@ -8,6 +8,7 @@
 import SwiftUI
 import MapKit
 
+/// The app's tabbbar.
 struct TabBar: View {
     @State private var isSheetPresented = false
 

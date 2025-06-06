@@ -8,6 +8,7 @@
 import SwiftUI
 
 
+/// Tab navigation for switching between categories in HomeView.
 struct EventCategoryTabView: View {
     @Binding var selectedCategory: EventCategory
  

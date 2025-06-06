@@ -1,6 +1,7 @@
 import SwiftUI
+import Kingfisher
 
-
+/// Displays the profile of a user.
 struct ProfileView: View {
     
     @Environment(AuthService.self) private var authService
@@ -69,20 +70,11 @@ struct ProfileView: View {
     private var bannerImage: some View {
         Group {
             if let bannerUrl = profile?.bannerUrl {
-                AsyncImage(url: URL(string: bannerUrl)) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(height: 160)
-                            .clipped()
-                    } else if phase.error != nil {
-                        ContentUnavailableView("Image Unavailable", systemImage: "exclamationmark.circle.fill")
-                    } else {
-                        ProgressView()
-                    }
-                }
-                .id(bannerUrl)
+                KFImage(URL(string: bannerUrl))
+                    .resizable()
+                    .scaledToFill()
+                    .frame(height: 160)
+                    .clipped()
             } else {
                 Image("default.event.thumbnail")
                     .resizable()
@@ -130,22 +122,13 @@ struct ProfileView: View {
     private var profileImageView: some View {
         Group {
             if let avatarUrl = profile?.avatarUrl {
-                AsyncImage(url: URL(string: avatarUrl)) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 100, height: 100)
-                            .clipShape(Circle())
-                            .shadow(radius: 1)
-                            .padding(.top, 110)
-                    } else if phase.error != nil {
-                        ContentUnavailableView("Image Unavailable", systemImage: "exclamationmark.circle.fill")
-                    } else {
-                        ProgressView()
-                    }
-                }
-                .id(avatarUrl)
+                KFImage(URL(string: avatarUrl))
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 100, height: 100)
+                    .clipShape(Circle())
+                    .shadow(radius: 1)
+                    .padding(.top, 110)
             } else {
                 Image("default.avatar.placeholder")
                     .resizable()
@@ -174,7 +157,7 @@ struct ProfileView: View {
     // Evenly spaced stats row
     private var statsRow: some View {
         HStack {
-            statItem(number: "\(profile?.dropinsCreated ?? 0)", label: "DropIns Created",sf_icon: "sparkles")
+            statItem(number: "\(profile?.dropinsCreated ?? 0)", label: "DropIns created",sf_icon: "sparkles")
                 .frame(maxWidth: .infinity)
             statItem(number: "\(profile?.dropinsJoined ?? 0)", label: "DropIns attended",sf_icon: "figure.wave")
                 .frame(maxWidth: .infinity)

@@ -1,6 +1,8 @@
 import SwiftUI
 import MapKit
+import Kingfisher
 
+/// Displays details about an event.
 struct EventDetailView: View {
     @Environment(EventStore.self) private var eventStore
     @Environment(\.dismiss) private var dismiss
@@ -48,18 +50,13 @@ struct EventDetailView: View {
         TabView {
             if let eventImagePaths = event.imagePaths {
                 ForEach(eventImagePaths, id: \.self) { imagePath in
-                    AsyncImage(url: URL(string: imagePath)) { phase in
-                        if let image = phase.image {
-                            image
-                                .resizable()
-                                .scaledToFill()
-                                .clipped()
-                        } else if phase.error != nil {
-                            ContentUnavailableView("Image Unavailable", systemImage: "exclamationmark.circle.fill")
-                        } else {
+                    KFImage.url(URL(string: imagePath))
+                        .placeholder() {
                             ProgressView()
                         }
-                    }
+                        .resizable()
+                        .scaledToFill()
+                        .clipped()
                 }
             } else {
                 Image("default.event.thumbnail")

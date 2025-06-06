@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// Displays a component with essential information about an event.
 struct EventQuickInfo: View {
     @Environment(EventStore.self) private var eventStore
 

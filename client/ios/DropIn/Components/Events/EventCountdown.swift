@@ -1,6 +1,11 @@
 import SwiftUI
 import Combine
 
+
+/// A component displaying a countdown of an event.
+///
+/// Displays a countdown starting from the start date of an event. Uses a default timer
+/// if none is provided. 
 struct EventCountdown: View {
     @State private var timeRemaining: TimeInterval = 0
     let eventStartDate: Date

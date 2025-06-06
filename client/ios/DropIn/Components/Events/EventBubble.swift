@@ -5,10 +5,13 @@
 //  Created by leo on 02.04.2025.
 //
 
-/// Simple circular shaped thumbnail of the event.
-/// Has a border that indicates the status of the event, which gets updated every minute.
 import SwiftUI
+import Kingfisher
 
+/// Simple circular shaped thumbnail of the event.
+///
+/// Displays a circular shaped thumbnail of an event.
+/// Includes a ring (border) that indicates the status of the event, which gets updated every minute.
 struct EventBubble: View {
     
     let event: DropInEvent
@@ -22,22 +25,11 @@ struct EventBubble: View {
     private var image: some View {
         Group {
             if let eventImagePath = event.imagePaths?.first {
-                AsyncImage(url: URL(string: eventImagePath)) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(ringColor, lineWidth: 3))
-                    } else if phase.error != nil {
-                        Image(systemName: "xmark.circle.fill")
-                            .resizable()
-                            .scaledToFill()
-                            .clipShape(Circle())
-                    } else {
-                        ProgressView()
-                    }
-                }
+                KFImage(URL(string: eventImagePath))
+                    .resizable()
+                    .scaledToFill()
+                    .clipShape(Circle())
+                    .overlay(Circle().stroke(ringColor, lineWidth: 3))
             } else {
                 Image("default.event.thumbnail")
                     .resizable()

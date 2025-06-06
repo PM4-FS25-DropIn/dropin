@@ -13,7 +13,7 @@ enum PickerType {
     case avatar, banner
 }
 
-/// Root view for editing a user profile
+/// Displays a view to edit the user profile.
 struct ProfileEditView: View {
     @Environment(AuthService.self) private var authService
     @Environment(\.dismiss) private var dismiss

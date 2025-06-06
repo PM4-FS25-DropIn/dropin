@@ -3,6 +3,8 @@ import PhotosUI
 import Auth
 import Storage
 
+/// A central service for managing DropIn events, including fetching, creating,
+/// joining, leaving, updating, and deleting events, as well as handling user participation.
 @MainActor
 @Observable
 class EventStore {
@@ -10,16 +12,19 @@ class EventStore {
     /// All fetched events for feed and map display.
     var events: [DropInEvent] = []
     
+    /// Indicates whether the store has completed initial setup.
     var isInitialized = false
     
-    /// Events the user joined (including his own).
+    /// Events the user joined (including their own).
     var joinedEvents: [DropInEvent] = []
     
+    /// Current delta used for event search expansion on the map.
     var searchDelta: Double = 0
     
     private var userId: UUID?
     private var userLocation: CLLocationCoordinate2D?
     
+    /// Initializes the store by updating joined events and loading user data.
     init() {
         Task {
             try await updateJoinedEvents()
@@ -29,11 +34,13 @@ class EventStore {
         }
     }
     
+    /// Retrieves the currently authenticated user's ID.
     private func getUserId() async throws -> UUID {
         return try await supabase.auth.session.user.id
     }
     
     
+    /// Fetches the list of events the user has joined from the backend.
     func updateJoinedEvents() async throws {
         joinedEvents = try await supabase
             .from("events_joined_by_user")
@@ -44,18 +51,20 @@ class EventStore {
         pruneExpiredJoinedEvents()
     }
     
+    /// Removes joined events that have already ended.
     func pruneExpiredJoinedEvents() {
         joinedEvents.removeAll { event in
             return event.end < .now
         }
     }
     
-    /// Clear events.
+    /// Clears all currently stored events and resets the search delta.
     func clearEvents() async throws {
         self.events = []
         searchDelta = 0
     }
     
+    /// Returns a list of events that the user has not joined.
     func getNotJoinedEvents() -> [DropInEvent] {
         let joinedIds = Set(joinedEvents.compactMap((\.id)))
 
@@ -68,7 +77,7 @@ class EventStore {
     }
     
     
-    /// Check if an event has been joined by the current user.
+    /// Checks if a specific event has been joined by the current user.
     func checkIfEventIsJoinedByUser(_ event: DropInEvent) -> Bool {
         guard let eventId = event.id, let eventUserId = event.userId else { return false }
         
@@ -82,7 +91,7 @@ class EventStore {
         return false
     }
     
-    /// Search and fetch events with an increasing searchDelta. A fallback is provided in case user location is disabled or unavailable.
+    /// Increases the search radius and fetches additional nearby events.
     func loadMoreNearbyEvents() async throws -> [DropInEvent] {
         searchDelta += 0.25
         print("Search Delta is: \(searchDelta)")
@@ -95,7 +104,7 @@ class EventStore {
         return filteredEvents
     }
     
-    /// Fetch events in current camera region.
+    /// Fetches events within the visible region of the map camera.
     func fetchEventsInCameraRegion(latitude: Double, longitude: Double, latitudeDelta: Double, longitudeDelta: Double) async throws {
         let events: [DropInEvent] = try await searchEventsInRegion(latitude: latitude, longitude: longitude, latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta)
         
@@ -107,7 +116,7 @@ class EventStore {
     }
     
     
-    /// Search and return events in a certain region (triggered by mapcamera movements).
+    /// Executes a Supabase RPC to retrieve events in a specified geographical region.
     private func searchEventsInRegion(latitude: Double, longitude: Double, latitudeDelta: Double, longitudeDelta: Double) async throws -> [DropInEvent] {
         let events: [DropInEvent] = try await supabase
             .rpc("get_events_in_region", params: ["center_lat": latitude, "center_lon": longitude, "lat_delta": latitudeDelta, "lon_delta": longitudeDelta])
@@ -118,7 +127,7 @@ class EventStore {
     }
     
     
-    /// Join a specific event.
+    /// Joins the specified event and updates local state accordingly.
     func joinEvent(_ event: DropInEvent) async throws -> DropInEvent {
         
         guard let eventId = event.id else {
@@ -145,8 +154,7 @@ class EventStore {
         return updatedEvent
     }
     
-    /// Leave a specific event.
-    /// This will remove the row from the event_joins table.
+    /// Leaves the specified event and removes the join from the backend.
     func leaveEvent(_ event: DropInEvent) async throws {
         try await supabase
             .from("event_joins")
@@ -165,7 +173,7 @@ class EventStore {
         }
     }
     
-    /// Create a new event.
+    /// Creates a new event, uploads any provided photos, and updates local state.
     func createEvent(_ event: DropInEvent, photos: [PhotosPickerItem]) async throws {
         
         let insertedEvent: [DropInEvent] = try await supabase
@@ -200,7 +208,20 @@ class EventStore {
         }
     }
     
-    /// Delete an event.
+    private func convertPhotoSelectionToEventThumbnail(_ photos: [PhotosPickerItem]) async throws -> [EventThumbnail] {
+        var eventThumbnails: [EventThumbnail] = []
+        
+        for photo in photos {
+            guard let eventThumbnail = try await photo.loadTransferable(type: EventThumbnail.self) else {
+                continue
+            }
+            eventThumbnails.append(eventThumbnail)
+        }
+        
+        return eventThumbnails
+    }
+    
+    /// Deletes an event from the backend and local store.
     func deleteEvent(_ event: DropInEvent) async throws {
         guard let eventId = event.id else { return }
         print("Deleting event with id: \(eventId)")
@@ -214,7 +235,7 @@ class EventStore {
         events.removeAll { $0.id == eventId }
     }
     
-    /// Update an event.
+    /// Updates an existing event in the backend and local cache.
     func updateEvent(_ event: DropInEvent) async throws {
         try await supabase
             .rpc("update_event", params: ["event": event])
@@ -225,6 +246,7 @@ class EventStore {
         }
     }
     
+    /// Uploads thumbnail photos for an event and returns their public URLs.
     private func uploadEventThumbnailPhotos(eventId: Int, photos: [EventThumbnail]) async throws -> [String] {
         
         var publicFileUrlPaths: [String] = []
@@ -251,6 +273,7 @@ class EventStore {
     }
 
     
+    /// Fetches the username of the event host based on their user ID.
     func getHostUsername(of event: DropInEvent) async throws -> String {
         let profile: [Profile] = try await supabase
             .from("profiles")
@@ -267,11 +290,12 @@ class EventStore {
         return username
     }
     
+    /// Returns the attendance status (joined or not) of a specific event.
     func getAttendanceStatus(of eventId: Int) -> AttendanceStatus {
         return joinedEvents.contains(where: { $0.id == eventId }) ? .joined : .undetermined
     }
     
-    // Filter events already stored.
+    /// Filters out already-stored events from the incoming event list.
     private func filterNewEvents(_ incoming: [DropInEvent], from existing: [DropInEvent]) -> [DropInEvent] {
         let existingIds = Set(existing.compactMap(\.id))
         return incoming.filter { event in
@@ -280,6 +304,7 @@ class EventStore {
         }
     }
     
+    /// Retrieves the profiles of all participants in a given event.
     func getAllParticipants(of eventId: Int) async throws -> [Profile] {
         let eventJoins: [EventJoins] = try await supabase
             .from("event_joins")
@@ -311,4 +336,3 @@ enum EventStoreError: Error {
     case userIdNotFound
     case imageUploadFailed
 }
-

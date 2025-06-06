@@ -9,6 +9,7 @@ import Observation
 import SwiftUI
 import Auth
 
+/// Displays information about user account and a support section.
 struct AboutView: View {
     @Environment(AuthService.self) private var authService
     @State private var showSignOutAlert = false

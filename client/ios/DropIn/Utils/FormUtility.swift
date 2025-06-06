@@ -7,16 +7,7 @@
 
 import Foundation
 
-
-func isTextTooShort(_ text: String...) -> Bool {
-    for t in text {
-        if t.trimmingCharacters(in: .whitespaces).count < 3 {
-            return true
-        }
-    }
-    return false
-}
-
+/// A simple formatter for decimal numbers.
 var decimalFormatter: NumberFormatter {
     let formatter = NumberFormatter()
     formatter.numberStyle = .decimal

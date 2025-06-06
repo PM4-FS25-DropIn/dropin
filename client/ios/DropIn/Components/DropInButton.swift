@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+/// A styled button for joining an event.
 struct DropInButton: View {
     @Binding var attendanceStatus: AttendanceStatus
     

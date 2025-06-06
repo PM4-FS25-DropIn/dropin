@@ -9,7 +9,7 @@ import SwiftUI
 import MapKit
 import PhotosUI
 
-
+/// A multi-step wizard for creating a new event.
 struct CreateEventWizard: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(EventStore.self) private var eventStore
@@ -99,12 +99,12 @@ struct CreateEventWizard: View {
                         .tint(.indigo)
                 }
                 .mapControlVisibility(.hidden)
-                .containerRelativeFrame(.vertical, count: 10, span: 5, spacing: 0)
+                .containerRelativeFrame(.vertical, count: 10, span: 6, spacing: 0)
                 .gesture(MyLongPressGesture { position in
-                    if let loc = proxy.convert(position, from: .global) {
+                    if let loc = proxy.convert(position, from: .local) {
                         vm.pinLocation = loc
-                        vm.event.location.coordinates[0] = loc.latitude
-                        vm.event.location.coordinates[1] = loc.longitude
+                        vm.event.location.coordinates[0] = loc.longitude
+                        vm.event.location.coordinates[1] = loc.latitude
                     }
                 })
                 .clipShape(RoundedRectangle(cornerRadius: 30))

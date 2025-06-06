@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+/// Displays a list of events created by the user.
 struct MyEventsList: View {
     @Environment(EventStore.self) private var eventStore
     @Environment(AuthService.self) private var authService

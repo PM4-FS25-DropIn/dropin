@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// A styled secure field.
 struct AuthSecureField: View {
     let placeholder: String
     @Binding var value: String

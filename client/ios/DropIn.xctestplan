@@ -4,12 +4,14 @@
       "id" : "865FB128-74C2-4659-8DC0-E3F8EF3800F5",
       "name" : "Configuration 1",
       "options" : {
-
+        "testTimeoutsEnabled" : true
       }
     }
   ],
   "defaultOptions" : {
+    "environmentVariableEntries" : [
 
+    ]
   },
   "testTargets" : [
     {

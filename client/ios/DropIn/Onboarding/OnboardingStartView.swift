@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// The onboarding start view.
 struct OnboardingStartView: View {
     @Binding var currentPageIndex: Int
     
