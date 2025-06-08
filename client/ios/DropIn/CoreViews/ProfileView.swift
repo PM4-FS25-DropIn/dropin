@@ -31,8 +31,18 @@ struct ProfileView: View {
         .edgesIgnoringSafeArea(.top)
         .onAppear {
             Task {
-                profile = try await authService.getProfile()
-                username = try await authService.getUsername()
+                if let user = authService.user {
+                    if let username = user.userMetadata["username"]?.value as? String {
+                        self.username = username
+                    } else {
+                        self.username = try await authService.getUsername()
+                    }
+                    if let profile = authService.profile {
+                        self.profile = profile
+                    } else {
+                        self.profile = try await authService.getProfile()
+                    }
+                }
             }
         }
     }

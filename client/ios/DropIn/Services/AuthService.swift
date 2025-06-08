@@ -14,6 +14,8 @@ final class AuthService {
     var userId: UUID?
     /// The current authenticated user session.
     var user: User?
+    /// The current profile.
+    var profile: Profile?
     
     /// Initializes the AuthService and sets up auth state listeners.
     init() {
@@ -28,8 +30,9 @@ final class AuthService {
             if [.initialSession, .signedIn, .signedOut].contains(state.event) {
                 isAuthenticated = state.session != nil
                 if isAuthenticated {
-                    userId = state.session?.user.id
-                    user = state.session?.user
+                    self.userId = state.session?.user.id
+                    self.user = state.session?.user
+                    self.profile = try? await getProfile()
                 }
             }
         }
