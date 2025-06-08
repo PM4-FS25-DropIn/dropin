@@ -56,3 +56,7 @@ Here you can find more detailed documentation about the project:
 - [Server Architecture](./docs/server/Architecture.md)
 - [Supabase Deployment and Configuration](./docs/server/SupabaseDeploymentAndConfiguration.md)
 - [Definition of Done](./docs/DefinitionOfDone.md)
+
+### App Documentation
+
+[App Documentation](https://pm4-fs25-dropin.github.io/dropin-docs/documentation/dropin/)
