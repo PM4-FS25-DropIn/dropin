@@ -72,7 +72,7 @@ struct AboutView: View {
         Section(header: Text("Support & About")) {
             Link(
                 "Help & Feedback",
-                destination: URL(string: "mailto:support@example.com")!
+                destination: URL(string: "mailto:support@dropinwith.me")!
             )
 
             HStack {
