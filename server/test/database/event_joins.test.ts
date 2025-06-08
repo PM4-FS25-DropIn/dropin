@@ -1,7 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { createSuperClient, generateRandomString, setupRandomClientAndLogin } from './dbhelpers.js';
-import { SupabaseClient } from '@supabase/supabase-js';
+import { createSuperClient, setupRandomClientAndLogin, createEvent } from './dbhelpers.js';
 
 test('An authenticated user can join an event', async (t) => {
     const serviceClient = createSuperClient();
@@ -160,28 +159,3 @@ test('Leaving an event decreases the slot counter', async (t) => {
     const slotsTakenResponse = <unknown>slotsTakenDaten as any[];
     assert.equal(slotsTakenResponse.length, 1, "Expected one event to be selected, but got: " + slotsTakenResponse.length);
 });
-
-async function createEvent(client: SupabaseClient<any, any, any>): Promise<any> {
-    const event_to_create = {
-        title: generateRandomString(),
-        description: generateRandomString(),
-        start: new Date().toISOString(),
-        end: new Date(Date.now() + 3600000).toISOString(),
-        latitude: 50,
-        longitude: 50,
-        slot_limit: 10,
-        slots_taken: 0,
-        age_restricted: false,
-        chat_enabled: true
-    };
-
-    const { data, error } = await client.from('events')
-        .insert(event_to_create)
-        .select();
-
-    if (error) {
-        assert.ifError(error);
-    }
-
-    return (<any>data)[0];
-}

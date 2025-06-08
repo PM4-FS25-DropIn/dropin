@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { createSuperClient, generateRandomString, setupRandomClientAndLogin } from './dbhelpers.js';
+import { createEvent, createSuperClient, DEFAULT_LOCATION_ASPOSTGIS, setupRandomClientAndLogin } from './dbhelpers.js';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 test('An authenticated user can create events', async (t) => {
@@ -12,8 +12,7 @@ test('An authenticated user can create events', async (t) => {
         description: "this is a cool description",
         start: new Date().toISOString(),
         end: new Date(Date.now() + 3600000).toISOString(),
-        latitude: 50,
-        longitude: 50,
+        location: "POINT(50 50)",
         slot_limit: 10,
         slots_taken: 0,
         age_restricted: false,
@@ -31,8 +30,7 @@ test('An authenticated user can create events', async (t) => {
     assert.equal(response.length, 1, "Expected one event to be created, but got: " + response.length);
     assert.equal(response[0].title, event_to_create.title, "Expected title to be " + event_to_create.title + ", but got: " + response[0].title);
     assert.equal(response[0].description, event_to_create.description, "Expected description to be " + event_to_create.description + ", but got: " + response[0].description);
-    assert.equal(response[0].latitude, event_to_create.latitude, "Expected latitude to be " + event_to_create.latitude + ", but got: " + response[0].latitude);
-    assert.equal(response[0].longitude, event_to_create.longitude, "Expected longitude to be " + event_to_create.longitude + ", but got: " + response[0].longitude);
+    assert.equal(response[0].location, DEFAULT_LOCATION_ASPOSTGIS, "Expected location to be " + event_to_create.location + ", but got: " + response[0].location);
     assert.equal(response[0].slot_limit, event_to_create.slot_limit, "Expected slot_limit to be " + event_to_create.slot_limit + ", but got: " + response[0].slot_limit);
     assert.equal(response[0].slots_taken, event_to_create.slots_taken, "Expected slots_taken to be " + event_to_create.slots_taken + ", but got: " + response[0].slots_taken);
     assert.equal(response[0].age_restricted, event_to_create.age_restricted, "Expected age_restricted to be " + event_to_create.age_restricted + ", but got: " + response[0].age_restricted);
@@ -255,8 +253,7 @@ async function seedEvents(
           description: `Description ${i + 1}`,
           start:       startDate.toISOString(),
           end:         endDate.toISOString(),
-          latitude:    0,
-          longitude:   0,
+          location:    "POINT(0 0)", 
           slot_limit:  10,
           user_id:     userId,
         })
@@ -269,31 +266,6 @@ async function seedEvents(
   
     return inserted;
   }
-
-async function createEvent(client: SupabaseClient<any, any, any>): Promise<any> {
-    const event_to_create = {
-        title: generateRandomString(),
-        description: generateRandomString(),
-        start: new Date().toISOString(),
-        end: new Date(Date.now() + 3600000).toISOString(),
-        latitude: 50,
-        longitude: 50,
-        slot_limit: 10,
-        slots_taken: 0,
-        age_restricted: false,
-        chat_enabled: true
-    };
-
-    const { data, error } = await client.from('events')
-        .insert(event_to_create)
-        .select();
-
-    if (error) {
-        assert.ifError(error);
-    }
-
-    return (<any>data)[0];
-}
 
 /**
  * Helper: read the slots_taken for a given event.

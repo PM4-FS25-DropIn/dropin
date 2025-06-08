@@ -88,3 +88,39 @@ export function generateRandomString(addDate: boolean = false): string {
 
     return result;
 }
+
+export const DEFAULT_LOCATION_ASPOSTGIS = "0101000020E610000000000000000049400000000000004940";
+
+export async function createEvent(client: SupabaseClient<any, any, any>): Promise<any> {
+    const event_to_create = {
+        title: generateRandomString(),
+        description: generateRandomString(),
+        start: new Date().toISOString(),
+        end: new Date(Date.now() + 3600000).toISOString(),
+        location:    "POINT(0 0)", 
+        slot_limit: 10,
+        slots_taken: 0,
+        age_restricted: false,
+        chat_enabled: true
+    };
+
+    const { data, error } = await client.from('events')
+        .insert(event_to_create)
+        .select();
+
+    if (error) {
+        assert.ifError(error);
+    }
+
+    return (<any>data)[0];
+}
+
+/**
+ * Creates a random blob of the given size and type.
+ * @param size The size of the blob in bytes.
+ * @param type The type of the blob. Default is 'image/png'.
+ * @returns {Blob} The created blob.
+ */
+export function generateRandomBlob(size: number, type: string = 'image/png'): Blob {
+    return new Blob([new ArrayBuffer(size)], { type });
+};

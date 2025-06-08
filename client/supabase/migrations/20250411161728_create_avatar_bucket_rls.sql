@@ -10,7 +10,7 @@
 CREATE POLICY "Authenticated users can upload an avatar."
     ON storage.objects
     FOR INSERT TO authenticated WITH CHECK (
-        bucket_id = 'avatars'
+        bucket_id = 'avatars' AND ((storage.foldername(name))[1]) = (select auth.uid()::text)
     );
 
 CREATE POLICY "Allow owner to delete their own avatar."
