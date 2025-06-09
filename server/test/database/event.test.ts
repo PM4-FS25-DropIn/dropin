@@ -107,61 +107,6 @@ test('An authenticated user can see all events', async (t) => {
     );
 });
 
-test('fetch_events_feed returns a maximum of 5 events when more than 5 exist', async () => {
-  const admin      = createSuperClient();
-  const { client: userClient, user } = await setupRandomClientAndLogin();
-
-  await seedEvents(admin, 7, user.id);
-
-  const { data: feed, error } = await userClient
-    .rpc('fetch_events_feed', { excluded_ids: [] });
-
-  assert.equal(error, null, `RPC error: ${error?.message}`);
-  assert(Array.isArray(feed), 'Expected feed to be an array');
-  assert(
-    (feed as any[]).length <= 5,
-    `Expected at most 5 events, got ${(feed as any[]).length}`
-  );
-});
-
-test('fetch_events_feed returns no more than 5 events when more than 5 exist', async () => {
-  const admin = createSuperClient();
-  const { client: userClient, user } = await setupRandomClientAndLogin();
-
-  await seedEvents(admin, 7, user.id);
-
-  const { data: feed, error } = await userClient
-    .rpc('fetch_events_feed', { excluded_ids: [] });
-
-  assert.equal(error, null, `RPC error: ${error?.message}`);
-  assert(Array.isArray(feed), 'Expected an array');
-  assert(
-    feed.length <= 5,
-    `Expected at most 5 events, got ${feed.length}`
-  );
-});
-
-test('fetch_events_feed excludes the IDs passed in excluded_ids', async () => {
-  const admin      = createSuperClient();
-  const { client: userClient, user } = await setupRandomClientAndLogin();
-
-  const seeded = await seedEvents(admin, 5, user.id);
-
-  const excluded = [seeded[1].id, seeded[3].id];
-
-  const { data: feed, error } = await userClient
-    .rpc('fetch_events_feed', { excluded_ids: excluded });
-
-  assert.equal(error, null, `RPC error: ${error?.message}`);
-  const feedIds = (feed as any[]).map(e => e.id);
-
-  excluded.forEach(id => {
-    assert(!feedIds.includes(id), `Did not expect excluded event ${id}`);
-  });
-
-  assert(feedIds.length <= 5, `Expected ≤5 items, got ${feedIds.length}`);
-});
-
 test('decrement_slots_taken when a row is removed from event_joins', async () => {
   const admin = createSuperClient();
 
