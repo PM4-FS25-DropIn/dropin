@@ -94,10 +94,14 @@ struct MapEventItemDetailSheet: View {
             DropInButton(attendanceStatus: $attendanceStatus) {
                joinEvent()
             }
-            .onAppear {
+            .onAppear() {
                 if let id = event.id {
                     attendanceStatus = eventStore.getAttendanceStatus(of: id)
-                    print("Attendance status is: \(attendanceStatus.rawValue)")
+                }
+            }
+            .onChange(of: event){
+                if let id = event.id {
+                    attendanceStatus = eventStore.getAttendanceStatus(of: id)
                 }
             }
         }

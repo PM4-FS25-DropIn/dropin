@@ -14,6 +14,10 @@ DropIn is currently available exclusively on iOS and optimized for iPhones using
 An Android version is not yet available but may be added in future development stages.
 We're committed to delivering the best possible experience on iOS before expanding to other platforms.
 
+## Landing Page
+
+[DropIn](https://dropinwith.me)
+
 ## Technologies
 * Frontend
 
