@@ -50,6 +50,45 @@ Run `supabase start` inside the `./client` directory to start and initialize the
 
 To run the database tests, navigate to the `./server` directory and run `npm run test:db` or `npm run test-win:db`.
 
+## Testing
+
+Testing was an essential part of our development workflow to ensure reliability and maintainability of DropIn. Our testing strategy covered both backend and client-side components through a combination of automated unit tests, integration tests, and end-to-end (E2E) UI tests.
+
+### CI/CD Integration
+
+We integrated the following tools into our CI pipeline:
+
+- **GitHub Actions**  
+  Used for running backend database integration tests and unit tests. These tests were triggered on every pull request into the `dev` branch.
+  
+- **Xcode Cloud**  
+  Used to automatically run the iOS test suites, including:
+  - Unit tests for critical service components (e.g. `AuthService`, `ChatService`)
+  - UI E2E tests simulating user workflows
+  - Performance and startup-time tests on real devices
+
+All test pipelines were triggered on PRs into the `dev` branch.
+
+### Test Deployment & Manual QA
+
+After each successful merge into `dev`, the iOS app was automatically built and deployed via **TestFlight**. This allowed us to test the app manually on devices to catch bugs and performance issues that might not be visible in automated test environments.
+
+### Code Coverage & Test Focus
+
+While the **overall coverage** of the app may appear low, this is primarily due to the large number of declarative UI components that don't benefit from traditional unit testing.
+
+Instead, our focus was on:
+
+- **Unit testing the parts that matter**: primarily service components that manage business and data logic
+- **Running those tests against a hosted test database** to verify API correctness
+- **Covering UI workflows** through automated E2E tests in Xcode Cloud
+
+This approach ensured meaningful coverage of critical areas without overengineering flaky or redundant tests.
+
+### Test Reports
+
+You can find the latest testing reports and overviews in the [`/reports`](./reports) directory.
+
 ## Documentation
 
 Here you can find more detailed documentation about the project:
