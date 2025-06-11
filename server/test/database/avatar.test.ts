@@ -34,11 +34,11 @@ test('Uploaded avatar needs to be in user directory', async (t) => {
 /**
  * An user should not be able to upload an avatar into the root directory.
  */
-test('Limit avatar upload to 5MB', async (t) => {
+test('Limit avatar upload to 10MB', async (t) => {
   const { client, user } = await setupRandomClientAndLogin();
   
     const uploadResult = await client.storage.from(AVATAR_BUCKET)
-      .upload(user.identities![0]!.id + AVATAR_FILE_NAME, generateRandomBlob(6 * 1024 * 1024));
+      .upload(user.identities![0]!.id + AVATAR_FILE_NAME, generateRandomBlob(11 * 1024 * 1024));
   
     assert.equal(uploadResult.data, null, "Expected data to be null, but got: " + uploadResult.data);
     assert.notEqual(uploadResult.error, null);
