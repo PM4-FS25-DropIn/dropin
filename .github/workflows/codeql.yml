@@ -1,0 +1,71 @@
+name: "Swift CodeQL Analysis"
+
+on:
+  pull_request:
+    branches: [ "dev" ]
+  workflow_dispatch:
+  
+      
+jobs:
+
+  analyze:
+    name: Analyze Swift
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: ./client/ios
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - language: swift
+          build-mode: manual
+       
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+      # Setup swift version 6.0
+    - name: Setup Swift
+      uses: swift-actions/setup-swift@v2
+      with:
+        swift-version: '6.1'
+
+      # Setup Xcode tools for building and simulation
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: 'latest-stable'    
+
+    # Initializes the CodeQL tools for scanning.
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: ${{ matrix.language }}
+        build-mode: ${{ matrix.build-mode }}
+        queries: security-extended,security-and-quality
+
+    # Build the Swift source code manually, instead of autobuild.
+    # Autobuild fails due to not finding the correct tooling and therefore we manually build.
+    - if: matrix.build-mode == 'manual'
+      shell: bash
+      run: |
+        xcodebuild clean build \
+          -scheme "DropIn" \
+          -destination "platform=iOS Simulator,OS=18.2,name=iPhone 16 Pro" \
+          CODE_SIGNING_ALLOWED=NO | xcpretty
+      # This directly prints the build stdout instead of buffering it.
+      env:
+          NSUnbufferedIO: YES
+        
+    # Perform codeql analysis
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      with:
+        category: "/language:${{matrix.language}}"

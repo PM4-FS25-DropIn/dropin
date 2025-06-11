@@ -1,0 +1,14 @@
+include:
+  - supabase/docker-compose.yml
+services:
+  api:
+    ports:
+      - 80:3000
+    image: dropin:latest
+    environment:
+      - DB_CONNECTION_STRING=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+    depends_on:
+      - db
+      - auth
+      - rest
+      - kong

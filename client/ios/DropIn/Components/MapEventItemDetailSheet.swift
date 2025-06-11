@@ -1,0 +1,159 @@
+//
+//  MapEventItemDetailSheet.swift
+//  dropin
+//
+//  Created by Moritz Feuchter on 01/05/2025.
+//
+
+
+import SwiftUI
+import Kingfisher
+@preconcurrency import MapKit
+
+/// A detail sheet for a selected event on the event map.
+struct MapEventItemDetailSheet: View {
+    @Environment(EventStore.self) private var eventStore
+    
+    @State private var lookAroundScene: MKLookAroundScene?
+    @State private var attendanceStatus: AttendanceStatus = .undetermined
+    @State private var joinEventTaskStatus: AsyncStatus = .idle
+    @State private var showAlert = false
+    
+    var viewModel: EventMapViewModel
+    var event: DropInEvent
+    var travelTime: String?
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            EventStatusBadge(status: event.status)
+            header
+            detailsScrollView
+        }
+        .padding()
+        .alert("Error", isPresented: $showAlert) {
+            Button("Ok", role: .cancel) { }
+        } message: {
+            Text(joinEventTaskStatus.error)
+        }
+    }
+    
+    var header: some View {
+        HStack {
+            VStack(alignment: .leading) {
+                Text(event.title)
+                    .font(.title)
+                    .bold()
+                    .lineLimit(1)
+                Text(formatCoordinates(latitude: event.latitude, longitude: event.longitude))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .bold()
+                    .lineLimit(1)
+                estimatedTimeDisplay
+            }
+            Spacer()
+            dropInButton
+        }
+    }
+    
+    var detailsScrollView: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                sectionTitle("About")
+                descriptionBox
+                sectionTitle("Quick Info")
+                EventQuickInfo(event: event)
+                sectionTitle("Gallery")
+                eventImagesCarousel
+                OpenInMapsButton(event: event)
+            }
+        }
+        .scrollIndicators(.hidden)
+    }
+    
+    var descriptionBox: some View {
+        VStack(alignment: .leading) {
+            Text(event.description)
+                .lineLimit(5)
+                .font(.body)
+                .foregroundStyle(.secondary)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 30))
+    }
+    
+    func sectionTitle(_ title: String) -> some View {
+        Text(title)
+            .font(.title3)
+            .bold()
+    }
+    
+    var dropInButton: some View {
+        HStack(spacing: 15) {
+            DropInButton(attendanceStatus: $attendanceStatus) {
+               joinEvent()
+            }
+            .onAppear() {
+                if let id = event.id {
+                    attendanceStatus = eventStore.getAttendanceStatus(of: id)
+                }
+            }
+            .onChange(of: event){
+                if let id = event.id {
+                    attendanceStatus = eventStore.getAttendanceStatus(of: id)
+                }
+            }
+        }
+    }
+    
+    var eventImagesCarousel: some View {
+        TabView {
+            if let eventImagePaths = event.imagePaths {
+                ForEach(eventImagePaths, id: \.self) { imagePath in
+                    KFImage(URL(string: imagePath))
+                        .resizable()
+                        .scaledToFill()
+                        .clipped()
+                }
+            } else {
+                Image("default.event.thumbnail")
+                    .resizable()
+                    .scaledToFill()
+                    .clipped()
+            }
+        }
+        .tabViewStyle(.page)
+        .clipShape(RoundedRectangle(cornerRadius: 30))
+        .containerRelativeFrame(.vertical, count: 12, span: 5, spacing: 0)
+    }
+    
+    var estimatedTimeDisplay: some View {
+        HStack {
+            Image(systemName: "figure.walk")
+            Text(travelTime ?? "N/A")
+                .bold()
+        }
+        .font(.caption)
+        .foregroundStyle(.secondary)
+    }
+    
+    func joinEvent() {
+        Task {
+            joinEventTaskStatus = .running
+            do {
+                _ = try await eventStore.joinEvent(event)
+                joinEventTaskStatus = .success
+                attendanceStatus = .joined
+            } catch {
+                joinEventTaskStatus = .failure(error)
+                showAlert = true
+            }
+        }
+    }
+}
+
+#Preview {
+    MapEventItemDetailSheet(viewModel: EventMapViewModel(), event: sampleEvent)
+        .environment(EventStore())
+}

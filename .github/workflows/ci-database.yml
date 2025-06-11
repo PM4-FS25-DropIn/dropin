@@ -1,0 +1,51 @@
+name: Database CI
+
+on:
+  pull_request:
+    branches: [ main, dev ]
+    paths:
+      - 'client/supabase/**'
+      - 'server/test/database/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  checks: write
+
+jobs:
+  run_database_tests:
+    name: Run Database Tests
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./server
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Start Supabase Local DB
+        working-directory: ./client
+        run: supabase start
+
+      - run: npm ci      
+      - run: npm run test:db
+      
+      - run: cat dbreport.xml
+        working-directory: ./server/test-results/
+
+      - uses: mikepenz/action-junit-report@v5
+        if: success() || failure()
+        with:
+          report_paths: './server/test-results/*.xml'
+          detailed_summary: true
+          include_passed: true
